@@ -1,12 +1,18 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import dotenv from "dotenv";
 
 dotenv.config();
-
-const client = axios.create({
+let config: AxiosRequestConfig = {
   // baseURL: process.env.REACT_APP_ENDPOINT,
   timeout: 1000,
-});
+};
+if (process.env.NODE_ENV === "production") {
+  config = {
+    baseURL: process.env.REACT_APP_ENDPOINT,
+    timeout: 1000,
+  };
+}
+const client = axios.create(config);
 
 client.interceptors.request.use((config) => {
   const accessToken = localStorage.getItem("access");
