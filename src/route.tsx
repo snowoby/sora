@@ -6,7 +6,6 @@ import Login from "@/pages/sign/Login";
 const Guide = () => {
   return (
     <>
-      asdasd
       <BrowserRouter>
         <Routes>
           <Route path="account" element={<SignPage />}>
