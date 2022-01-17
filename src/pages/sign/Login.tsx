@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Immutable from "immutable";
 import { LoginAPI } from "@/api/SignAPI";
 import log from "@/log";
+import { Button, Form } from "semantic-ui-react";
 
 const Login = () => {
   const [form, setForm] = useState(
@@ -14,8 +15,9 @@ const Login = () => {
 
   return (
     <>
-      <form
+      <Form
         onSubmit={async (e) => {
+          console.log(e);
           e.preventDefault();
           setSubmitting(true);
           try {
@@ -28,25 +30,40 @@ const Login = () => {
           }
         }}
       >
-        <input
+        <Form.Field>
+          <label>email</label>
+          <input
+            className="block"
+            placeholder="email"
+            type="email"
+            onChange={(event) => {
+              setForm((data) => data.set("email", event.target.value));
+            }}
+          />
+        </Form.Field>
+        <Form.Field>
+          <label>password</label>
+          <input
+            className="block"
+            placeholder="password"
+            type="password"
+            onChange={(event) => {
+              setForm((data) => data.set("password", event.target.value));
+            }}
+          />
+        </Form.Field>
+
+        <Button
+          inverted
+          fluid
+          color="blue"
           className="block"
-          placeholder="email"
-          onChange={(event) => {
-            setForm((data) => data.set("email", event.target.value));
-          }}
-        />
-        <input
-          className="block"
-          placeholder="password"
-          type="password"
-          onChange={(event) => {
-            setForm((data) => data.set("password", event.target.value));
-          }}
-        />
-        <button className="block" type="submit" disabled={submitting}>
+          type="submit"
+          disabled={submitting}
+        >
           登录
-        </button>
-      </form>
+        </Button>
+      </Form>
     </>
   );
 };
