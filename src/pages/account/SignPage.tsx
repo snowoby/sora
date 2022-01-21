@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useContext, useState } from "react";
+import React, { useContext, useState, ChangeEvent } from "react";
 import { Link } from "react-router-dom";
 import Immutable from "immutable";
 import { Button, Stack, TextField } from "@mui/material";
@@ -6,7 +6,7 @@ import { Helmet } from "react-helmet";
 import log from "@/log";
 import UniversalContext from "@/context/UniversalContext";
 import loginBackground from "@/assets/login_background.webp";
-import { LoginAPI } from "@/api/SignAPI";
+import { APIRegister, LoginStream } from "@/api/SignAPI";
 
 type SignPageType = "login" | "register";
 
@@ -23,22 +23,25 @@ const SignPage = ({ pageType }: { pageType: SignPageType }) => {
   const another = (value: SignPageType) =>
     value === "login" ? "register" : "login";
 
-  const formSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSubmitting(true);
-    try {
-      const response = await LoginAPI(form);
-      //TODO
-    } catch (e) {
-      log.info(e);
-    } finally {
-      setSubmitting(false);
-    }
+  const loginAction = async () => {
+    const response = await LoginStream(form);
+    setSubmitting(false);
+    log.info(response.data);
+  };
+  const registerAction = async () => {
+    await APIRegister(form);
+    await loginAction();
+  };
+  const submit = {
+    login: loginAction,
+    register: registerAction,
   };
 
   const inputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setForm((data) => data.set(event.target.name, event.target.value));
   };
+
+  const haveContent = form.get("email") || form.get("password");
 
   return (
     <>
@@ -51,16 +54,23 @@ const SignPage = ({ pageType }: { pageType: SignPageType }) => {
       >
         <div className="group">
           <div
-            className="m-20 max-w-md w-screen max-h-96 h-screen
+            className={`m-20 max-w-md w-screen max-h-96 h-screen
         bg-cover shadow-2xl backdrop-filter backdrop-blur-xl
-        bg-no-repeat bg-fixed rounded-lg p-4 group-hover:bg-white duration-200"
+        bg-no-repeat bg-fixed rounded-lg p-4 group-hover:bg-white duration-200 ${
+          haveContent && "bg-white"
+        }`}
           >
             {
               //TODO firefox
             }
             <h1 className="text-center text-4xl">{universalConfig.siteName}</h1>
             <div className="mt-8">
-              <form onSubmit={formSubmit}>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  submit[pageType]();
+                }}
+              >
                 <Stack spacing={3}>
                   {["email", "password"].map((fieldName) => (
                     <TextField

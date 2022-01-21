@@ -2,16 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-import Guide from "@/route";
-import UniversalContext, {
-  UniversalContextDefaultValue,
-} from "@/context/UniversalContext";
+import App from "@/App";
 
 ReactDOM.render(
   <React.StrictMode>
-    <UniversalContext.Provider value={UniversalContextDefaultValue}>
-      <Guide />
-    </UniversalContext.Provider>
+    <App />
   </React.StrictMode>,
   document.getElementById("root")
 );
