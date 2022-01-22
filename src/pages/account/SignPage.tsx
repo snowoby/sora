@@ -1,5 +1,5 @@
 import React, { useContext, useState, ChangeEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import Immutable from "immutable";
 import { Button, Stack, TextField } from "@mui/material";
 import { Helmet } from "react-helmet";
@@ -7,6 +7,7 @@ import log from "@/log";
 import UniversalContext from "@/context/UniversalContext";
 import loginBackground from "@/assets/login_background.webp";
 import { APIRegister, LoginStream } from "@/api/SignAPI";
+import AccountContext from "@/context/AccountContext";
 
 type SignPageType = "login" | "register";
 
@@ -18,6 +19,7 @@ const SignPage = ({ pageType }: { pageType: SignPageType }) => {
       password: "",
     })
   );
+
   const [submitting, setSubmitting] = useState(false);
 
   const another = (value: SignPageType) =>
@@ -42,6 +44,9 @@ const SignPage = ({ pageType }: { pageType: SignPageType }) => {
   };
 
   const haveContent = form.get("email") || form.get("password");
+
+  const { email } = useContext(AccountContext);
+  if (email) return <Navigate to="/account" replace />;
 
   return (
     <>
@@ -68,7 +73,7 @@ const SignPage = ({ pageType }: { pageType: SignPageType }) => {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  submit[pageType]();
+                  submit[pageType]().catch((e) => log.error(e));
                 }}
               >
                 <Stack spacing={3}>
