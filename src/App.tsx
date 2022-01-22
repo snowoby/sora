@@ -6,23 +6,22 @@ import AccountContext from "@/context/AccountContext";
 import Guide from "@/route";
 import { APISelf } from "./api/SignAPI";
 import log from "./log";
-
-type Account = {
-  email: string | null;
-};
+import { AccountInfo } from "./types";
 
 const App = () => {
-  const [account, setAccount] = useState<Account>({ email: null });
-
-  useEffect(() => {
+  const [accountInfo, setAccount] = useState<AccountInfo>();
+  const updateAccountInfo = () =>
     APISelf()
       .then((response) => setAccount(response.data))
       .catch((e) => log.error(e));
+
+  useEffect(() => {
+    updateAccountInfo();
   }, []);
 
   return (
     <UniversalContext.Provider value={UniversalContextDefaultValue}>
-      <AccountContext.Provider value={account}>
+      <AccountContext.Provider value={{ accountInfo, updateAccountInfo }}>
         <Guide />
       </AccountContext.Provider>
     </UniversalContext.Provider>

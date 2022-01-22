@@ -1,17 +1,12 @@
 import client from "@/api/axios";
 import Api from "@/api/ApiList";
-import Immutable from "immutable";
-import { config } from "dotenv";
 import {
   GetRefreshToken,
   SetAccessToken,
   SetRefreshToken,
 } from "@/utils/utils";
-import log from "@/log";
 import axios from "axios";
-
-type Token = { body: string };
-type Account = { email: string };
+import { AccountInfo, Token } from "@/types";
 
 export const APILogin = (info: Record<string, any>) =>
   axios.post<Token>(Api.login, info);
@@ -27,7 +22,7 @@ export const APIAccess = async () => {
   return response;
 };
 
-export const APISelf = () => client.get<Account>(Api.self);
+export const APISelf = () => client.get<AccountInfo>(Api.self);
 
 export const LoginStream = async (info: Record<string, any>) => {
   SetRefreshToken("");

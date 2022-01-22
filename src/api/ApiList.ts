@@ -1,4 +1,5 @@
 const account = "/account/";
+const profile = "/profile/";
 
 export default {
   account,
@@ -6,4 +7,5 @@ export default {
   register: account + "register",
   refresh: account + "refresh",
   self: account + "",
+  profile,
 };
