@@ -45,8 +45,8 @@ const SignPage = ({ pageType }: { pageType: SignPageType }) => {
 
   const haveContent = form.get("email") || form.get("password");
 
-  const accountInfo = useContext(AccountContext);
-  if (accountInfo) return <Navigate to="/account" replace />;
+  const account = useContext(AccountContext);
+  if (account.accountInfo) return <Navigate to="/account" replace />;
 
   return (
     <>

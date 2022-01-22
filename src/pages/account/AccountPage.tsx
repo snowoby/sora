@@ -1,8 +1,7 @@
 import React, { ChangeEvent, useContext, useState } from "react";
 import AccountContext from "@/context/AccountContext";
-import { AccountPageProps, Profile, ProfileCreate } from "@/types";
-import { Button, Input, TextField } from "@mui/material";
-import Immutable from "immutable";
+import { ProfileCreate } from "@/types";
+import { Button, Stack, TextField } from "@mui/material";
 import { APICreateProfile } from "@/api/ProfileAPI";
 import log from "@/log";
 
@@ -14,7 +13,11 @@ const AccountPage = () => {
       <div>email:{accountInfo?.account.email}</div>
       <div>
         {accountInfo?.profiles.map((profile) => (
-          <div key={profile.id}>{profile.id}</div>
+          <div key={profile.id}>
+            <span>{profile.id} </span>
+            <span>{profile.title} </span>
+            <span>{profile.callSign}</span>
+          </div>
         ))}
       </div>
 
@@ -53,20 +56,22 @@ const ProfileCreateForm = () => {
         }
       }}
     >
-      {["title", "callSign", "category"].map((fieldName) => (
-        <TextField
-          key={fieldName}
-          fullWidth
-          label={fieldName}
-          name={fieldName}
-          required
-          onChange={handleChange}
-        />
-      ))}
-
-      <Button fullWidth type="submit">
-        Go
-      </Button>
+      <Stack spacing={3}>
+        {["title", "callSign", "category"].map((fieldName) => (
+          <TextField
+            key={fieldName}
+            fullWidth
+            label={fieldName}
+            name={fieldName}
+            required
+            variant="filled"
+            onChange={handleChange}
+          />
+        ))}
+        <Button fullWidth type="submit" variant="contained">
+          Go
+        </Button>
+      </Stack>
     </form>
   );
 };
