@@ -4,9 +4,9 @@ import UniversalContext, {
 } from "@/context/UniversalContext";
 import AccountContext from "@/context/AccountContext";
 import Guide from "@/route";
-import { APISelf } from "./api/SignAPI";
 import log from "./log";
 import { AccountInfo } from "./types";
+import { APISelf } from "./api/ProfileAPI";
 
 const App = () => {
   const [accountInfo, setAccount] = useState<AccountInfo>();

@@ -1,4 +1,3 @@
-import client from "@/api/axios";
 import Api from "@/api/ApiList";
 import {
   GetRefreshToken,
@@ -6,23 +5,30 @@ import {
   SetRefreshToken,
 } from "@/utils/utils";
 import axios from "axios";
-import { AccountInfo, Token } from "@/types";
+import { Token } from "@/types";
+
+let config;
+if (process.env.NODE_ENV === "production") {
+  config = {
+    baseURL: process.env.REACT_APP_ENDPOINT,
+    timeout: 1000,
+  };
+}
+const client = axios.create(config);
 
 export const APILogin = (info: Record<string, any>) =>
-  axios.post<Token>(Api.login, info);
+  client.post<Token>(Api.login, info);
 
 export const APIRegister = (info: Record<string, any>) =>
-  axios.post(Api.register, info);
+  client.post(Api.register, info);
 
 export const APIAccess = async () => {
-  const response = await axios.post<Token>(Api.refresh, null, {
+  const response = await client.post<Token>(Api.refresh, null, {
     headers: { Authorization: `Bearer ${GetRefreshToken()}` },
   });
   SetAccessToken(response.data.body);
   return response;
 };
-
-export const APISelf = () => client.get<AccountInfo>(Api.self);
 
 export const LoginStream = async (info: Record<string, any>) => {
   SetRefreshToken("");
