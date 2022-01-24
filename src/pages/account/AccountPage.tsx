@@ -4,13 +4,15 @@ import { ProfileCreate } from "@/types";
 import { Button, Stack, TextField } from "@mui/material";
 import { APICreateProfile } from "@/api/ProfileAPI";
 import log from "@/log";
+import { Navigate } from "react-router-dom";
 
 const AccountPage = () => {
   const { accountInfo } = useContext(AccountContext);
 
+  if (!accountInfo) return <Navigate to="/account/login" replace />;
   return (
     <>
-      <div>email:{accountInfo?.account.email}</div>
+      <div>email:{accountInfo.account.email}</div>
       <div>
         {accountInfo?.profiles.map((profile) => (
           <div key={profile.id}>
