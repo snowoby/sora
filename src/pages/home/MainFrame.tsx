@@ -5,8 +5,6 @@ import AccountContext from "@/context/AccountContext";
 import { Link } from "react-router-dom";
 
 const MainFrame = () => {
-  const account = useContext(AccountContext);
-
   return (
     <Container>
       <Grid container columnSpacing={2}>
@@ -28,7 +26,7 @@ const MainFrame = () => {
         <Grid item xs={4}>
           <Link to="/account">account</Link>
 
-          <ProfileSwitcher profiles={account.accountInfo?.profiles} />
+          <ProfileSwitcher />
         </Grid>
       </Grid>
     </Container>

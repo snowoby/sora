@@ -38,8 +38,10 @@ export type SignPageType = "login" | "register";
 export type AccountContextType = {
   accountInfo?: AccountInfo;
   updateAccountInfo: () => void;
+  switchProfile: (profileID: string) => void;
+  currentProfile?: Profile;
 };
 
 export type ProfileSwitcherProps = {
-  profiles?:Profiles
-}
+  profiles?: Profiles;
+};

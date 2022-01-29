@@ -19,6 +19,7 @@ const SignPage = ({ pageType }: { pageType: SignPageType }) => {
       password: "",
     })
   );
+  const navigate = useNavigate();
 
   const [submitting, setSubmitting] = useState(false);
 
@@ -29,7 +30,6 @@ const SignPage = ({ pageType }: { pageType: SignPageType }) => {
     const response = await LoginStream(form);
     setSubmitting(false);
     log.info(response.data);
-    const navigate = useNavigate();
     navigate("/");
   };
   const registerAction = async () => {
