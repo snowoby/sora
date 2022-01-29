@@ -5,6 +5,7 @@ type InfoBasic = {
 type Account = { email: string } & InfoBasic;
 
 export type Profile = ProfileCreate & InfoBasic;
+export type Profiles = Profile[];
 
 export type ProfileCreate = {
   title: string;
@@ -38,3 +39,7 @@ export type AccountContextType = {
   accountInfo?: AccountInfo;
   updateAccountInfo: () => void;
 };
+
+export type ProfileSwitcherProps = {
+  profiles?:Profiles
+}
