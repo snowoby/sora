@@ -1,5 +1,5 @@
 import React, { useContext, useState, ChangeEvent } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import Immutable from "immutable";
 import { Button, Stack, TextField } from "@mui/material";
 import { Helmet } from "react-helmet";
@@ -29,6 +29,8 @@ const SignPage = ({ pageType }: { pageType: SignPageType }) => {
     const response = await LoginStream(form);
     setSubmitting(false);
     log.info(response.data);
+    const navigate = useNavigate();
+    navigate("/");
   };
   const registerAction = async () => {
     await APIRegister(form);

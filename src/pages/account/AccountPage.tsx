@@ -45,6 +45,12 @@ const ProfileCreateForm = () => {
       [e.target.name]: e.target.value,
     });
 
+  const keys: ("title" | "callSign" | "category")[] = [
+    "title",
+    "callSign",
+    "category",
+  ];
+
   return (
     <form
       onSubmit={async (e) => {
@@ -59,12 +65,13 @@ const ProfileCreateForm = () => {
       }}
     >
       <Stack spacing={3}>
-        {["title", "callSign", "category"].map((fieldName) => (
+        {keys.map((fieldName) => (
           <TextField
             key={fieldName}
             fullWidth
             label={fieldName}
             name={fieldName}
+            value={createProfile[fieldName]}
             required
             variant="filled"
             onChange={handleChange}
