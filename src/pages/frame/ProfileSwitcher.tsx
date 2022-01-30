@@ -1,17 +1,21 @@
-import React, { useContext, useState, useRef } from "react";
-import { Avatar, Menu, MenuItem, Typography } from "@mui/material";
-import { ProfileSwitcherProps } from "@/types";
+import React, { useContext, useState, useRef, useEffect } from "react";
+import { Divider, Menu, MenuItem, Stack } from "@mui/material";
 import AccountContext from "@/context/AccountContext";
-import log from "@/log";
 import ProfileCard from "@/components/ProfileCard";
+import { Add, Settings } from "@mui/icons-material";
 
 const ProfileSwitcher = () => {
   const { accountInfo, currentProfile, switchProfile } =
     useContext(AccountContext);
   const profiles = accountInfo?.profiles;
-
+  const [menuWidth, setMenuWidth] = useState("auto");
   const [open, setOpen] = useState<boolean>(false);
   const anchor = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMenuWidth(`300px`);
+    if (anchor.current) setMenuWidth(`${anchor.current.clientWidth}px`);
+  }, [anchor, window.innerWidth]);
 
   return (
     <div className="w-full">
@@ -28,21 +32,27 @@ const ProfileSwitcher = () => {
           open={open}
           onClose={() => setOpen(false)}
           anchorEl={anchor.current}
-          PaperProps={{ className: "w-96" }}
+          PaperProps={{ style: { width: menuWidth } }}
         >
           {profiles?.map((profile) => (
-            <div key={profile.id}>
-              <MenuItem
-                onClick={() => {
-                  switchProfile(profile.id);
-                  setOpen(false);
-                }}
-                selected={profile.id === currentProfile?.id}
-              >
-                <ProfileCard profile={profile} size="lite" />
-              </MenuItem>
-            </div>
+            <MenuItem
+              key={profile.id}
+              onClick={() => {
+                switchProfile(profile.id);
+                setOpen(false);
+              }}
+              selected={profile.id === currentProfile?.id}
+            >
+              <ProfileCard profile={profile} size="lite" />
+            </MenuItem>
           ))}
+          <Divider />
+          <MenuItem>
+            <Stack direction="row" spacing={3}>
+              <Settings />
+              <div>settings</div>
+            </Stack>
+          </MenuItem>
         </Menu>
       )}
     </div>

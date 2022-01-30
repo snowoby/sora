@@ -24,9 +24,11 @@ const MainFrame = () => {
           </Stack>
         </Grid>
         <Grid item xs={4}>
-          <Stack spacing={2}>
+          <Stack className="sticky top-0" spacing={2}>
             <div />
-            <ProfileSwitcher />
+            <div>
+              <ProfileSwitcher />
+            </div>
             <Divider />
             <Link to="/account">account</Link>
           </Stack>
