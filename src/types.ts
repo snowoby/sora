@@ -45,3 +45,8 @@ export type AccountContextType = {
 export type ProfileSwitcherProps = {
   profiles?: Profiles;
 };
+
+export type ProfileCardProps = {
+  profile: Profile;
+  size?: "normal" | "lite";
+};

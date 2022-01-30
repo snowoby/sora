@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Box, Container, Grid, Skeleton, Stack } from "@mui/material";
+import { Box, Container, Divider, Grid, Skeleton, Stack } from "@mui/material";
 import ProfileSwitcher from "@/pages/frame/ProfileSwitcher";
 import AccountContext from "@/context/AccountContext";
 import { Link } from "react-router-dom";
@@ -24,9 +24,12 @@ const MainFrame = () => {
           </Stack>
         </Grid>
         <Grid item xs={4}>
-          <Link to="/account">account</Link>
-
-          <ProfileSwitcher />
+          <Stack spacing={2}>
+            <div />
+            <ProfileSwitcher />
+            <Divider />
+            <Link to="/account">account</Link>
+          </Stack>
         </Grid>
       </Grid>
     </Container>
