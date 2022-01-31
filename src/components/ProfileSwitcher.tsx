@@ -1,7 +1,7 @@
 import React, { useContext, useState, useRef, useEffect } from "react";
 import { Divider, Menu, MenuItem, Stack } from "@mui/material";
-import AccountContext from "@/context/AccountContext";
-import ProfileCard from "@/components/ProfileCard";
+import AccountContext from "../context/AccountContext";
+import ProfileCard from "./ProfileCard";
 import { Add, Settings } from "@mui/icons-material";
 
 const ProfileSwitcher = () => {

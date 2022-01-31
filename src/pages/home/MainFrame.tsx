@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
-import { Box, Container, Divider, Grid, Skeleton, Stack } from "@mui/material";
-import ProfileSwitcher from "@/pages/frame/ProfileSwitcher";
-import AccountContext from "@/context/AccountContext";
+import React from "react";
+import { Container, Divider, Grid, Skeleton, Stack } from "@mui/material";
 import { Link } from "react-router-dom";
+import ProfileSwitcher from "@/components/ProfileSwitcher";
+import EpisodeCard from "@/components/EpisodeCard";
 
 const MainFrame = () => {
   return (
@@ -14,11 +14,7 @@ const MainFrame = () => {
               .fill(undefined)
               .map((value, index) => (
                 <div key={index} className="bg-blue-200">
-                  <Stack spacing={1}>
-                    <Skeleton variant="text" />
-                    <Skeleton variant="circular" width={40} height={40} />
-                    <Skeleton variant="rectangular" height={118} />
-                  </Stack>
+                  <EpisodeCard />
                 </div>
               ))}
           </Stack>
