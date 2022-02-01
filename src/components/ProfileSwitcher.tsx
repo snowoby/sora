@@ -1,10 +1,26 @@
 import React, { useContext, useState, useRef, useEffect } from "react";
-import { Divider, Menu, MenuItem, Stack } from "@mui/material";
+import { Button, Divider, Menu, MenuItem, Stack } from "@mui/material";
 import AccountContext from "../context/AccountContext";
-import ProfileCard from "./ProfileCard";
 import { Add, Settings } from "@mui/icons-material";
+import ProfileCard from "./profile";
+import { makeStyles } from "@material-ui/styles";
+
+const useStyles = makeStyles({
+  profileButton: {
+    borderRadius: "9999px",
+    "&:hover": {
+      backgroundColor: "#eeeeee",
+    },
+    padding: "0.75rem",
+    color: "black",
+    textTransform: "none",
+    justifyContent: "flex-start",
+  },
+});
 
 const ProfileSwitcher = () => {
+  const styles = useStyles();
+
   const { accountInfo, currentProfile, switchProfile } =
     useContext(AccountContext);
   const profiles = accountInfo?.profiles;
@@ -17,16 +33,26 @@ const ProfileSwitcher = () => {
     if (anchor.current) setMenuWidth(`${anchor.current.clientWidth}px`);
   }, [anchor, window.innerWidth]);
 
+  const orderedProfiles = currentProfile
+    ? [
+        currentProfile,
+        ...(profiles?.filter((profile) => profile.id !== currentProfile?.id) ??
+          []),
+      ]
+    : profiles;
+
   return (
-    <div className="w-full">
+    <>
       <div ref={anchor} />
-      <button
-        className="rounded-full hover:bg-gray-100 w-full p-3"
+      <Button
+        className={styles.profileButton}
         type="button"
         onClick={() => setOpen(true)}
+        autoCapitalize="false"
+        fullWidth
       >
         {currentProfile && <ProfileCard profile={currentProfile} />}
-      </button>
+      </Button>
       {anchor.current && (
         <Menu
           open={open}
@@ -34,16 +60,18 @@ const ProfileSwitcher = () => {
           anchorEl={anchor.current}
           PaperProps={{ style: { width: menuWidth } }}
         >
-          {profiles?.map((profile) => (
+          {orderedProfiles?.map((profile) => (
             <MenuItem
               key={profile.id}
               onClick={() => {
                 switchProfile(profile.id);
                 setOpen(false);
               }}
-              selected={profile.id === currentProfile?.id}
             >
-              <ProfileCard profile={profile} size="lite" />
+              <ProfileCard
+                profile={profile}
+                size={currentProfile?.id === profile.id ? "normal" : "lite"}
+              />
             </MenuItem>
           ))}
           <Divider />
@@ -55,7 +83,7 @@ const ProfileSwitcher = () => {
           </MenuItem>
         </Menu>
       )}
-    </div>
+    </>
   );
 };
 export default ProfileSwitcher;

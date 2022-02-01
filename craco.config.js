@@ -22,8 +22,5 @@ module.exports = {
         return cssLoaderOptions;
       },
     },
-    postcss: {
-      plugins: [require("tailwindcss"), require("autoprefixer")],
-    },
   },
 };

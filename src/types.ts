@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 type InfoBasic = {
   id: string;
 };
@@ -49,4 +51,8 @@ export type ProfileSwitcherProps = {
 export type ProfileCardProps = {
   profile: Profile;
   size?: "normal" | "lite";
+};
+
+export type MainFrameProps = {
+  children?: ReactNode;
 };

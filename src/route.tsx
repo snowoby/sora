@@ -2,15 +2,15 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SignPage from "@/pages/account/SignPage";
 import AccountPage from "./pages/account/AccountPage";
-import MainFrame from "@/pages/home/MainFrame";
 import PublishPage from "@/pages/publish";
+import MainPage from "@/pages/home";
 
 const Guide = () => {
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="" element={<MainFrame />} />
+          <Route path="" element={<MainPage />} />
           <Route path="account">
             <Route path="login" element={<SignPage pageType="login" />} />
             <Route path="register" element={<SignPage pageType="register" />} />
