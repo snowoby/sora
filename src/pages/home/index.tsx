@@ -1,7 +1,5 @@
 import React from "react";
-import { Divider, Stack } from "@mui/material";
-import { Link } from "react-router-dom";
-import ProfileSwitcher from "@/components/ProfileSwitcher";
+import { Stack } from "@mui/material";
 import EpisodeCard from "@/components/EpisodeCard";
 import MainFrame from "@/pages/frame/MainFrame";
 

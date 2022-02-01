@@ -1,26 +1,10 @@
 import React, { useContext, useState, useRef, useEffect } from "react";
 import { Button, Divider, Menu, MenuItem, Stack } from "@mui/material";
-import AccountContext from "../context/AccountContext";
-import { Add, Settings } from "@mui/icons-material";
+import AccountContext from "@/context/AccountContext";
+import { Settings } from "@mui/icons-material";
 import ProfileCard from "./profile";
-import { makeStyles } from "@material-ui/styles";
-
-const useStyles = makeStyles({
-  profileButton: {
-    borderRadius: "9999px",
-    "&:hover": {
-      backgroundColor: "#eeeeee",
-    },
-    padding: "0.75rem",
-    color: "black",
-    textTransform: "none",
-    justifyContent: "flex-start",
-  },
-});
 
 const ProfileSwitcher = () => {
-  const styles = useStyles();
-
   const { accountInfo, currentProfile, switchProfile } =
     useContext(AccountContext);
   const profiles = accountInfo?.profiles;
@@ -45,7 +29,16 @@ const ProfileSwitcher = () => {
     <>
       <div ref={anchor} />
       <Button
-        className={styles.profileButton}
+        sx={{
+          borderRadius: "9999px",
+          "&:hover": {
+            backgroundColor: "#eeeeee",
+          },
+          padding: "0.75rem",
+          color: "black",
+          textTransform: "none",
+          justifyContent: "flex-start",
+        }}
         type="button"
         onClick={() => setOpen(true)}
         autoCapitalize="false"
