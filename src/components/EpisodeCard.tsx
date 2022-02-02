@@ -1,13 +1,19 @@
 import React from "react";
-import { Skeleton, Stack } from "@mui/material";
+import { Skeleton, Stack, Typography } from "@mui/material";
+import { EpisodeCardProps, EpisodeInfo } from "@/types";
 
-const EpisodeCard = () => {
+const EpisodeCard = ({ episodeInfo }: EpisodeCardProps) => {
   return (
     <>
       <Stack spacing={1}>
-        <Skeleton variant="text" />
-        <Skeleton variant="circular" width={40} height={40} />
-        <Skeleton variant="rectangular" height={118} />
+        <Typography variant="subtitle1">
+          {episodeInfo.edges.profile.title}
+        </Typography>
+        <Typography variant="subtitle1">
+          {episodeInfo.edges.profile.callSign}
+        </Typography>
+        <Typography variant="subtitle1">{episodeInfo.title}</Typography>
+        <Typography variant="subtitle1">{episodeInfo.content}</Typography>
       </Stack>
     </>
   );

@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import internal from "stream";
 
 type InfoBasic = {
   id: string;
@@ -56,3 +57,33 @@ export type ProfileCardProps = {
 export type MainFrameProps = {
   children?: ReactNode;
 };
+
+export type EpisodeData = {
+  title: string;
+  content: string;
+};
+
+export type EpisodeInfo = EpisodeData &
+  InfoBasic & {
+    edges: {
+      profile: Profile;
+    };
+  };
+
+export type PublishCardProps = {
+  profileID: string;
+  afterSubmit?: (info: EpisodeInfo) => void;
+};
+
+export type EpisodeCardProps = {
+  episodeInfo: EpisodeInfo;
+};
+
+export type FileUploadData = {
+  filename: string;
+  mime: string;
+  size: number;
+  category: string;
+};
+
+export type FileInfo = any;

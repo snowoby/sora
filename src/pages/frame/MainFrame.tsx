@@ -19,6 +19,8 @@ const MainFrame = ({ children }: MainFrameProps) => {
             </div>
             <Divider />
             <Link to="/account">account</Link>
+            <Link to="/">home</Link>
+            <Link to="/publish">publish</Link>
           </Stack>
         </Grid>
       </Grid>
