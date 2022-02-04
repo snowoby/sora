@@ -1,43 +1,45 @@
-import React, { ChangeEvent, useContext, useState } from "react";
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useContext,
+  useRef,
+  useState,
+} from "react";
 import AccountContext from "@/context/AccountContext";
-import { ProfileCreate } from "@/types";
-import { Button, Stack, TextField } from "@mui/material";
+import { Profile, ProfileCreate } from "@/types";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Stack,
+  TextField,
+} from "@mui/material";
+import { Navigate } from "react-router-dom";
+import MainFrame from "@/pages/frame/MainFrame";
+import ProfileCard from "@/components/profile";
+import AvatarWrap from "@/components/AvatarWrap";
 import { APICreateProfile } from "@/api/ProfileAPI";
 import log from "@/log";
-import { Navigate } from "react-router-dom";
+import { FilePush } from "@/api/FileUpload";
 
 const AccountPage = () => {
-  const { accountInfo } = useContext(AccountContext);
-
-  if (!accountInfo) return <Navigate to="/account/login" replace />;
-  return (
-    <>
-      <div>email:{accountInfo.account.email}</div>
-      <div>
-        {accountInfo?.profiles.map((profile) => (
-          <div key={profile.id}>
-            <span>{profile.id} </span>
-            <span>{profile.title} </span>
-            <span>{profile.callSign}</span>
-          </div>
-        ))}
-      </div>
-
-      <div>
-        <ProfileCreateForm />
-      </div>
-    </>
-  );
-};
-
-const ProfileCreateForm = () => {
-  const { updateAccountInfo } = useContext(AccountContext);
+  const { accountInfo, updateAccountInfo } = useContext(AccountContext);
   const emptyForm: ProfileCreate = {
-    callSign: "",
+    call: "",
     title: "",
     category: "",
+    avatar: "",
   };
+  const [open, setOpen] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState<Profile | undefined>();
+
   const [createProfile, setCreateProfile] = useState<ProfileCreate>(emptyForm);
+  const reset = () => {
+    setOpen(false);
+    setCreateProfile({ ...emptyForm });
+  };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) =>
     setCreateProfile({
@@ -45,43 +47,93 @@ const ProfileCreateForm = () => {
       [e.target.name]: e.target.value,
     });
 
-  const keys: ("title" | "callSign" | "category")[] = [
+  const keys: ("title" | "call" | "category" | "avatar")[] = [
     "title",
-    "callSign",
+    "call",
     "category",
+    "avatar",
   ];
 
+  const submit = async () => {
+    try {
+      await APICreateProfile(createProfile);
+      await updateAccountInfo();
+      setCreateProfile(emptyForm);
+    } catch (e) {
+      log.error(e);
+    }
+  };
+
+  if (!accountInfo) return <Navigate to="/account/login" replace />;
+
+  const editDialog = selectedProfile && (
+    <Dialog open={open} onClose={reset}>
+      <DialogTitle>Subscribe</DialogTitle>
+      <DialogContent>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            submit().then(reset);
+          }}
+        >
+          <Stack spacing={3}>
+            <AvatarWrap source={createProfile.avatar} />
+            <input
+              type="file"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                FilePush(selectedProfile.id, "avatar", file).then(({ data }) =>
+                  setCreateProfile({
+                    ...createProfile,
+                    avatar: `${data.path}/${data.id}`,
+                  })
+                );
+              }}
+            ></input>
+            {keys.map((fieldName) => (
+              <TextField
+                key={fieldName}
+                hidden={fieldName === "avatar"}
+                fullWidth
+                label={fieldName}
+                name={fieldName}
+                value={createProfile[fieldName]}
+                required
+                variant="filled"
+                onChange={handleChange}
+              />
+            ))}
+          </Stack>
+        </form>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={reset}>Cancel</Button>
+        <Button onClick={() => submit().then(reset)}>Subscribe</Button>
+      </DialogActions>
+    </Dialog>
+  );
+
   return (
-    <form
-      onSubmit={async (e) => {
-        e.preventDefault();
-        try {
-          await APICreateProfile(createProfile);
-          await updateAccountInfo();
-          setCreateProfile(emptyForm);
-        } catch (e) {
-          log.error(e);
-        }
-      }}
-    >
-      <Stack spacing={3}>
-        {keys.map((fieldName) => (
-          <TextField
-            key={fieldName}
-            fullWidth
-            label={fieldName}
-            name={fieldName}
-            value={createProfile[fieldName]}
-            required
-            variant="filled"
-            onChange={handleChange}
-          />
+    <MainFrame>
+      <div>email:{accountInfo.account.email}</div>
+      <div>
+        {accountInfo?.profiles.map((profile) => (
+          <div key={profile.id}>
+            <button
+              onClick={() => {
+                setSelectedProfile(profile);
+                setOpen(true);
+              }}
+            >
+              edit
+            </button>
+            <ProfileCard key={profile.id} profile={profile} />
+          </div>
         ))}
-        <Button fullWidth type="submit" variant="contained">
-          Go
-        </Button>
-      </Stack>
-    </form>
+      </div>
+      {editDialog}
+    </MainFrame>
   );
 };
 

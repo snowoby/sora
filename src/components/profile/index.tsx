@@ -1,6 +1,7 @@
 import React from "react";
 import { ProfileCardProps } from "@/types";
 import { Avatar, Box, Typography } from "@mui/material";
+import AvatarWrap from "@/components/AvatarWrap";
 
 const styleConfig = {
   normal: {
@@ -26,7 +27,7 @@ const ProfileCard = ({ profile, size }: ProfileCardProps) => {
         gap: "0.75rem",
       }}
     >
-      <Avatar sx={config.avatarSize} />
+      <AvatarWrap sx={config.avatarSize} source={profile.avatar} />
       <Box
         sx={{
           width: "100%",
@@ -54,7 +55,7 @@ const ProfileCard = ({ profile, size }: ProfileCardProps) => {
             whiteSpace: "nowrap",
           }}
         >
-          {profile.callSign}
+          {profile.call}
         </Typography>
       </Box>
     </Box>

@@ -10113,6 +10113,13 @@ react-helmet@^6.1.0:
     react-fast-compare "^3.1.1"
     react-side-effect "^2.1.0"
 
+react-image-crop@^9.0.8:
+  version "9.0.8"
+  resolved "https://registry.npmmirror.com/react-image-crop/-/react-image-crop-9.0.8.tgz#e6029d8bba522ff2f9ffea720fe6980a9af785dc"
+  integrity sha512-dKvt3B65BqyVn27CWfB3rAWUW5uuiuhggqF1zYuye7c2ui4buuryxNEMU2fH30DI1gO6ZqWVf+i4/iyWyB1CyQ==
+  dependencies:
+    clsx "^1.1.1"
+
 react-is@^16.13.1, react-is@^16.7.0:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
@@ -12001,6 +12008,11 @@ url@^0.11.0:
   dependencies:
     punycode "1.3.2"
     querystring "0.2.0"
+
+urlcat@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.npmmirror.com/urlcat/-/urlcat-2.0.4.tgz#c119b4e3b31df4d140e77e177ea5d95dbe6b2fe2"
+  integrity sha512-12c4Vi40DHVdZ/8mOLjZjp0asCzM6hi8Gj116fpImRP1FN4gBMCtMi9XhLNOmre/FEQYNqHbZmX8iyYAtIcy8Q==
 
 use@^3.1.0:
   version "3.1.1"

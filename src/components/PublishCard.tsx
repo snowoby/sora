@@ -2,14 +2,17 @@ import React, { ChangeEvent, useState } from "react";
 import { Button, Card, Input, Stack, TextField } from "@mui/material";
 import { APICreateEpisode } from "@/api/Episode";
 import log from "@/log";
-import { PublishCardProps } from "@/types";
+import { FileInfo, PublishCardProps } from "@/types";
 import { FilePush } from "@/api/FileUpload";
+import { Image } from "@mui/icons-material";
 
 const PublishCard = ({ profileID, afterSubmit }: PublishCardProps) => {
   const [form, setForm] = useState({
     title: "",
     content: "",
   });
+
+  const [images, setImages] = useState<FileInfo[]>([]);
   return (
     <Card>
       <form
@@ -46,13 +49,26 @@ const PublishCard = ({ profileID, afterSubmit }: PublishCardProps) => {
               const a = e.target.files?.[0];
               if (a)
                 FilePush(profileID, "dev", a)
-                  .then((response) => log.info(response))
+                  .then(({ data }) => {
+                    setImages([...images, data]);
+                  })
                   .catch((e) => log.error(e));
             }}
           />
           <Button fullWidth type="submit">
             publish
           </Button>
+          {JSON.stringify(images)}
+          {images.map((file) => (
+            <img
+              key={file.id}
+              src={`http://127.0.0.1:9000/develop/dev/${file.id}/small`}
+              onError={(e) => {
+                log.error(e);
+                e.currentTarget.src = `http://127.0.0.1:9000/develop/dev/${file.id}/original`;
+              }}
+            />
+          ))}
         </Stack>
       </form>
     </Card>

@@ -1,7 +1,14 @@
 import React, { useContext, useState, ChangeEvent } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import Immutable from "immutable";
-import { Button, Stack, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Divider,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { Helmet } from "react-helmet";
 import log from "@/log";
 import UniversalContext from "@/context/UniversalContext";
@@ -22,12 +29,14 @@ const SignPage = ({ pageType }: { pageType: SignPageType }) => {
   const navigate = useNavigate();
 
   const [submitting, setSubmitting] = useState(false);
+  const { accountInfo, updateAccountInfo } = useContext(AccountContext);
 
   const another = (value: SignPageType) =>
     value === "login" ? "register" : "login";
 
   const loginAction = async () => {
     const response = await LoginStream(form);
+    await updateAccountInfo();
     setSubmitting(false);
     log.info(response.data);
     navigate("/");
@@ -45,74 +54,93 @@ const SignPage = ({ pageType }: { pageType: SignPageType }) => {
     setForm((data) => data.set(event.target.name, event.target.value));
   };
 
-  const haveContent = form.get("email") || form.get("password");
+  const haveContent = Boolean(form.get("email") || form.get("password"));
 
-  const account = useContext(AccountContext);
-  if (account.accountInfo) return <Navigate to="/account" replace />;
+  if (accountInfo) return <Navigate to="/account" replace />;
 
   return (
     <>
       <Helmet>
         <title>{pageType}</title>
       </Helmet>
-      <div
-        style={{ backgroundImage: `url(${loginBackground})` }}
-        className="h-screen w-screen bg-cover bg-bottom flex items-center justify-center"
+      <Box
+        sx={{
+          backgroundImage: `url(${loginBackground})`,
+          width: "100vw",
+          height: "100vh",
+          backgroundSize: "cover",
+          backgroundPosition: "bottom",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
       >
-        <div className="group">
-          <div
-            className={`m-20 max-w-md w-screen max-h-96 h-screen
-        bg-cover shadow-2xl backdrop-filter backdrop-blur-xl
-        bg-no-repeat bg-fixed rounded-lg p-4 group-hover:bg-white duration-200 ${
-          haveContent && "bg-white"
-        }`}
-          >
+        <Box
+          sx={[
             {
-              //TODO firefox
-            }
-            <h1 className="text-center text-4xl">{universalConfig.siteName}</h1>
-            <div className="mt-8">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  submit[pageType]().catch((e) => log.error(e));
-                }}
-              >
-                <Stack spacing={3}>
-                  {["email", "password"].map((fieldName) => (
-                    <TextField
-                      key={fieldName}
-                      className="block"
-                      fullWidth
-                      label={fieldName}
-                      type={fieldName}
-                      name={fieldName}
-                      variant="filled"
-                      required={true}
-                      onChange={inputChange}
-                    />
-                  ))}
-                  <Button
+              m: "0",
+              p: "2rem",
+              width: "100%",
+              maxWidth: "24rem",
+              height: "100%",
+              maxHeight: "24rem",
+              boxShadow: "0 0 4rem gray",
+              backgroundColor: "rgba(255,255,255,0.6)",
+              "&:hover": {
+                backgroundColor: "rgba(255,255,255,0.9)",
+              },
+              transitionDuration: "200ms",
+              borderRadius: "2rem",
+            },
+            haveContent && {
+              backgroundColor: "rgba(255,255,255,0.9)",
+            },
+          ]}
+        >
+          <Typography variant="h4" sx={{ textAlign: "center", mb: "0.75rem" }}>
+            {universalConfig.siteName}
+          </Typography>
+          <Box>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                submit[pageType]().catch((e) => log.error(e));
+              }}
+            >
+              <Stack spacing={3}>
+                {["email", "password"].map((fieldName) => (
+                  <TextField
+                    key={fieldName}
                     className="block"
                     fullWidth
-                    variant="contained"
-                    type="submit"
-                    disabled={submitting}
-                  >
-                    {pageType}
-                  </Button>
-                </Stack>
-              </form>
-              <div className="w-full text-center">
-                <div className="my-2">-or-</div>
-                <Link to={`../${another(pageType)}`}>
-                  <Button>{another(pageType)}</Button>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+                    label={fieldName}
+                    type={fieldName}
+                    name={fieldName}
+                    variant="filled"
+                    required={true}
+                    onChange={inputChange}
+                  />
+                ))}
+                <Button
+                  className="block"
+                  fullWidth
+                  variant="contained"
+                  type="submit"
+                  disabled={submitting}
+                >
+                  {pageType}
+                </Button>
+              </Stack>
+            </form>
+            <Stack spacing={2} sx={{ width: "100%", textAlign: "center" }}>
+              <Divider>or</Divider>
+              <Link to={`../${another(pageType)}`}>
+                <Button>{another(pageType)}</Button>
+              </Link>
+            </Stack>
+          </Box>
+        </Box>
+      </Box>
     </>
   );
 };

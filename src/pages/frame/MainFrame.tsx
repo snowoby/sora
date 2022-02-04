@@ -1,10 +1,40 @@
-import React from "react";
-import { Container, Divider, Grid, Stack } from "@mui/material";
+import React, { useContext } from "react";
+import { Button, Container, Divider, Grid, Stack } from "@mui/material";
 import { MainFrameProps } from "@/types";
 import ProfileSwitcher from "@/components/ProfileSwitcher";
 import { Link } from "react-router-dom";
+import AccountContext from "@/context/AccountContext";
 
 const MainFrame = ({ children }: MainFrameProps) => {
+  const { accountInfo } = useContext(AccountContext);
+
+  const loginButton = (
+    <Link to="/account/login">
+      <Button
+        fullWidth
+        color="primary"
+        variant="contained"
+        size="large"
+        sx={{ borderRadius: "9999px", height: "4rem" }}
+      >
+        login
+      </Button>
+    </Link>
+  );
+
+  const menu = (
+    <Stack className="sticky top-0" spacing={2}>
+      <div />
+      <div>
+        <ProfileSwitcher />
+      </div>
+      <Divider />
+      <Link to="/account">account</Link>
+      <Link to="/">home</Link>
+      <Link to="/publish">publish</Link>
+    </Stack>
+  );
+
   return (
     <Container>
       <Grid container columnSpacing={2}>
@@ -12,16 +42,7 @@ const MainFrame = ({ children }: MainFrameProps) => {
           {children}
         </Grid>
         <Grid item xs={4}>
-          <Stack className="sticky top-0" spacing={2}>
-            <div />
-            <div>
-              <ProfileSwitcher />
-            </div>
-            <Divider />
-            <Link to="/account">account</Link>
-            <Link to="/">home</Link>
-            <Link to="/publish">publish</Link>
-          </Stack>
+          {accountInfo ? menu : loginButton}
         </Grid>
       </Grid>
     </Container>

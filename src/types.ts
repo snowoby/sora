@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import internal from "stream";
+import { AvatarProps } from "@mui/material";
 
 type InfoBasic = {
   id: string;
@@ -12,8 +13,9 @@ export type Profiles = Profile[];
 
 export type ProfileCreate = {
   title: string;
-  callSign: string;
+  call: string;
   category: string;
+  avatar: string;
 };
 
 export type SignFormData = {
@@ -63,12 +65,7 @@ export type EpisodeData = {
   content: string;
 };
 
-export type EpisodeInfo = EpisodeData &
-  InfoBasic & {
-    edges: {
-      profile: Profile;
-    };
-  };
+export type EpisodeInfo = EpisodeData & InfoBasic & {};
 
 export type PublishCardProps = {
   profileID: string;
@@ -86,4 +83,35 @@ export type FileUploadData = {
   category: string;
 };
 
-export type FileInfo = any;
+export type StorageEndpoint = {
+  storageEndpoint: string;
+  storageBucket: string;
+};
+
+export type FileInfo = {
+  filename: string;
+  id: string;
+  mime: string;
+  note: string;
+  path: string;
+  sid: string;
+  size: number;
+  status: string;
+};
+
+export type UniversalContextProps = {
+  siteName: string;
+  storage?: StorageEndpoint;
+};
+
+// export type ProfileFormProps = {
+//   initial?: {
+//     id?: string;
+//     onSubmit: (profile: ProfileCreate, id?: string) => void;
+//
+//   } && ProfileCreate
+// }
+
+export interface AvatarWrapProps extends AvatarProps {
+  source?: string;
+}

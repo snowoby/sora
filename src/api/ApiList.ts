@@ -4,6 +4,7 @@ const account = `${root}account/`;
 const profile = `${root}profile/`;
 const episode = `${root}episode/`;
 const file = `${root}file/`;
+const site = `${root}site/`;
 const singleFile = `${file}single/`;
 const largeFile = `${root}large/`;
 
@@ -14,6 +15,7 @@ export default {
   refresh: `${account}refresh`,
   self: account,
   profile,
+  site,
   episode,
   file,
   singleFile,
