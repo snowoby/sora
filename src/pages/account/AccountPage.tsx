@@ -8,6 +8,7 @@ import React, {
 import AccountContext from "@/context/AccountContext";
 import { Profile, ProfileCreate } from "@/types";
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -77,20 +78,30 @@ const AccountPage = () => {
           }}
         >
           <Stack spacing={3}>
-            <AvatarWrap source={createProfile.avatar} />
-            <input
-              type="file"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (!file) return;
-                FilePush(selectedProfile.id, "avatar", file).then(({ data }) =>
-                  setCreateProfile({
-                    ...createProfile,
-                    avatar: `${data.path}/${data.id}`,
-                  })
-                );
-              }}
-            ></input>
+            <Box>
+              <AvatarWrap
+                sx={{ width: "3rem", height: "3rem" }}
+                source={createProfile.avatar}
+              />
+              <Button variant="contained" component="label">
+                Upload File
+                <input
+                  type="file"
+                  hidden
+                  onChange={(e) => {
+                    const file = e.target?.files?.[0];
+                    if (!file) return;
+                    FilePush(selectedProfile.id, "avatar", file).then(
+                      ({ data }) =>
+                        setCreateProfile({
+                          ...createProfile,
+                          avatar: `${data.path}/${data.id}`,
+                        })
+                    );
+                  }}
+                />
+              </Button>
+            </Box>
             {keys.map((fieldName) => (
               <TextField
                 key={fieldName}

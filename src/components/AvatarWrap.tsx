@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Avatar } from "@mui/material";
 import { AvatarWrapProps } from "@/types";
-import log from "@/log";
 import { StorageUrl } from "@/api/Storage";
 
 const AvatarWrap = ({ source, ...props }: AvatarWrapProps) => {
@@ -9,17 +8,7 @@ const AvatarWrap = ({ source, ...props }: AvatarWrapProps) => {
     source && StorageUrl(source, identifier);
 
   return (
-    <Avatar
-      src={url("compressed")}
-      // imgProps={{
-      //   onError: (e) => {
-      //     log.error(e);
-      //     setIdentifier(url("compressed"));
-      //   },
-      //   ...imgProps,
-      // }}
-      {...props}
-    >
+    <Avatar src={url("compressed")} {...props}>
       <Avatar src={url("original")} />
     </Avatar>
   );
