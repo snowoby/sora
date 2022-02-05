@@ -4,6 +4,7 @@ import { APICreateEpisode } from "@/api/Episode";
 import log from "@/log";
 import { FileInfo, PublishCardProps } from "@/types";
 import { FilePush } from "@/api/FileUpload";
+import ProfileSwitcher from "@/components/ProfileSwitcher";
 
 const PublishCard = ({ profileID, afterSubmit }: PublishCardProps) => {
   const [form, setForm] = useState({
@@ -42,6 +43,9 @@ const PublishCard = ({ profileID, afterSubmit }: PublishCardProps) => {
             name="content"
             onChange={(e) => setForm({ ...form, content: e.target.value })}
           />
+          <div>
+            <ProfileSwitcher />
+          </div>
           <Input
             type="file"
             onChange={(e: ChangeEvent<HTMLInputElement>) => {

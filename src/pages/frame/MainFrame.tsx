@@ -24,11 +24,6 @@ const MainFrame = ({ children }: MainFrameProps) => {
 
   const menu = (
     <Stack className="sticky top-0" spacing={2}>
-      <div />
-      <div>
-        <ProfileSwitcher />
-      </div>
-      <Divider />
       <Link to="/account">account</Link>
       <Link to="/">home</Link>
       <Link to="/publish">publish</Link>
