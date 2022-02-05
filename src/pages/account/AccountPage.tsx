@@ -1,19 +1,13 @@
-import React, {
-  ChangeEvent,
-  FormEvent,
-  useContext,
-  useRef,
-  useState,
-} from "react";
+import React, { ChangeEvent, useContext, useRef, useState } from "react";
 import AccountContext from "@/context/AccountContext";
 import { Profile, ProfileCreate } from "@/types";
 import {
-  Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  Grid,
   Stack,
   TextField,
 } from "@mui/material";
@@ -21,9 +15,12 @@ import { Navigate } from "react-router-dom";
 import MainFrame from "@/pages/frame/MainFrame";
 import ProfileCard from "@/components/profile";
 import AvatarWrap from "@/components/AvatarWrap";
-import { APICreateProfile } from "@/api/ProfileAPI";
-import log from "@/log";
+import { APICreateProfile, APIUpdateProfile } from "@/api/ProfileAPI";
 import { FilePush } from "@/api/FileUpload";
+import log from "@/log";
+import ReactCrop, { Crop } from "react-image-crop";
+import PromiseFileReader from "promise-file-reader";
+import "react-image-crop/src/ReactCrop.scss";
 
 const AccountPage = () => {
   const { accountInfo, updateAccountInfo } = useContext(AccountContext);
@@ -34,42 +31,135 @@ const AccountPage = () => {
     avatar: "",
   };
   const [open, setOpen] = useState(false);
-  const [selectedProfile, setSelectedProfile] = useState<Profile | undefined>();
+  const [cropOpen, setCropOpen] = useState(false);
+  const [avatar, setAvatar] = useState("");
+  const [selectedProfile, setSelectedProfile] = useState<Profile>();
+  const previewCanvasRef = useRef<HTMLCanvasElement>(null);
+  const [img, setImg] = useState<HTMLImageElement>();
+  const [editProfile, setEditProfile] = useState<ProfileCreate>(emptyForm);
 
-  const [createProfile, setCreateProfile] = useState<ProfileCreate>(emptyForm);
   const reset = () => {
-    setOpen(false);
-    setCreateProfile({ ...emptyForm });
+    setSelectedProfile(undefined);
+    setEditProfile({ ...emptyForm });
   };
+  const [crop, setCrop] = useState<Crop>({
+    height: 0,
+    x: 0,
+    y: 0,
+    aspect: 1,
+    width: 100,
+    unit: "%",
+  });
+
+  const [completedCrop, setCompletedCrop] = useState<Crop>({
+    height: 0,
+    x: 0,
+    y: 0,
+    aspect: 1,
+    width: 100,
+    unit: "%",
+  });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) =>
-    setCreateProfile({
-      ...createProfile,
+    setEditProfile({
+      ...editProfile,
       [e.target.name]: e.target.value,
     });
 
-  const keys: ("title" | "call" | "category" | "avatar")[] = [
-    "title",
-    "call",
-    "category",
-    "avatar",
-  ];
+  const keys: ("title" | "call" | "category")[] = ["title", "call", "category"];
 
   const submit = async () => {
     try {
-      await APICreateProfile(createProfile);
+      if (selectedProfile)
+        await APIUpdateProfile(selectedProfile.id, editProfile);
+      else await APICreateProfile(editProfile);
       await updateAccountInfo();
-      setCreateProfile(emptyForm);
+      setEditProfile(emptyForm);
     } catch (e) {
       log.error(e);
     }
   };
-
+  const closeEdit = () => setOpen(false);
+  const closeCrop = () => setCropOpen(false);
+  const OKCrop = () => {
+    previewCanvasRef.current?.toBlob(
+      (blob) => {
+        if (!blob) return;
+        FilePush("avatar", blob)
+          .then(({ data }) =>
+            setEditProfile({
+              ...editProfile,
+              avatar: `${data.path}/${data.id}`,
+            })
+          )
+          .catch((e) => log.error(e));
+      },
+      "image/png",
+      1
+    );
+  };
+  // const uploadAvatar = () =>
+  //   FilePush("avatar").then(({ data }) =>
+  //     setEditProfile({
+  //       ...editProfile,
+  //       avatar: `${data.path}/${data.id}`,
+  //     })
+  //   );
   if (!accountInfo) return <Navigate to="/account/login" replace />;
 
-  const editDialog = selectedProfile && (
-    <Dialog open={open} onClose={reset}>
-      <DialogTitle>Subscribe</DialogTitle>
+  const cropDialog = (
+    <Dialog open={cropOpen} onClose={closeCrop}>
+      <DialogTitle>crop</DialogTitle>
+      <DialogContent>
+        <ReactCrop
+          src={avatar}
+          crop={crop}
+          onImageLoaded={setImg}
+          onComplete={setCompletedCrop}
+          onChange={(newCrop) => {
+            setCrop(newCrop);
+            const canvas = previewCanvasRef.current;
+            if (!canvas || !img) return;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) return;
+            const pixelRatio = window.devicePixelRatio;
+            const scaleX = img.naturalWidth / img.width;
+            const scaleY = img.naturalHeight / img.height;
+            canvas.width = crop.width * pixelRatio * scaleX;
+            canvas.height = crop.height * pixelRatio * scaleY;
+            ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+            ctx.imageSmoothingQuality = "high";
+            ctx.drawImage(
+              img,
+              crop.x * scaleX,
+              crop.y * scaleY,
+              crop.width * scaleX,
+              crop.height * scaleY,
+              0,
+              0,
+              crop.width * scaleX,
+              crop.height * scaleY
+            );
+          }}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={closeCrop}>Cancel</Button>
+        <Button
+          onClick={() => {
+            OKCrop();
+            closeCrop();
+          }}
+        >
+          OK
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+
+  const editDialog = (
+    <Dialog open={open} onClose={closeEdit}>
+      <DialogTitle>{selectedProfile ? "edit" : "create"}</DialogTitle>
       <DialogContent>
         <form
           onSubmit={(e) => {
@@ -78,49 +168,56 @@ const AccountPage = () => {
           }}
         >
           <Stack spacing={3}>
-            <Box>
-              <AvatarWrap
-                sx={{ width: "3rem", height: "3rem" }}
-                source={createProfile.avatar}
-              />
+            {selectedProfile && (
+              <Grid container justifyContent="center">
+                <AvatarWrap
+                  sx={{ width: "6rem", height: "6rem", textAlign: "center" }}
+                  source={editProfile.avatar}
+                />
+              </Grid>
+            )}
+            {selectedProfile && (
               <Button variant="contained" component="label">
-                Upload File
+                update avatar
                 <input
                   type="file"
                   hidden
                   onChange={(e) => {
                     const file = e.target?.files?.[0];
                     if (!file) return;
-                    FilePush(selectedProfile.id, "avatar", file).then(
-                      ({ data }) =>
-                        setCreateProfile({
-                          ...createProfile,
-                          avatar: `${data.path}/${data.id}`,
-                        })
-                    );
+                    PromiseFileReader.readAsDataURL(file)
+                      .then((data) => setAvatar(data))
+                      .catch((err) => console.error(err))
+                      .then(() => setCropOpen(true));
                   }}
                 />
               </Button>
-            </Box>
+            )}
+
             {keys.map((fieldName) => (
               <TextField
                 key={fieldName}
-                hidden={fieldName === "avatar"}
                 fullWidth
                 label={fieldName}
                 name={fieldName}
-                value={createProfile[fieldName]}
+                value={editProfile[fieldName]}
                 required
                 variant="filled"
                 onChange={handleChange}
               />
             ))}
           </Stack>
+          <input
+            hidden={true}
+            name="avatar"
+            value={editProfile["avatar"] ?? ""}
+            readOnly
+          />
         </form>
       </DialogContent>
       <DialogActions>
-        <Button onClick={reset}>Cancel</Button>
-        <Button onClick={() => submit().then(reset)}>Subscribe</Button>
+        <Button onClick={closeEdit}>Cancel</Button>
+        <Button onClick={() => submit().then(closeEdit)}>OK</Button>
       </DialogActions>
     </Dialog>
   );
@@ -128,22 +225,62 @@ const AccountPage = () => {
   return (
     <MainFrame>
       <div>email:{accountInfo.account.email}</div>
-      <div>
+      <Grid container spacing={2}>
         {accountInfo?.profiles.map((profile) => (
-          <div key={profile.id}>
-            <button
-              onClick={() => {
-                setSelectedProfile(profile);
-                setOpen(true);
-              }}
+          <Grid key={profile.id} item xs={12} md={6} lg={4}>
+            <Button
+              onClick={() => setSelectedProfile(profile)}
+              sx={[
+                {
+                  padding: "1rem",
+                  "&:hover": {
+                    backgroundColor: "#eeeeee",
+                  },
+                  color: "text.primary",
+                  textTransform: "none",
+                  justifyContent: "flex-start",
+                },
+                selectedProfile?.id === profile.id && {
+                  backgroundColor: "#eeeeee",
+                },
+              ]}
+              fullWidth
+              autoCapitalize="false"
             >
-              edit
-            </button>
-            <ProfileCard key={profile.id} profile={profile} />
-          </div>
+              <ProfileCard profile={profile} />
+            </Button>
+          </Grid>
         ))}
-      </div>
+      </Grid>
+
+      <Button
+        onClick={() => {
+          selectedProfile && setEditProfile(selectedProfile);
+          setOpen(true);
+        }}
+        disabled={!selectedProfile}
+      >
+        edit
+      </Button>
+      <Button
+        onClick={() => {
+          reset();
+          setOpen(true);
+        }}
+      >
+        new profile
+      </Button>
       {editDialog}
+      {cropDialog}
+      <canvas
+        hidden={true}
+        ref={previewCanvasRef}
+        // Rounding is important so the canvas width and height matches/is a multiple for sharpness.
+        style={{
+          width: Math.round(completedCrop?.width ?? 0),
+          height: Math.round(completedCrop?.height ?? 0),
+        }}
+      />
     </MainFrame>
   );
 };

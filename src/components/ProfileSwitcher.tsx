@@ -35,13 +35,12 @@ const ProfileSwitcher = () => {
             backgroundColor: "#eeeeee",
           },
           padding: "0.75rem",
-          color: "black",
+          color: "text.primary",
           textTransform: "none",
           justifyContent: "flex-start",
         }}
         type="button"
         onClick={() => setOpen(true)}
-        autoCapitalize="false"
         fullWidth
       >
         {currentProfile && <ProfileCard profile={currentProfile} />}

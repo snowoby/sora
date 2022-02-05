@@ -4,7 +4,6 @@ import { APICreateEpisode } from "@/api/Episode";
 import log from "@/log";
 import { FileInfo, PublishCardProps } from "@/types";
 import { FilePush } from "@/api/FileUpload";
-import { Image } from "@mui/icons-material";
 
 const PublishCard = ({ profileID, afterSubmit }: PublishCardProps) => {
   const [form, setForm] = useState({
@@ -46,9 +45,9 @@ const PublishCard = ({ profileID, afterSubmit }: PublishCardProps) => {
           <Input
             type="file"
             onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              const a = e.target.files?.[0];
-              if (a)
-                FilePush(profileID, "dev", a)
+              const file = e.target.files?.[0];
+              if (file)
+                FilePush("dev", file)
                   .then(({ data }) => {
                     setImages([...images, data]);
                   })

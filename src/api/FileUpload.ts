@@ -14,25 +14,21 @@ import PromiseFileReader from "promise-file-reader";
 //     read.onerror = reject;
 //   });
 
-export const singleFileCreate = (profileID: string, data: FileUploadData) =>
-  client.post<FileInfo>(`${ApiList.singleFile}/${profileID}`, data);
+export const singleFileCreate = (data: FileUploadData) =>
+  client.post<FileInfo>(`${ApiList.singleFile}`, data);
 
-export const singleFilePut = (profileID: string, fileID: string, file: File) =>
-  client.put<FileInfo>(`${ApiList.singleFile}/${profileID}/${fileID}`, file, {
+export const singleFilePut = (fileID: string, file: File | Blob) =>
+  client.put<FileInfo>(`${ApiList.singleFile}/${fileID}`, file, {
     headers: {
       "Content-Type": file.type,
     },
   });
 
-export const FilePush = async (
-  profileID: string,
-  category: string,
-  file: File
-) => {
-  return singleFileCreate(profileID, {
+export const FilePush = async (category: string, file: File | Blob) => {
+  return singleFileCreate({
     category: category,
-    filename: file.name,
+    filename: file instanceof File ? file.name : "noname",
     mime: file.type,
     size: file.size,
-  }).then(({ data }) => singleFilePut(profileID, data.id, file));
+  }).then(({ data }) => singleFilePut(data.id, file));
 };
