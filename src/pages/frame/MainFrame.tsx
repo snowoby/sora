@@ -31,16 +31,14 @@ const MainFrame = ({ children }: MainFrameProps) => {
   );
 
   return (
-    <Container>
-      <Grid container columnSpacing={2}>
-        <Grid item xs={8}>
-          {children}
-        </Grid>
-        <Grid item xs={4}>
-          {accountInfo ? menu : loginButton}
-        </Grid>
+    <Grid container columnSpacing={2}>
+      <Grid item xs={8}>
+        {children}
       </Grid>
-    </Container>
+      <Grid item xs={4}>
+        {accountInfo ? menu : loginButton}
+      </Grid>
+    </Grid>
   );
 };
 

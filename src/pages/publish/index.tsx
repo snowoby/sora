@@ -1,20 +1,26 @@
 import React, { useContext } from "react";
-import PublishCard from "@/components/PublishCard";
-import { AppBar, Box, Toolbar, Typography } from "@mui/material";
-import MainFrame from "../frame/MainFrame";
+import { Button, Grid, Stack } from "@mui/material";
 import AccountContext from "@/context/AccountContext";
+import PublishCard from "@/components/publish/PublishCard";
+import ProfileSwitcher from "@/components/ProfileSwitcher";
 
 const PublishPage = () => {
   const { currentProfile } = useContext(AccountContext);
   return (
-    <MainFrame>
-      <AppBar position="sticky">
-        <Toolbar>
-          <Typography variant="h6">publish</Typography>
-        </Toolbar>
-      </AppBar>
-      {currentProfile && <PublishCard profileID={currentProfile.id} />}
-    </MainFrame>
+    <Grid container spacing={2}>
+      <Grid item md={8}>
+        {currentProfile && <PublishCard profileID={currentProfile.id} />}
+      </Grid>
+      <Grid item md={4}>
+        <div>
+          <ProfileSwitcher />
+        </div>
+
+        <Button fullWidth type="submit" variant="contained" size="large">
+          publish
+        </Button>
+      </Grid>
+    </Grid>
   );
 };
 
