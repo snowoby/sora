@@ -8,19 +8,17 @@ import { Container } from "@mui/material";
 
 const Guide = () => {
   return (
-    <Container>
-      <BrowserRouter>
-        <Routes>
-          <Route path="" element={<MainPage />} />
-          <Route path="account">
-            <Route path="login" element={<SignPage pageType="login" />} />
-            <Route path="register" element={<SignPage pageType="register" />} />
-            <Route path="" element={<AccountPage />} />
-          </Route>
-          <Route path="publish" element={<PublishPage />} />
-        </Routes>
-      </BrowserRouter>
-    </Container>
+    <BrowserRouter>
+      <Routes>
+        <Route path="" element={<MainPage />} />
+        <Route path="account">
+          <Route path="login" element={<SignPage pageType="login" />} />
+          <Route path="register" element={<SignPage pageType="register" />} />
+          <Route path="" element={<AccountPage />} />
+        </Route>
+        <Route path="publish" element={<PublishPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 

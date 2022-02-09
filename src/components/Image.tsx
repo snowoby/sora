@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { StorageExists, StorageUrl } from "@/api/Storage";
 import log from "@/log";
 import urlcat from "urlcat";
+import { CircularProgress } from "@mui/material";
 
 const SourceImage = ({
   source,

@@ -5,7 +5,12 @@ import {
   Card,
   Grid,
   Icon,
+  IconButton,
+  ImageList,
+  ImageListItem,
+  ImageListItemBar,
   Input,
+  List,
   Stack,
   TextField,
   Typography,
@@ -18,6 +23,7 @@ import MarkdownEditor from "./MarkdownEditor";
 import SourceImage from "../Image";
 import FileUploader from "@/components/publish/FileUploader";
 import Image from "../Image";
+import { Add } from "@mui/icons-material";
 
 const PublishCard = ({ profileID, afterSubmit }: PublishCardProps) => {
   const [form, setForm] = useState({
@@ -25,7 +31,7 @@ const PublishCard = ({ profileID, afterSubmit }: PublishCardProps) => {
     content: "",
   });
 
-  const [headPic, setHeadPic] = useState<FileInfo>();
+  const [navPic, setNavPic] = useState<FileInfo>();
   const [files, setFiles] = useState<FileInfo[]>([]);
 
   return (
@@ -46,11 +52,17 @@ const PublishCard = ({ profileID, afterSubmit }: PublishCardProps) => {
             multiple={false}
             onDrop={(files) => {
               log.info(files);
-              FilePush("file", files[0]).then(({ data }) => setHeadPic(data));
+              FilePush("file", files[0]).then(({ data }) => setNavPic(data));
             }}
           >
-            <Box height="18rem" width="100%">
-              {headPic && (
+            <Box
+              height={navPic ? "18rem" : "6rem"}
+              width="100%"
+              display="flex"
+              justifyItems="center"
+              justifyContent="center"
+            >
+              {navPic ? (
                 <SourceImage
                   style={{
                     height: "100%",
@@ -58,8 +70,12 @@ const PublishCard = ({ profileID, afterSubmit }: PublishCardProps) => {
                     objectFit: "cover",
                     overflow: "hidden",
                   }}
-                  source={`${headPic.path}/${headPic.id}`}
+                  source={`${navPic.path}/${navPic.id}`}
                 />
+              ) : (
+                <IconButton>
+                  <Add />
+                </IconButton>
               )}
             </Box>
           </FileUploader>
@@ -81,7 +97,8 @@ const PublishCard = ({ profileID, afterSubmit }: PublishCardProps) => {
             value={form.content}
             onChange={(e) => setForm({ ...form, content: e.target.value })}
           />
-          <Stack direction="row" flexWrap="wrap">
+
+          <Box display="grid" gridTemplateColumns="auto 1fr">
             <div style={{ width: "6rem", height: "6rem", margin: "0.5rem" }}>
               <FileUploader
                 accept={["image/*"]}
@@ -101,54 +118,33 @@ const PublishCard = ({ profileID, afterSubmit }: PublishCardProps) => {
                 </Button>
               </FileUploader>
             </div>
-            {files
-              .filter((file) => file.mime.startsWith("image/"))
-              .map((file) => (
-                <Box
-                  width="6rem"
-                  height="6rem"
-                  display="block"
-                  position="relative"
-                  margin="0.5rem"
-                  key={file.id}
-                >
-                  <Image
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "contain",
-                    }}
-                    source={`${file.path}/${file.id}`}
-                  />
-
-                  <Box
-                    position="absolute"
-                    bottom="0"
-                    maxWidth="100%"
-                    sx={{
-                      wordBreak: "break-all",
-                      lineClamp: "4",
-                      overflow: "hidden",
-                      boxOrient: "vertical",
-                      display: "webkit-box",
-                    }}
-                  >
-                    <Typography
-                      variant="body2"
-                      fontSize="0.75rem"
-                      sx={{
-                        display: "-webkit-box",
-                        overflow: "hidden",
-                        WebkitBoxOrient: "vertical",
-                        WebkitLineClamp: 2,
+            <List
+              component={Stack}
+              direction="row"
+              spacing={2}
+              sx={{ overflowX: "scroll" }}
+            >
+              {files
+                .filter((file) => file.mime.startsWith("image/"))
+                .map((file) => (
+                  <ImageListItem key={file.id}>
+                    <Image
+                      style={{
+                        width: "6rem",
+                        height: "6rem",
+                        objectFit: "cover",
                       }}
-                    >
-                      {file.filename}
-                    </Typography>
-                  </Box>
-                </Box>
-              ))}
-          </Stack>
+                      source={`${file.path}/${file.id}`}
+                    />
+                    <ImageListItemBar
+                      subtitle={
+                        <Typography variant="body2">{file.filename}</Typography>
+                      }
+                    />
+                  </ImageListItem>
+                ))}
+            </List>
+          </Box>
         </Stack>
       </form>
     </Card>
