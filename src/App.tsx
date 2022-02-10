@@ -41,7 +41,7 @@ const App = () => {
     switchProfile(currentProfile?.id);
   }, [accountInfo?.profiles]);
 
-  if (!ep) return <CircularProgress />;
+  // if (!ep) return <CircularProgress />;
 
   return (
     <UniversalContext.Provider
