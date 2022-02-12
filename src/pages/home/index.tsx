@@ -20,7 +20,11 @@ const MainPage = () => {
     <MainFrame>
       <Stack spacing={2}>
         {episodes?.map((episode) => (
-          <EpisodeCard key={episode.id} episodeInfo={episode} />
+          <>
+            <a href={`/episode/${episode.id}`}>{episode.id}</a>
+            <EpisodeCard key={episode.id} episodeInfo={episode} />
+          </>
+
         ))}
       </Stack>
     </MainFrame>
