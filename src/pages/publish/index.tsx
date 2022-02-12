@@ -1,11 +1,10 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Button,
   Card,
   Container,
   Grid,
-  IconButton,
   ImageListItem,
   ImageListItemBar,
   List,
@@ -14,7 +13,6 @@ import {
   Typography,
 } from "@mui/material";
 import AccountContext from "@/context/AccountContext";
-import PublishCard from "@/components/publish/PublishCard";
 import ProfileSwitcher from "@/components/ProfileSwitcher";
 import { FileInfo } from "@/types";
 import { APICreateEpisode } from "@/api/Episode";
@@ -57,7 +55,7 @@ const PublishPage = () => {
     <Container>
       <Grid container spacing={2}>
         <Grid item md={8}>
-          <Card>
+          <Card sx={{overflow:"visible"}}>
             <form>
               <Stack spacing={2}>
                 <FileUploader
@@ -152,7 +150,8 @@ const PublishPage = () => {
                       .filter((file) => file.mime.startsWith("image/"))
                       .map((file) => (
                         <ImageListItem key={file.id}>
-                          <Image
+                          <Button onClick={()=>navigator.clipboard.writeText(`![${file.filename}](image:${file.path}/${file.id} "${file.filename}")`)}>
+                            <Image
                             style={{
                               width: "6rem",
                               height: "6rem",
@@ -167,6 +166,7 @@ const PublishPage = () => {
                               </Typography>
                             }
                           />
+                          </Button>
                         </ImageListItem>
                       ))}
                   </List>

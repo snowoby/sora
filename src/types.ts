@@ -63,9 +63,10 @@ export type MainFrameProps = {
 export type EpisodeData = {
   title: string;
   content: string;
+  navPicture: string;
 };
 
-export type EpisodeInfo = EpisodeData & InfoBasic & {};
+export type EpisodeInfo = EpisodeData & InfoBasic & {profile: Profile};
 
 export type PublishCardProps = {
   profileID: string;

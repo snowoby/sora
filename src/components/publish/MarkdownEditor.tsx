@@ -1,19 +1,39 @@
-import React from "react";
-import { Grid, TextField } from "@mui/material";
+import React, { useState } from "react";
+import { Box, Tab, Tabs, TextField } from "@mui/material";
 import { TextFieldProps } from "@mui/material/TextField/TextField";
 import MarkdownViewer from "@/components/publish/MarkdownViewer";
 
 const MarkdownEditor = (props: TextFieldProps) => {
+
+  const [tabIndex, setTabIndex]= useState<string>("edit")
+
+  const handleChange = (_:React.SyntheticEvent, value: any) => {
+    setTabIndex(value)
+  }
   return (
-    <Grid container>
-      <Grid item xs={12} md={6}>
+    <div>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', position:"sticky",top:0 }}>
+          <Tabs value={tabIndex} onChange={handleChange} sx={{backgroundColor:"background.paper"}} >
+            <Tab label="edit" value="edit" />
+            <Tab label="preview" value="preview" />
+          </Tabs>
+      </Box>
+      <div hidden={tabIndex!="edit"}>
         <TextField {...props} />
-      </Grid>
-      <Grid item xs={12} md={6}>
+      </div>
+      <Box hidden={tabIndex!="preview"} sx={[
+        {
+          "& img": {
+            maxWidth: "100%",
+            maxHeight: "100%",
+            display: "block",
+            margin: "auto"
+          }
+        }
+      ]} >
         <MarkdownViewer>{props.value as string}</MarkdownViewer>
-      </Grid>
-    </Grid>
-  );
+      </Box>
+    </div>);
 };
 
 export default MarkdownEditor;

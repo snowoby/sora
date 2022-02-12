@@ -18,7 +18,7 @@ export const singleFileCreate = (data: FileUploadData) =>
   client.post<FileInfo>(`${ApiList.singleFile}`, data);
 
 export const singleFilePut = (fileID: string, file: File | Blob) =>
-  client.put<FileInfo>(`${ApiList.singleFile}/${fileID}`, file, {
+  client.put<FileInfo>(`${ApiList.singleFile}${fileID}`, file, {
     headers: {
       "Content-Type": file.type,
     },
