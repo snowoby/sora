@@ -6,6 +6,7 @@ import PublishPage from "@/pages/publish";
 import MainPage from "@/pages/home";
 import { Container } from "@mui/material";
 import EpisodePage from "@/pages/episode/EpisodePage";
+import CreateSeriesPage from "./pages/series/Create";
 
 const Guide = () => {
   return (
@@ -18,6 +19,9 @@ const Guide = () => {
           <Route path="" element={<AccountPage />} />
         </Route>
         <Route path="episode">
+          <Route path=":id" element={<EpisodePage />} />
+        </Route>
+        <Route path="series" element={<CreateSeriesPage />}>
           <Route path=":id" element={<EpisodePage />} />
         </Route>
         <Route path="publish" element={<PublishPage />} />

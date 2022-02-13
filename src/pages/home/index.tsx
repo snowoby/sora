@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Stack } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import EpisodeCard from "@/components/EpisodeCard";
 import MainFrame from "@/pages/frame/MainFrame";
 import { APIGetAllEpisode } from "@/api/Episode";
 import { EpisodeInfo } from "@/types";
 import log from "@/log";
+import { Masonry } from "@mui/lab";
 
 const MainPage = () => {
   const [episodes, setEpisodes] = useState<EpisodeInfo[]>();
@@ -19,13 +20,15 @@ const MainPage = () => {
   return (
     <MainFrame>
       <Stack spacing={2}>
-        {episodes?.map((episode) => (
-          <>
-            <a href={`/episode/${episode.id}`}>{episode.id}</a>
-            <EpisodeCard key={episode.id} episodeInfo={episode} />
-          </>
-
-        ))}
+        {episodes && (
+          <Masonry columns={2} spacing={1}>
+            {episodes.map((episode) => (
+              <Box key={episode.id}>
+                <EpisodeCard episodeInfo={episode} />
+              </Box>
+            ))}
+          </Masonry>
+        )}
       </Stack>
     </MainFrame>
   );

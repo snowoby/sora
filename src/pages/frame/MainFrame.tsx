@@ -27,6 +27,7 @@ const MainFrame = ({ children }: MainFrameProps) => {
       <Link to="/account">account</Link>
       <Link to="/">home</Link>
       <Link to="/publish">publish</Link>
+      <Link to="/series">series</Link>
     </Stack>
   );
 

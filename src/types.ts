@@ -53,7 +53,7 @@ export type ProfileSwitcherProps = {
 
 export type ProfileCardProps = {
   profile: Profile;
-  size?: "normal" | "lite";
+  size?: "normal" | "lite" | "display";
 };
 
 export type MainFrameProps = {
@@ -66,7 +66,7 @@ export type EpisodeData = {
   navPicture: string;
 };
 
-export type EpisodeInfo = EpisodeData & InfoBasic & {profile: Profile};
+export type EpisodeInfo = EpisodeData & InfoBasic & { profile: Profile };
 
 export type PublishCardProps = {
   profileID: string;
@@ -116,3 +116,11 @@ export type UniversalContextProps = {
 export interface AvatarWrapProps extends AvatarProps {
   source?: string;
 }
+
+export type SeriesData = {
+  title: string;
+  content: string;
+  profileID: string;
+};
+
+export type SeriesInfo = InfoBasic & SeriesData;

@@ -7,10 +7,17 @@ const styleConfig = {
   normal: {
     avatarSize: { height: "4rem", width: "4rem" },
     titleSize: "h6",
+    call: true,
   },
   lite: {
     avatarSize: { height: "3rem", width: "3rem" },
     titleSize: "subtitle1",
+    call: true,
+  },
+  display: {
+    avatarSize: { height: "2rem", width: "2rem" },
+    titleSize: "subtitle2",
+    call: false,
   },
 };
 
@@ -47,16 +54,18 @@ const ProfileCard = ({ profile, size }: ProfileCardProps) => {
         >
           {profile.title}
         </Typography>
-        <Typography
-          variant="subtitle2"
-          sx={{
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {profile.call}
-        </Typography>
+        {config.call && (
+          <Typography
+            variant="subtitle2"
+            sx={{
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {profile.call}
+          </Typography>
+        )}
       </Box>
     </Box>
   );

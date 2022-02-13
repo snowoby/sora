@@ -3,6 +3,7 @@ const root = "/";
 const account = `${root}account/`;
 const profile = `${root}profile/`;
 const episode = `${root}episode/`;
+const series = `${root}series/`;
 const file = `${root}file/`;
 const site = `${root}site/`;
 const singleFile = `${file}single/`;
@@ -19,4 +20,5 @@ export default {
   episode,
   file,
   singleFile,
+  series,
 };

@@ -54,8 +54,8 @@ const PublishPage = () => {
   return (
     <Container>
       <Grid container spacing={2}>
-        <Grid item md={8}>
-          <Card sx={{overflow:"visible"}}>
+        <Grid item xs={8}>
+          <Card sx={{ overflow: "visible" }}>
             <form>
               <Stack spacing={2}>
                 <FileUploader
@@ -150,22 +150,28 @@ const PublishPage = () => {
                       .filter((file) => file.mime.startsWith("image/"))
                       .map((file) => (
                         <ImageListItem key={file.id}>
-                          <Button onClick={()=>navigator.clipboard.writeText(`![${file.filename}](image:${file.path}/${file.id} "${file.filename}")`)}>
-                            <Image
-                            style={{
-                              width: "6rem",
-                              height: "6rem",
-                              objectFit: "cover",
-                            }}
-                            source={`${file.path}/${file.id}`}
-                          />
-                          <ImageListItemBar
-                            subtitle={
-                              <Typography variant="body2">
-                                {file.filename}
-                              </Typography>
+                          <Button
+                            onClick={() =>
+                              navigator.clipboard.writeText(
+                                `![${file.filename}](image:${file.path}/${file.id} "${file.filename}")`
+                              )
                             }
-                          />
+                          >
+                            <Image
+                              style={{
+                                width: "6rem",
+                                height: "6rem",
+                                objectFit: "cover",
+                              }}
+                              source={`${file.path}/${file.id}`}
+                            />
+                            <ImageListItemBar
+                              subtitle={
+                                <Typography variant="body2">
+                                  {file.filename}
+                                </Typography>
+                              }
+                            />
                           </Button>
                         </ImageListItem>
                       ))}
@@ -175,7 +181,7 @@ const PublishPage = () => {
             </form>
           </Card>
         </Grid>
-        <Grid item md={4}>
+        <Grid item xs={4}>
           <Stack spacing={2}>
             <div />
             <div>
