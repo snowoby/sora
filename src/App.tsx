@@ -9,8 +9,9 @@ import { AccountInfo, Profile, StorageEndpoint } from "./types";
 import { APISelf } from "./api/ProfileAPI";
 import { APIStorageEndpoint } from "@/api/Site";
 import endpoint from "@/const/endpoint";
-import CircularProgress from "@mui/material/CircularProgress";
 import urlcat from "urlcat";
+import { AppBar, Box, Toolbar } from "@mui/material";
+import universalContext from "@/context/UniversalContext";
 
 const App = () => {
   const [accountInfo, setAccount] = useState<AccountInfo>();
@@ -44,20 +45,38 @@ const App = () => {
   // if (!ep) return <CircularProgress />;
 
   return (
-    <UniversalContext.Provider
-      value={{ ...UniversalContextDefaultValue, storage: ep }}
-    >
-      <AccountContext.Provider
-        value={{
-          accountInfo,
-          updateAccountInfo,
-          currentProfile,
-          switchProfile,
+    <>
+      <AppBar
+        position="sticky"
+        sx={{
+          backgroundColor: "background.paper",
+          color: "text.primary",
+          mb: "2rem",
         }}
       >
-        <Guide />
-      </AccountContext.Provider>
-    </UniversalContext.Provider>
+        <Toolbar>{UniversalContextDefaultValue.siteName}</Toolbar>
+      </AppBar>
+
+      <Box minHeight="calc(100vh - 20rem)">
+        <UniversalContext.Provider
+          value={{ ...UniversalContextDefaultValue, storage: ep }}
+        >
+          <AccountContext.Provider
+            value={{
+              accountInfo,
+              updateAccountInfo,
+              currentProfile,
+              switchProfile,
+            }}
+          >
+            <Guide />
+          </AccountContext.Provider>
+        </UniversalContext.Provider>
+      </Box>
+      <Box sx={{ minHeight: "20rem", backgroundColor: "#8fb2bd" }}>
+        页面底部
+      </Box>
+    </>
   );
 };
 

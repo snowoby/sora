@@ -17,6 +17,7 @@ import MarkdownViewer from "@/components/publish/MarkdownViewer";
 import { ArrowBack } from "@mui/icons-material";
 import ProfileCard from "@/components/profile";
 import { useNavigate } from "react-router-dom";
+import BackTitleBar from "@/components/BackTitleBar";
 
 const EpisodePage = () => {
   let { id } = useParams();
@@ -36,14 +37,7 @@ const EpisodePage = () => {
     <Container>
       <Grid container spacing={2}>
         <Grid item xs={8}>
-          <Box position="sticky" top="0" bgcolor="background.paper">
-            <Typography variant="h6">
-              <IconButton onClick={() => navigate(-1)}>
-                <ArrowBack />
-              </IconButton>
-              {episode.title}
-            </Typography>
-          </Box>
+          <BackTitleBar>{episode.title}</BackTitleBar>
           <Paper sx={{ padding: "0.5rem" }}>
             <MarkdownViewer>{episode.content}</MarkdownViewer>
           </Paper>

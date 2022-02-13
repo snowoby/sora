@@ -23,6 +23,7 @@ import SourceImage from "@/components/Image";
 import { Add } from "@mui/icons-material";
 import MarkdownEditor from "@/components/publish/MarkdownEditor";
 import Image from "@/components/Image";
+import BackTitleBar from "@/components/BackTitleBar";
 
 const PublishPage = () => {
   const { currentProfile } = useContext(AccountContext);
@@ -55,6 +56,7 @@ const PublishPage = () => {
     <Container>
       <Grid container spacing={2}>
         <Grid item xs={8}>
+          <BackTitleBar>publish</BackTitleBar>
           <Card sx={{ overflow: "visible" }}>
             <form>
               <Stack spacing={2}>
