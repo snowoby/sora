@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   Container,
+  Divider,
   Grid,
   ImageListItem,
   ImageListItemBar,
@@ -14,7 +15,7 @@ import {
 } from "@mui/material";
 import AccountContext from "@/context/AccountContext";
 import ProfileSwitcher from "@/components/ProfileSwitcher";
-import { FileInfo } from "@/types";
+import { FileInfo, SeriesInfo } from "@/types";
 import { APICreateEpisode } from "@/api/Episode";
 import log from "@/log";
 import FileUploader from "@/components/publish/FileUploader";
@@ -24,23 +25,20 @@ import { Add } from "@mui/icons-material";
 import MarkdownEditor from "@/components/publish/MarkdownEditor";
 import Image from "@/components/Image";
 import BackTitleBar from "@/components/BackTitleBar";
+import { APIAllMySeries } from "@/api/Series";
+import SeriesSwitcher from "@/components/SeriesSwitcher";
 
 const PublishPage = () => {
-  const { currentProfile } = useContext(AccountContext);
-  const [formData, setFormData] = useState({
-    profileID: currentProfile?.id,
+  const { profiles } = useContext(AccountContext);
+  const [seriesList, setSeriesList] = useState<SeriesInfo[]>();
+
+  const [formData, setFormData] = useState<Record<string, any>>({
     title: "",
     content: "",
+    seriesID: null,
+    profileID: "",
     navPicture: "",
   });
-
-  // useEffect watch profileID change
-  useEffect(() => {
-    setFormData({
-      ...formData,
-      profileID: currentProfile?.id,
-    });
-  }, [currentProfile]);
 
   const handleNavPicChange = (navPic: FileInfo) => {
     setFormData({
@@ -51,6 +49,20 @@ const PublishPage = () => {
   };
   const [navPic, setNavPic] = useState<FileInfo>();
   const [files, setFiles] = useState<FileInfo[]>([]);
+
+  useEffect(() => {
+    APIAllMySeries()
+      .then(({ data }) => setSeriesList(data))
+      .catch(log.error);
+  }, []);
+
+  if (!profiles || !seriesList) {
+    return <div>Loading...</div>;
+  }
+
+  if (!profiles.length) {
+    return <div>No profile</div>;
+  }
 
   return (
     <Container>
@@ -187,8 +199,36 @@ const PublishPage = () => {
           <Stack spacing={2}>
             <div />
             <div>
-              <ProfileSwitcher />
+              <ProfileSwitcher
+                profiles={profiles}
+                selected={profiles.find((p) => p.id === formData.profileID)}
+                onChange={(profile) =>
+                  setFormData({ ...formData, profileID: profile.id })
+                }
+              />
             </div>
+            <Divider />
+            <div>
+              <SeriesSwitcher
+                seriesList={seriesList}
+                onChange={(series) =>
+                  setFormData({ ...formData, seriesID: series.id })
+                }
+                selected={seriesList.find((s) => s.id === formData.seriesID)}
+                placeholder="not publish in a series"
+              />
+              {formData.seriesID && (
+                <Button
+                  sx={{ display: "block" }}
+                  fullWidth
+                  color="error"
+                  onClick={() => setFormData({ ...formData, seriesID: null })}
+                >
+                  clear
+                </Button>
+              )}
+            </div>
+            <Divider />
             <Button
               fullWidth
               type="button"

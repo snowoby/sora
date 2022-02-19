@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import AccountContext from "@/context/AccountContext";
 
 const MainFrame = ({ children }: MainFrameProps) => {
-  const { accountInfo } = useContext(AccountContext);
+  const { account } = useContext(AccountContext);
 
   const loginButton = (
     <Link to="/account/login">
@@ -27,7 +27,7 @@ const MainFrame = ({ children }: MainFrameProps) => {
       <Link to="/account">account</Link>
       <Link to="/">home</Link>
       <Link to="/publish">publish</Link>
-      {/*<Link to="/series">series</Link>*/}
+      <Link to="/series">series</Link>
     </Stack>
   );
 
@@ -38,7 +38,7 @@ const MainFrame = ({ children }: MainFrameProps) => {
           {children}
         </Grid>
         <Grid item xs={4}>
-          {accountInfo ? menu : loginButton}
+          {account ? menu : loginButton}
         </Grid>
       </Grid>
     </Container>

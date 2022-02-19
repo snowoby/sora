@@ -23,7 +23,7 @@ import PromiseFileReader from "promise-file-reader";
 import "react-image-crop/src/ReactCrop.scss";
 
 const AccountPage = () => {
-  const { accountInfo, updateAccountInfo } = useContext(AccountContext);
+  const { account, profiles, updateAccount } = useContext(AccountContext);
   const emptyForm: ProfileCreate = {
     call: "",
     title: "",
@@ -73,7 +73,7 @@ const AccountPage = () => {
       if (selectedProfile)
         await APIUpdateProfile(selectedProfile.id, editProfile);
       else await APICreateProfile(editProfile);
-      await updateAccountInfo();
+      await updateAccount();
       setEditProfile(emptyForm);
     } catch (e) {
       log.error(e);
@@ -105,7 +105,7 @@ const AccountPage = () => {
   //       avatar: `${data.path}/${data.id}`,
   //     })
   //   );
-  if (!accountInfo) return <Navigate to="/account/login" replace />;
+  if (!account || !profiles) return <Navigate to="/account/login" replace />;
 
   const cropDialog = (
     <Dialog open={cropOpen} onClose={closeCrop}>
@@ -224,9 +224,9 @@ const AccountPage = () => {
 
   return (
     <MainFrame>
-      <div>email:{accountInfo.account.email}</div>
+      <div>email:{account.email}</div>
       <Grid container spacing={2}>
-        {accountInfo?.profiles.map((profile) => (
+        {profiles.map((profile) => (
           <Grid key={profile.id} item xs={12} md={6} lg={4}>
             <Button
               onClick={() => setSelectedProfile(profile)}
@@ -245,7 +245,6 @@ const AccountPage = () => {
                 },
               ]}
               fullWidth
-              autoCapitalize="false"
             >
               <ProfileCard profile={profile} />
             </Button>

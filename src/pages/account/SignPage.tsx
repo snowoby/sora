@@ -29,14 +29,14 @@ const SignPage = ({ pageType }: { pageType: SignPageType }) => {
   const navigate = useNavigate();
 
   const [submitting, setSubmitting] = useState(false);
-  const { accountInfo, updateAccountInfo } = useContext(AccountContext);
+  const { account, updateAccount } = useContext(AccountContext);
 
   const another = (value: SignPageType) =>
     value === "login" ? "register" : "login";
 
   const loginAction = async () => {
     const response = await LoginStream(form);
-    await updateAccountInfo();
+    await updateAccount();
     setSubmitting(false);
     log.info(response.data);
     navigate("/");
@@ -56,7 +56,7 @@ const SignPage = ({ pageType }: { pageType: SignPageType }) => {
 
   const haveContent = Boolean(form.get("email") || form.get("password"));
 
-  if (accountInfo) return <Navigate to="/account" replace />;
+  if (account) return <Navigate to="/account" replace />;
 
   return (
     <>

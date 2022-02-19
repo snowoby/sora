@@ -5,25 +5,18 @@ import UniversalContext, {
 import AccountContext from "@/context/AccountContext";
 import Guide from "@/route";
 import log from "./log";
-import { AccountInfo, Profile, StorageEndpoint } from "./types";
+import { AccountInfo, StorageEndpoint } from "./types";
 import { APISelf } from "./api/ProfileAPI";
 import { APIStorageEndpoint } from "@/api/Site";
 import endpoint from "@/const/endpoint";
 import urlcat from "urlcat";
 import { AppBar, Box, Toolbar } from "@mui/material";
-import universalContext from "@/context/UniversalContext";
 
 const App = () => {
   const [accountInfo, setAccount] = useState<AccountInfo>();
-  const [currentProfile, setCurrentProfile] = useState<Profile>();
   const [ep, setEp] = useState<StorageEndpoint>();
-  const switchProfile = (profileID?: string) =>
-    setCurrentProfile(
-      accountInfo?.profiles.find((profile) => profile.id === profileID) ??
-        accountInfo?.profiles[0]
-    );
 
-  const updateAccountInfo = () =>
+  const updateAccount = () =>
     APISelf()
       .then((response) => {
         setAccount(response.data);
@@ -31,16 +24,12 @@ const App = () => {
       .catch((e) => log.error(e));
 
   useEffect(() => {
-    updateAccountInfo().then(() => {});
+    updateAccount().then(() => {});
     APIStorageEndpoint().then(({ data }) => {
       endpoint.url = urlcat(data.storageEndpoint, data.storageBucket);
       setEp(data);
     });
   }, []);
-
-  useEffect(() => {
-    switchProfile(currentProfile?.id);
-  }, [accountInfo?.profiles]);
 
   // if (!ep) return <CircularProgress />;
 
@@ -63,10 +52,9 @@ const App = () => {
         >
           <AccountContext.Provider
             value={{
-              accountInfo,
-              updateAccountInfo,
-              currentProfile,
-              switchProfile,
+              account: accountInfo?.account,
+              profiles: accountInfo?.profiles,
+              updateAccount,
             }}
           >
             <Guide />

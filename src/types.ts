@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 import internal from "stream";
 import { AvatarProps } from "@mui/material";
 
@@ -30,7 +30,7 @@ export type SignFormProps = {
 
 export type AccountInfo = {
   account: Account;
-  profiles: Profile[];
+  profiles: Profiles;
 };
 
 export type Token = { body: string };
@@ -41,14 +41,17 @@ export type AccountPageProps = {
 export type SignPageType = "login" | "register";
 
 export type AccountContextType = {
-  accountInfo?: AccountInfo;
-  updateAccountInfo: () => void;
-  switchProfile: (profileID: string) => void;
-  currentProfile?: Profile;
+  account?: Account;
+  profiles?: Profiles;
+  updateAccount: () => void;
 };
 
 export type ProfileSwitcherProps = {
-  profiles?: Profiles;
+  selected?: Profile;
+  profiles: Profiles;
+  disabled?: boolean;
+  children?: React.ReactNode;
+  onChange: (profile: Profile) => void;
 };
 
 export type ProfileCardProps = {
@@ -118,9 +121,10 @@ export interface AvatarWrapProps extends AvatarProps {
 }
 
 export type SeriesData = {
+  id: string | null;
   title: string;
-  content: string;
+  type: string;
   profileID: string;
 };
 
-export type SeriesInfo = InfoBasic & SeriesData;
+export type SeriesInfo = InfoBasic & SeriesData & { profile: Profile };

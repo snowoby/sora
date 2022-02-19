@@ -1,77 +1,150 @@
 import React, { useContext, useEffect } from "react";
-import { Button, Container, Grid, TextField } from "@mui/material";
+import { Button, Container, Grid, TextField, Typography } from "@mui/material";
 import ProfileSwitcher from "@/components/ProfileSwitcher";
 import AccountContext from "@/context/AccountContext";
-import { APIAllMySeries, APICreateSeries } from "@/api/Series";
-import { SeriesInfo } from "@/types";
+import { APIAllMySeries, APICreateSeries, APIUpdateSeries } from "@/api/Series";
+import { SeriesData, SeriesInfo } from "@/types";
+import log from "@/log";
+const GroupButton = ({
+  onClick,
+  active,
+  children,
+}: {
+  onClick: () => void;
+  active: boolean;
+  children?: React.ReactNode;
+}) => {
+  return (
+    <div>
+      <Button
+        onClick={onClick}
+        sx={[
+          {
+            color: "text.primary",
+            textTransform: "none",
+            justifyContent: "flex-start",
+          },
+          active && {
+            backgroundColor: "#eeeeee",
+          },
+        ]}
+        fullWidth
+      >
+        <Typography variant="subtitle1">{children}</Typography>
+      </Button>
+    </div>
+  );
+};
 
 const CreateSeriesPage = () => {
-  const [title, setTitle] = React.useState("");
-  const [content, setContent] = React.useState("");
-  const [series, setSeries] = React.useState<SeriesInfo[]>();
-  const { currentProfile } = useContext(AccountContext);
+  const emptySeries = {
+    id: null,
+    title: "",
+    type: "",
+    profileID: "",
+  };
+  const [seriesList, setSeriesList] = React.useState<SeriesInfo[]>();
+  const [seriesEdit, setSeriesEdit] = React.useState<SeriesData>(emptySeries);
+  const { profiles } = useContext(AccountContext);
+
+  // const [profile, setProfile] = useState<Profile>();
+
+  const getSeriesList = () =>
+    APIAllMySeries().then(({ data }) => setSeriesList(data));
 
   useEffect(() => {
-    APIAllMySeries().then(({ data }) => {
-      setSeries(data);
-      console.log(data);
-    });
+    getSeriesList();
   }, []);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!currentProfile) return;
-    if (!series) return;
-    APICreateSeries({
-      title: title,
-      content: content,
-      profileID: currentProfile.id,
-    }).then(({ data }) => {
-      setSeries([...series, data]);
-      console.log(data);
-    });
-    console.log(title, content);
+    if (!seriesEdit.id) {
+      APICreateSeries(seriesEdit).then(getSeriesList).catch(log.error);
+    } else {
+      APIUpdateSeries(seriesEdit.id, seriesEdit)
+        .then(getSeriesList)
+        .catch(log.error);
+    }
   };
 
-  if (!currentProfile) {
+  if (!profiles) {
     return <div>Loading...</div>;
   }
 
   return (
     <Container>
       <Grid container>
+        <Grid item xs={4}>
+          <GroupButton
+            onClick={() => {
+              setSeriesEdit(emptySeries);
+            }}
+            active={!seriesEdit.id}
+          >
+            !New
+          </GroupButton>
+          {seriesList?.map((series, index) => (
+            <GroupButton
+              key={index}
+              onClick={() => {
+                setSeriesEdit({
+                  id: series.id,
+                  title: series.title,
+                  type: series.type,
+                  profileID: series.profile.id,
+                });
+              }}
+              active={seriesEdit.id === series.id}
+            >
+              {series.title}
+            </GroupButton>
+          ))}
+        </Grid>
         <Grid item xs={8}>
-          <ProfileSwitcher />
+          <Typography variant="body1">Owner</Typography>
+          {profiles && (
+            <ProfileSwitcher
+              profiles={profiles}
+              disabled={!!seriesEdit.id}
+              selected={profiles.find((p) => p.id === seriesEdit.profileID)}
+              onChange={(profile) => {
+                setSeriesEdit({
+                  ...seriesEdit,
+                  profileID: profile.id,
+                });
+              }}
+            >
+              select a profile
+            </ProfileSwitcher>
+          )}
           <form onSubmit={handleSubmit}>
             <TextField
+              key={"title" + seriesEdit.id}
               variant="filled"
-              label="Series Name"
+              label="title"
               fullWidth
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={seriesEdit.title}
+              onChange={(e) =>
+                setSeriesEdit({ ...seriesEdit, title: e.target.value })
+              }
             />
             <TextField
-              multiline
+              key={"type" + seriesEdit.id}
               variant="filled"
-              label="series description"
+              label="type"
               fullWidth
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
+              value={seriesEdit?.type}
+              onChange={(e) =>
+                setSeriesEdit({ ...seriesEdit, type: e.target.value })
+              }
             />
             <Button type="submit">create</Button>
           </form>
-        </Grid>
-        <Grid item xs={4}>
-          {series?.map((s) => (
-            <div key={s.id}>
-              <h3>{s.title}</h3>
-              <p>{s.content}</p>
-            </div>
-          ))}
         </Grid>
       </Grid>
     </Container>
   );
 };
+
 export default CreateSeriesPage;
