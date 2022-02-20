@@ -4,6 +4,7 @@ import { AvatarProps } from "@mui/material";
 
 type InfoBasic = {
   id: string;
+  valueType: string;
 };
 
 type Account = { email: string } & InfoBasic;
@@ -69,15 +70,19 @@ export type EpisodeData = {
   navPicture: string;
 };
 
-export type EpisodeInfo = EpisodeData & InfoBasic & { profile: Profile };
+export type Episode = EpisodeData &
+  InfoBasic & {
+    profile: Profile;
+    series?: Series;
+  };
 
 export type PublishCardProps = {
   profileID: string;
-  afterSubmit?: (info: EpisodeInfo) => void;
+  afterSubmit?: (info: Episode) => void;
 };
 
 export type EpisodeCardProps = {
-  episodeInfo: EpisodeInfo;
+  episode: Episode;
 };
 
 export type FileUploadData = {
@@ -127,4 +132,4 @@ export type SeriesData = {
   profileID: string;
 };
 
-export type SeriesInfo = InfoBasic & SeriesData & { profile: Profile };
+export type Series = InfoBasic & SeriesData & { profile: Profile };

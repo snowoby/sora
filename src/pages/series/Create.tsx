@@ -3,8 +3,9 @@ import { Button, Container, Grid, TextField, Typography } from "@mui/material";
 import ProfileSwitcher from "@/components/ProfileSwitcher";
 import AccountContext from "@/context/AccountContext";
 import { APIAllMySeries, APICreateSeries, APIUpdateSeries } from "@/api/Series";
-import { SeriesData, SeriesInfo } from "@/types";
+import { SeriesData, Series } from "@/types";
 import log from "@/log";
+import BackTitleBar from "@/components/BackTitleBar";
 const GroupButton = ({
   onClick,
   active,
@@ -43,7 +44,7 @@ const CreateSeriesPage = () => {
     type: "",
     profileID: "",
   };
-  const [seriesList, setSeriesList] = React.useState<SeriesInfo[]>();
+  const [seriesList, setSeriesList] = React.useState<Series[]>();
   const [seriesEdit, setSeriesEdit] = React.useState<SeriesData>(emptySeries);
   const { profiles } = useContext(AccountContext);
 
@@ -76,6 +77,7 @@ const CreateSeriesPage = () => {
     <Container>
       <Grid container>
         <Grid item xs={4}>
+          <BackTitleBar />
           <GroupButton
             onClick={() => {
               setSeriesEdit(emptySeries);

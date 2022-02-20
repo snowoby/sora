@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Menu, MenuItem } from "@mui/material";
+import { Box, Button, Menu, MenuItem } from "@mui/material";
 
 type FrameSwitcherProps<T> = {
   options: T[];
@@ -12,6 +12,10 @@ type FrameSwitcherProps<T> = {
   renderButton?: (option: T) => React.ReactNode;
   renderSelected?: (option: T) => React.ReactNode;
   renderUnselected?: (option: T) => React.ReactNode;
+  renderUnselectedMenuItem?: (
+    option: T,
+    callAfterClick: () => void
+  ) => React.ReactNode;
 };
 
 const FrameSwitcher = <T,>(props: FrameSwitcherProps<T>) => {
@@ -24,8 +28,8 @@ const FrameSwitcher = <T,>(props: FrameSwitcherProps<T>) => {
   }, [anchor, window.innerWidth]);
 
   return (
-    <>
-      <div ref={anchor} />
+    <div>
+      <div ref={anchor} style={{ marginBottom: "0.5rem" }} />
       <Button
         sx={{
           borderRadius: "9999px",
@@ -55,6 +59,7 @@ const FrameSwitcher = <T,>(props: FrameSwitcherProps<T>) => {
         >
           {props.selected && (
             <MenuItem
+              sx={{ padding: "0.75rem" }}
               onClick={() => {
                 props.selected && props.onChange?.(props.selected);
                 setOpen(false);
@@ -72,19 +77,24 @@ const FrameSwitcher = <T,>(props: FrameSwitcherProps<T>) => {
                 )
             )
             .map((item, index) => (
-              <MenuItem
-                key={props.renderKey?.(item) ?? index}
-                onClick={() => {
-                  props.onChange?.(item);
-                  setOpen(false);
-                }}
-              >
-                {props.renderUnselected?.(item)}
-              </MenuItem>
+              <Box key={props.renderKey?.(item) ?? index}>
+                {props.renderUnselectedMenuItem?.(item, () =>
+                  setOpen(false)
+                ) ?? (
+                  <MenuItem
+                    onClick={() => {
+                      props.onChange?.(item);
+                      setOpen(false);
+                    }}
+                  >
+                    {props.renderUnselected?.(item)}
+                  </MenuItem>
+                )}
+              </Box>
             ))}
         </Menu>
       )}
-    </>
+    </div>
   );
 };
 

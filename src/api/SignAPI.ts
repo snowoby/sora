@@ -6,6 +6,7 @@ import {
 } from "@/utils/utils";
 import axios from "axios";
 import { Token } from "@/types";
+import log from "@/log";
 
 let config;
 if (process.env.NODE_ENV === "production") {
@@ -35,5 +36,6 @@ export const LoginStream = async (info: Record<string, any>) => {
   SetAccessToken("");
   const response = await APILogin(info);
   SetRefreshToken(response.data.body);
+  log.info(response.data.body);
   return await APIAccess();
 };

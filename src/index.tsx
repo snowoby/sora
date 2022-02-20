@@ -2,11 +2,18 @@ import React from "react";
 import ReactDOM from "react-dom";
 import reportWebVitals from "./reportWebVitals";
 import App from "./App";
-import { CssBaseline } from "@mui/material";
+import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
+const darkTheme = createTheme({
+  palette: {
+    mode: "dark",
+  },
+});
 ReactDOM.render(
   <React.StrictMode>
+    {/*<ThemeProvider theme={darkTheme}>*/}
     <CssBaseline />
     <App />
+    {/*</ThemeProvider>*/}
   </React.StrictMode>,
   document.getElementById("root")
 );

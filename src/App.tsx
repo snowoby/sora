@@ -10,7 +10,13 @@ import { APISelf } from "./api/ProfileAPI";
 import { APIStorageEndpoint } from "@/api/Site";
 import endpoint from "@/const/endpoint";
 import urlcat from "urlcat";
-import { AppBar, Box, Toolbar } from "@mui/material";
+import {
+  AppBar,
+  Box,
+  createTheme,
+  ThemeProvider,
+  Toolbar,
+} from "@mui/material";
 
 const App = () => {
   const [accountInfo, setAccount] = useState<AccountInfo>();

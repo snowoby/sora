@@ -9,13 +9,15 @@ import {
   ImageListItem,
   ImageListItemBar,
   List,
+  ListSubheader,
+  MenuItem,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import AccountContext from "@/context/AccountContext";
 import ProfileSwitcher from "@/components/ProfileSwitcher";
-import { FileInfo, SeriesInfo } from "@/types";
+import { FileInfo, Profile, Series } from "@/types";
 import { APICreateEpisode } from "@/api/Episode";
 import log from "@/log";
 import FileUploader from "@/components/publish/FileUploader";
@@ -27,10 +29,13 @@ import Image from "@/components/Image";
 import BackTitleBar from "@/components/BackTitleBar";
 import { APIAllMySeries } from "@/api/Series";
 import SeriesSwitcher from "@/components/SeriesSwitcher";
+import FrameSwitcher from "@/components/FrameSwitcher";
+import SeriesCard from "@/components/series";
+import ProfileCard from "@/components/profile";
 
 const PublishPage = () => {
   const { profiles } = useContext(AccountContext);
-  const [seriesList, setSeriesList] = useState<SeriesInfo[]>();
+  const [seriesList, setSeriesList] = useState<Series[]>();
 
   const [formData, setFormData] = useState<Record<string, any>>({
     title: "",
@@ -198,36 +203,34 @@ const PublishPage = () => {
         <Grid item xs={4}>
           <Stack spacing={2}>
             <div />
-            <div>
-              <ProfileSwitcher
-                profiles={profiles}
-                selected={profiles.find((p) => p.id === formData.profileID)}
-                onChange={(profile) =>
-                  setFormData({ ...formData, profileID: profile.id })
+            <ProfileSeriesSwitcher
+              onChange={(item) => {
+                if (item.valueType === "series") {
+                  const series = item as Series;
+                  setFormData({
+                    ...formData,
+                    seriesID: series.id,
+                    profileID: series.profile.id,
+                  });
+                } else {
+                  const profile = item as Profile;
+                  setFormData({
+                    ...formData,
+                    profileID: profile.id,
+                    seriesID: null,
+                  });
                 }
-              />
-            </div>
-            <Divider />
-            <div>
-              <SeriesSwitcher
-                seriesList={seriesList}
-                onChange={(series) =>
-                  setFormData({ ...formData, seriesID: series.id })
-                }
-                selected={seriesList.find((s) => s.id === formData.seriesID)}
-                placeholder="not publish in a series"
-              />
-              {formData.seriesID && (
-                <Button
-                  sx={{ display: "block" }}
-                  fullWidth
-                  color="error"
-                  onClick={() => setFormData({ ...formData, seriesID: null })}
-                >
-                  clear
-                </Button>
-              )}
-            </div>
+              }}
+              profileOptions={profiles ?? []}
+              seriesOptions={seriesList ?? []}
+              selected={
+                formData.seriesID
+                  ? seriesList.find((series) => series.id === formData.seriesID)
+                  : profiles.find(
+                      (profile) => profile.id === formData.profileID
+                    )
+              }
+            />
             <Divider />
             <Button
               fullWidth
@@ -255,3 +258,88 @@ const PublishPage = () => {
 };
 
 export default PublishPage;
+
+type GroupLabel = { valueType: "group"; children: React.ReactNode };
+
+type ProfileSeriesSwitcherProps = {
+  profileOptions: Profile[];
+  seriesOptions: Series[];
+  selected?: Profile | Series;
+  onChange: (selected: Profile | Series) => void;
+  placeholder?: string;
+};
+
+const ProfileSeriesSwitcher = ({
+  profileOptions,
+  seriesOptions,
+  selected,
+  onChange,
+  placeholder,
+}: ProfileSeriesSwitcherProps) => {
+  return (
+    <FrameSwitcher<Series | Profile | GroupLabel>
+      selected={selected}
+      options={[
+        {
+          valueType: "group",
+          children: <Divider />,
+        },
+        ...profileOptions,
+        {
+          valueType: "group",
+          children: <Divider />,
+        },
+        ...seriesOptions,
+      ]}
+      placeholder={placeholder}
+      renderButton={(item) => (
+        <>
+          {item.valueType === "profile" ? (
+            <ProfileCard profile={item as Profile} size="normal" />
+          ) : (
+            <SeriesCard series={item as Series} />
+          )}
+        </>
+      )}
+      renderSelected={(selected) => {
+        switch (selected.valueType) {
+          case "profile":
+            return <ProfileCard profile={selected as Profile} size="normal" />;
+          case "series":
+            return <SeriesCard series={selected as Series} />;
+          default:
+            return null;
+        }
+      }}
+      renderUnselectedMenuItem={(unselected, callAfterClick) => {
+        if (unselected.valueType === "group")
+          return (
+            <ListSubheader sx={{ backgroundColor: "text.disabled" }}>
+              {(unselected as GroupLabel).children}
+            </ListSubheader>
+          );
+        let inner;
+        switch (unselected.valueType) {
+          case "profile":
+            inner = <ProfileCard profile={unselected as Profile} size="lite" />;
+            break;
+          case "series":
+            inner = <SeriesCard series={unselected as Series} />;
+            break;
+          default:
+            inner = null;
+        }
+        return (
+          <MenuItem
+            onClick={() => {
+              onChange(unselected as Profile | Series);
+              callAfterClick();
+            }}
+          >
+            {inner}
+          </MenuItem>
+        );
+      }}
+    />
+  );
+};

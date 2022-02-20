@@ -3,12 +3,12 @@ import { Box, Stack } from "@mui/material";
 import EpisodeCard from "@/components/EpisodeCard";
 import MainFrame from "@/pages/frame/MainFrame";
 import { APIGetAllEpisode } from "@/api/Episode";
-import { EpisodeInfo } from "@/types";
+import { Episode } from "@/types";
 import log from "@/log";
 import { Masonry } from "@mui/lab";
 
 const MainPage = () => {
-  const [episodes, setEpisodes] = useState<EpisodeInfo[]>();
+  const [episodes, setEpisodes] = useState<Episode[]>();
   useEffect(() => {
     APIGetAllEpisode()
       .then(({ data }) => {
@@ -24,7 +24,7 @@ const MainPage = () => {
           <Masonry columns={2} spacing={1}>
             {episodes.map((episode) => (
               <Box key={episode.id}>
-                <EpisodeCard episodeInfo={episode} />
+                <EpisodeCard episode={episode} />
               </Box>
             ))}
           </Masonry>

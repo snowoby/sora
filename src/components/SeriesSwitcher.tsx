@@ -1,11 +1,11 @@
 import React from "react";
-import { SeriesInfo } from "@/types";
+import { Series } from "@/types";
 import FrameSwitcher from "@/components/FrameSwitcher";
 
 type SeriesSwitcherProps = {
-  seriesList: SeriesInfo[];
-  selected?: SeriesInfo;
-  onChange: (series: SeriesInfo) => void;
+  seriesList: Series[];
+  selected?: Series;
+  onChange: (series: Series) => void;
   placeholder: React.ReactNode;
 };
 
@@ -16,7 +16,7 @@ const SeriesSwitcher = ({
   placeholder,
 }: SeriesSwitcherProps) => {
   return (
-    <FrameSwitcher<SeriesInfo>
+    <FrameSwitcher<Series>
       options={seriesList}
       onChange={onChange}
       selected={selected}
