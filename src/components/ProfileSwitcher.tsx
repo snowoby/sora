@@ -2,6 +2,7 @@ import React from "react";
 import ProfileCard from "./profile";
 import { Profile, ProfileSwitcherProps } from "@/types";
 import FrameSwitcher from "@/components/FrameSwitcher";
+import AbstractSwitcher from "@/components/AbstractSwitcher";
 
 const ProfileSwitcher = ({
   profiles,

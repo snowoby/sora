@@ -28,7 +28,6 @@ import MarkdownEditor from "@/components/publish/MarkdownEditor";
 import Image from "@/components/Image";
 import BackTitleBar from "@/components/BackTitleBar";
 import { APIAllMySeries } from "@/api/Series";
-import SeriesSwitcher from "@/components/SeriesSwitcher";
 import FrameSwitcher from "@/components/FrameSwitcher";
 import SeriesCard from "@/components/series";
 import ProfileCard from "@/components/profile";
@@ -36,7 +35,6 @@ import ProfileCard from "@/components/profile";
 const PublishPage = () => {
   const { profiles } = useContext(AccountContext);
   const [seriesList, setSeriesList] = useState<Series[]>();
-
   const [formData, setFormData] = useState<Record<string, any>>({
     title: "",
     content: "",
@@ -80,7 +78,6 @@ const PublishPage = () => {
                 <FileUploader
                   multiple={false}
                   onDrop={(files) => {
-                    log.info(files);
                     FilePush("file", files[0]).then(({ data }) =>
                       handleNavPicChange(data)
                     );
@@ -142,7 +139,6 @@ const PublishPage = () => {
                       onDrop={async (files) => {
                         for (let i = 0; i < files.length; i++) {
                           const { data } = await FilePush("file", files[i]);
-                          log.info(data);
                           setFiles((prevFiles) => [...prevFiles, data]);
                         }
                       }}
@@ -292,21 +288,31 @@ const ProfileSeriesSwitcher = ({
         ...seriesOptions,
       ]}
       placeholder={placeholder}
-      renderButton={(item) => (
-        <>
-          {item.valueType === "profile" ? (
-            <ProfileCard profile={item as Profile} size="normal" />
-          ) : (
-            <SeriesCard series={item as Series} />
-          )}
-        </>
-      )}
+      renderButton={(item) => {
+        return (
+          <>
+            {item.valueType === "profile" ? (
+              <ProfileCard profile={item as Profile} size="normal" />
+            ) : (
+              <SeriesCard
+                series={item as Series}
+                profile={(item as Series).profile}
+              />
+            )}
+          </>
+        );
+      }}
       renderSelected={(selected) => {
         switch (selected.valueType) {
           case "profile":
             return <ProfileCard profile={selected as Profile} size="normal" />;
           case "series":
-            return <SeriesCard series={selected as Series} />;
+            return (
+              <SeriesCard
+                series={selected as Series}
+                profile={(selected as Series).profile}
+              />
+            );
           default:
             return null;
         }
@@ -324,7 +330,12 @@ const ProfileSeriesSwitcher = ({
             inner = <ProfileCard profile={unselected as Profile} size="lite" />;
             break;
           case "series":
-            inner = <SeriesCard series={unselected as Series} />;
+            inner = (
+              <SeriesCard
+                series={unselected as Series}
+                profile={(unselected as Series).profile}
+              />
+            );
             break;
           default:
             inner = null;
@@ -332,8 +343,8 @@ const ProfileSeriesSwitcher = ({
         return (
           <MenuItem
             onClick={() => {
-              onChange(unselected as Profile | Series);
               callAfterClick();
+              onChange(unselected as Profile | Series);
             }}
           >
             {inner}

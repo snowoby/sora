@@ -6,7 +6,6 @@ import { Episode } from "@/types";
 import log from "@/log";
 import MarkdownViewer from "@/components/publish/MarkdownViewer";
 import ProfileCard from "@/components/profile";
-import { useNavigate } from "react-router-dom";
 import BackTitleBar from "@/components/BackTitleBar";
 import SeriesCard from "@/components/series";
 

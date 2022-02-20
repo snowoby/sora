@@ -1,22 +1,16 @@
-import React, { ReactNode, useEffect, useRef, useState } from "react";
+import React, { ReactNode, useRef } from "react";
 import { Button, ButtonProps, Menu, MenuProps } from "@mui/material";
 
 type Props = {
+  open: boolean;
   buttonProps?: ButtonProps;
   buttonContent?: ReactNode;
   menuProps?: MenuProps;
   children: ReactNode;
 };
 
-const AbstractSwitcher = (props: Props) => {
-  const [menuWidth, setMenuWidth] = useState("auto");
-  const [open, setOpen] = useState<boolean>(false);
+const NewFrameSwitcher = (props: Props) => {
   const anchor = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    setMenuWidth(`300px`);
-    if (anchor.current) setMenuWidth(`${anchor.current.clientWidth}px`);
-  }, [anchor, window.innerWidth]);
-
   return (
     <div>
       <div ref={anchor} />
@@ -37,7 +31,7 @@ const AbstractSwitcher = (props: Props) => {
         {props.buttonContent}
       </Button>
       {anchor.current && (
-        <Menu anchorEl={anchor.current} {...props.menuProps} open={open}>
+        <Menu anchorEl={anchor.current} {...props.menuProps} open={props.open}>
           {props.children}
         </Menu>
       )}
@@ -45,4 +39,4 @@ const AbstractSwitcher = (props: Props) => {
   );
 };
 
-export default AbstractSwitcher;
+export default NewFrameSwitcher;

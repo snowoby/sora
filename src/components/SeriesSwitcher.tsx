@@ -29,3 +29,15 @@ const SeriesSwitcher = ({
   );
 };
 export default SeriesSwitcher;
+type NewSeriesSwitcherProps = {
+  seriesList: Series[];
+  selected?: Series;
+  onChange: (series: Series) => void;
+  placeholder: React.ReactNode;
+};
+const NewSeriesSwitcher = ({
+  seriesList,
+  selected,
+  onChange,
+  placeholder,
+}: SeriesSwitcherProps) => {};
