@@ -104,7 +104,9 @@ const SignPage = ({ pageType }: { pageType: SignPageType }) => {
             <form
               onSubmit={(e) => {
                 e.preventDefault();
+
                 submit[pageType]().catch((e) => log.error(e));
+                return false;
               }}
             >
               <Stack spacing={3}>

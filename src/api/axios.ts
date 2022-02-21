@@ -10,6 +10,7 @@ import log from "@/log";
 
 dotenv.config();
 let config: AxiosRequestConfig = {
+  baseURL: "http://localhost:8089/",
   timeout: 1000,
 };
 if (process.env.NODE_ENV === "production") {

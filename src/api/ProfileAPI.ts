@@ -9,4 +9,4 @@ export const APICreateProfile = (info: Record<string, any>) =>
   client.post<Profile>(Api.profile, info);
 
 export const APIUpdateProfile = (id: string, info: Record<string, any>) =>
-  client.put<Profile>(urlcat(Api.profile, "/:id/", { id }), info);
+  client.put<Profile>(urlcat(Api.profile, "/:id", { id }), info);

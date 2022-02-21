@@ -4,11 +4,14 @@ import {
   SetAccessToken,
   SetRefreshToken,
 } from "@/utils/utils";
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { Token } from "@/types";
 import log from "@/log";
 
-let config;
+let config: AxiosRequestConfig = {
+  baseURL: "http://localhost:8089/",
+  timeout: 1000,
+};
 if (process.env.NODE_ENV === "production") {
   config = {
     baseURL: process.env.REACT_APP_ENDPOINT,
