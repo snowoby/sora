@@ -15,7 +15,6 @@ let config: AxiosRequestConfig = {
 if (process.env.NODE_ENV === "production") {
   config = {
     baseURL: process.env.REACT_APP_ENDPOINT,
-    timeout: 5000,
   };
 }
 const client = axios.create(config);
