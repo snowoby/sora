@@ -40,17 +40,17 @@ const PublishPage = () => {
     content: "",
     seriesID: null,
     profileID: "",
-    navPicture: "",
+    cover: "",
   });
 
-  const handleNavPicChange = (navPic: FileInfo) => {
+  const handleCoverChange = (cover: FileInfo) => {
     setFormData({
       ...formData,
-      navPicture: `${navPic.path}/${navPic.id}`,
+      cover: `${cover.path}/${cover.id}`,
     });
-    setNavPic(navPic);
+    setCover(cover);
   };
-  const [navPic, setNavPic] = useState<FileInfo>();
+  const [cover, setCover] = useState<FileInfo>();
   const [files, setFiles] = useState<FileInfo[]>([]);
 
   useEffect(() => {
@@ -79,18 +79,18 @@ const PublishPage = () => {
                   multiple={false}
                   onDrop={(files) => {
                     FilePush("file", files[0]).then(({ data }) =>
-                      handleNavPicChange(data)
+                      handleCoverChange(data)
                     );
                   }}
                 >
                   <Box
-                    height={navPic ? "18rem" : "6rem"}
+                    height={cover ? "18rem" : "6rem"}
                     width="100%"
                     display="flex"
                     justifyItems="center"
                     justifyContent="center"
                   >
-                    {navPic ? (
+                    {cover ? (
                       <SourceImage
                         style={{
                           height: "100%",
@@ -98,7 +98,7 @@ const PublishPage = () => {
                           objectFit: "cover",
                           overflow: "hidden",
                         }}
-                        source={`${navPic.path}/${navPic.id}`}
+                        source={`${cover.path}/${cover.id}`}
                       />
                     ) : (
                       <Button fullWidth>

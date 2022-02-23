@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Stack } from "@mui/material";
+import { Box, Container, Divider, Grid, Stack } from "@mui/material";
 import EpisodeCard from "@/components/EpisodeCard";
 import MainFrame from "@/pages/frame/MainFrame";
 import { APIGetAllEpisode } from "@/api/Episode";
@@ -18,19 +18,26 @@ const MainPage = () => {
   }, []);
 
   return (
-    <MainFrame>
-      <Stack spacing={2}>
-        {episodes && (
-          <Masonry columns={2} spacing={1}>
-            {episodes.map((episode) => (
-              <Box key={episode.id}>
-                <EpisodeCard episode={episode} />
-              </Box>
-            ))}
-          </Masonry>
-        )}
-      </Stack>
-    </MainFrame>
+    <Container>
+      <Grid container>
+        <Grid xs={3}></Grid>
+        <Grid xs={6}>
+          <Stack spacing={2}>
+            {episodes && (
+              <Stack>
+                {episodes.map((episode) => (
+                  <Box key={episode.id}>
+                    <EpisodeCard episode={episode} />
+                    <Divider />
+                  </Box>
+                ))}
+              </Stack>
+            )}
+          </Stack>
+        </Grid>
+        <Grid xs={3}></Grid>
+      </Grid>
+    </Container>
   );
 };
 

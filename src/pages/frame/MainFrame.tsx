@@ -32,7 +32,7 @@ const MainFrame = ({ children }: MainFrameProps) => {
   );
 
   return (
-    <Container>
+    <Container maxWidth="xl">
       <Grid container columnSpacing={2}>
         <Grid item xs={8}>
           {children}

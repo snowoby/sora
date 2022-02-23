@@ -8,10 +8,7 @@ import axios, { AxiosRequestConfig } from "axios";
 import { Token } from "@/types";
 import log from "@/log";
 
-let config: AxiosRequestConfig = {
-  baseURL: "http://localhost:8089/",
-  timeout: 1000,
-};
+let config;
 if (process.env.NODE_ENV === "production") {
   config = {
     baseURL: process.env.REACT_APP_ENDPOINT,

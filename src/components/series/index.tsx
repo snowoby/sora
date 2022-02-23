@@ -1,16 +1,15 @@
 import React from "react";
 import { Profile, Series } from "@/types";
 import { Avatar, Box, Typography } from "@mui/material";
-import { Profiler } from "inspector";
 import { StorageUrl } from "@/api/Storage";
-import log from "@/log";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 type Props = {
   series: Series;
   profile?: Profile;
+  size?: "display";
 };
 
-const SeriesCard = ({ series, profile }: Props) => {
+const SeriesCard = ({ series, profile, size }: Props) => {
   return (
     <div
       style={{
@@ -20,7 +19,10 @@ const SeriesCard = ({ series, profile }: Props) => {
         alignItems: "center",
       }}
     >
-      {profile && <Avatar src={StorageUrl(profile.avatar, "compressed")} />}
+      <Avatar
+        sx={[size === "display" && { height: "2rem", width: "2rem" }]}
+        src={profile && StorageUrl(profile.avatar, "compressed")}
+      />
       <ArrowRightIcon />
       <Typography variant="subtitle2" height="fit-content">
         {series.title}

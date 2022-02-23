@@ -10,13 +10,7 @@ import { APISelf } from "./api/ProfileAPI";
 import { APIStorageEndpoint } from "@/api/Site";
 import endpoint from "@/const/endpoint";
 import urlcat from "urlcat";
-import {
-  AppBar,
-  Box,
-  createTheme,
-  ThemeProvider,
-  Toolbar,
-} from "@mui/material";
+import { Box, createTheme, Grid, ThemeProvider, useTheme } from "@mui/material";
 
 const App = () => {
   const [accountInfo, setAccount] = useState<AccountInfo>();
@@ -39,36 +33,33 @@ const App = () => {
 
   // if (!ep) return <CircularProgress />;
 
+  const theme = createTheme({
+    palette: {
+      text: {
+        primary: "#252525",
+        secondary: "#484848",
+      },
+    },
+  });
+
   return (
     <>
-      <AppBar
-        position="sticky"
-        sx={{
-          backgroundColor: "background.paper",
-          color: "text.primary",
-          mb: "2rem",
-        }}
-      >
-        <Toolbar>{UniversalContextDefaultValue.siteName}</Toolbar>
-      </AppBar>
-
       <Box minHeight="calc(100vh - 20rem)">
-        <UniversalContext.Provider
-          value={{ ...UniversalContextDefaultValue, storage: ep }}
-        >
-          <AccountContext.Provider
-            value={{
-              account: accountInfo?.account,
-              profiles: accountInfo?.profiles,
-              updateAccount,
-            }}
+        <ThemeProvider theme={theme}>
+          <UniversalContext.Provider
+            value={{ ...UniversalContextDefaultValue, storage: ep }}
           >
-            <Guide />
-          </AccountContext.Provider>
-        </UniversalContext.Provider>
-      </Box>
-      <Box sx={{ minHeight: "20rem", backgroundColor: "#8fb2bd" }}>
-        页面底部
+            <AccountContext.Provider
+              value={{
+                account: accountInfo?.account,
+                profiles: accountInfo?.profiles,
+                updateAccount,
+              }}
+            >
+              <Guide />
+            </AccountContext.Provider>
+          </UniversalContext.Provider>
+        </ThemeProvider>
       </Box>
     </>
   );

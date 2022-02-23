@@ -98,7 +98,7 @@ const SignPage = ({ pageType }: { pageType: SignPageType }) => {
           ]}
         >
           <Typography variant="h4" sx={{ textAlign: "center", mb: "0.75rem" }}>
-            {universalConfig.siteName}
+            {pageType}
           </Typography>
           <Box>
             <form

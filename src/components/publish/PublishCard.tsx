@@ -31,7 +31,7 @@ const PublishCard = ({ profileID, afterSubmit }: PublishCardProps) => {
     content: "",
   });
 
-  const [navPic, setNavPic] = useState<FileInfo>();
+  const [cover, setCover] = useState<FileInfo>();
   const [files, setFiles] = useState<FileInfo[]>([]);
 
   return (
@@ -52,17 +52,17 @@ const PublishCard = ({ profileID, afterSubmit }: PublishCardProps) => {
             multiple={false}
             onDrop={(files) => {
               log.info(files);
-              FilePush("file", files[0]).then(({ data }) => setNavPic(data));
+              FilePush("file", files[0]).then(({ data }) => setCover(data));
             }}
           >
             <Box
-              height={navPic ? "18rem" : "6rem"}
+              height={cover ? "18rem" : "6rem"}
               width="100%"
               display="flex"
               justifyItems="center"
               justifyContent="center"
             >
-              {navPic ? (
+              {cover ? (
                 <SourceImage
                   style={{
                     height: "100%",
@@ -70,7 +70,7 @@ const PublishCard = ({ profileID, afterSubmit }: PublishCardProps) => {
                     objectFit: "cover",
                     overflow: "hidden",
                   }}
-                  source={`${navPic.path}/${navPic.id}`}
+                  source={`${cover.path}/${cover.id}`}
                 />
               ) : (
                 <IconButton>

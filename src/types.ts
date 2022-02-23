@@ -67,7 +67,7 @@ export type MainFrameProps = {
 export type EpisodeData = {
   title: string;
   content: string;
-  navPicture: string;
+  cover?: string;
 };
 
 export type Episode = EpisodeData &
