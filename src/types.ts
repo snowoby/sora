@@ -4,6 +4,8 @@ import { AvatarProps } from "@mui/material";
 
 type InfoBasic = {
   id: string;
+  create_time: string;
+  update_time: string;
   valueType: string;
 };
 

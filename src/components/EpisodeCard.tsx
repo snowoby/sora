@@ -1,41 +1,73 @@
 import React from "react";
-import { Box, CardMedia, Paper, Stack, Typography } from "@mui/material";
-import { EpisodeCardProps, Profile } from "@/types";
+import {
+  Avatar,
+  Box,
+  CardMedia,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { EpisodeCardProps, Profile, Series } from "@/types";
 import { Link } from "react-router-dom";
 import { StorageUrl } from "@/api/Storage";
-import SeriesCard from "@/components/series";
 import AvatarWrap from "@/components/AvatarWrap";
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 
+dayjs.extend(relativeTime);
 const EpisodeCard = ({ episode }: EpisodeCardProps) => {
   return (
-    <Link to={`episode/${episode.id}`} style={{ textDecoration: "none" }}>
-      <Paper
-        sx={{
-          boxShadow: "0px 0px 0px",
-          borderTopLeftRadius: "1rem",
-          p: "1rem",
-        }}
-      >
-        <Stack spacing={2}>
-          <Box>
+    <Paper
+      sx={{
+        boxShadow: "0px 0px 0px",
+        borderRadius: "0px",
+        "&:hover": {
+          backgroundColor: "action.selected",
+          transition: "background-color 0.2s ease-in-out",
+        },
+      }}
+    >
+      <Stack>
+        <Box mx="2rem" my="1rem">
+          <Box
+            display="grid"
+            gridTemplateColumns="auto 1fr auto"
+            alignItems="center"
+          >
             {episode.series ? (
-              <SeriesCard series={episode.series} size="display" />
+              <SeriesCard series={episode.series} />
             ) : (
               <ProfileCard profile={episode.profile} />
             )}
+            <div />
+
+            <Typography variant="body2" color="text.secondary">
+              {dayjs(episode.create_time).fromNow()}
+            </Typography>
           </Box>
+        </Box>
+        <Link
+          to={`episode/${episode.id}`}
+          style={{
+            textDecoration: "none",
+            marginBottom: "1rem",
+          }}
+        >
           {episode.cover && (
             <CardMedia
               component="img"
-              sx={{ maxHeight: "1000px" }}
+              sx={{ maxHeight: "1000px", mb: "1rem" }}
               image={StorageUrl(episode.cover)}
               alt="green iguana"
             />
           )}
-          <Typography variant="h6">{episode.title}</Typography>
-        </Stack>
-      </Paper>
-    </Link>
+          <Typography sx={{ mx: "2rem", color: "text.primary" }} variant="h6">
+            {episode.title}
+          </Typography>
+        </Link>
+      </Stack>
+    </Paper>
   );
 };
 
@@ -50,7 +82,7 @@ const ProfileCard = ({ profile }: { profile: Profile }) => {
       }}
     >
       <AvatarWrap
-        sx={{ width: "3rem", height: "3rem" }}
+        sx={{ width: "2.5rem", height: "2.5rem" }}
         source={profile.avatar}
       />
       <Box
@@ -64,10 +96,9 @@ const ProfileCard = ({ profile }: { profile: Profile }) => {
       >
         <Typography
           variant="subtitle1"
-          color="text.secondary"
           sx={{
-            fontWeight: "400",
             overflow: "hidden",
+
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
           }}
@@ -76,6 +107,35 @@ const ProfileCard = ({ profile }: { profile: Profile }) => {
         </Typography>
       </Box>
     </Box>
+  );
+};
+
+type SeriesCardProps = {
+  series: Series;
+};
+
+const SeriesCard = ({ series }: SeriesCardProps) => {
+  const profile = series.profile;
+  return (
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "auto auto 1fr",
+        gap: "0.5rem",
+        alignItems: "center",
+      }}
+    >
+      <Avatar
+        sx={{ height: "2.5rem", width: "2.5rem" }}
+        src={
+          profile && profile.avatar && StorageUrl(profile.avatar, "compressed")
+        }
+      />
+      <ArrowRightIcon />
+      <Typography variant="subtitle1" height="fit-content">
+        {series.title}
+      </Typography>
+    </div>
   );
 };
 export default EpisodeCard;

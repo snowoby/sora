@@ -37,7 +37,7 @@ const App = () => {
     palette: {
       text: {
         primary: "#252525",
-        secondary: "#484848",
+        secondary: "#696969",
       },
     },
   });
