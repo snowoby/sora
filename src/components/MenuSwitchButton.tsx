@@ -7,7 +7,7 @@ const MenuSwitchButton = (props: ButtonProps) => {
       sx={{
         borderRadius: "9999px",
         "&:hover": {
-          backgroundColor: "#eeeeee",
+          backgroundColor: "action.hover",
         },
         padding: "0.75rem",
         color: "text.primary",

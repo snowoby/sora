@@ -26,7 +26,7 @@ const GroupButton = ({
             justifyContent: "flex-start",
           },
           active && {
-            backgroundColor: "#eeeeee",
+            backgroundColor: "action.hover",
           },
         ]}
         fullWidth

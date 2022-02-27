@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -7,6 +7,7 @@ import {
   Divider,
   Grid,
   Stack,
+  Typography,
 } from "@mui/material";
 import EpisodeCard from "@/components/EpisodeCard";
 import MainFrame from "@/pages/frame/MainFrame";
@@ -19,6 +20,8 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
 import LibraryBooksOutlinedIcon from "@mui/icons-material/LibraryBooksOutlined";
+import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
+import UniversalContext from "@/context/UniversalContext";
 
 const WrappedButton = (props: ButtonProps) => {
   return (
@@ -27,7 +30,7 @@ const WrappedButton = (props: ButtonProps) => {
       sx={{
         borderRadius: "9999px",
         "&:hover": {
-          backgroundColor: "action.selected",
+          backgroundColor: "action.hover",
         },
         padding: "0.75rem",
         color: "text.primary",
@@ -50,9 +53,11 @@ const MainPage = () => {
       .catch((e) => log.error(e));
   }, []);
 
+  const { siteName } = useContext(UniversalContext);
+
   const router = [
-    { name: "account", icon: <AccountCircleOutlinedIcon />, link: "/account" },
     { name: "home", icon: <HomeOutlinedIcon />, link: "/" },
+    { name: "account", icon: <AccountCircleOutlinedIcon />, link: "/account" },
     { name: "series", icon: <LibraryBooksOutlinedIcon />, link: "/series" },
     {
       name: "publish",
@@ -91,6 +96,9 @@ const MainPage = () => {
         </Grid>
         <Grid item xs={2}>
           <Stack className="sticky top-0" spacing={0}>
+            <Typography variant="h6" sx={{ m: "0.75rem", userSelect: "none" }}>
+              {siteName}
+            </Typography>
             {router.map((route, index) => (
               <Link to={route.link} key={index}>
                 <WrappedButton>

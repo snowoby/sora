@@ -34,6 +34,7 @@ const App = () => {
   // if (!ep) return <CircularProgress />;
 
   const theme = createTheme({
+    components: {},
     palette: {
       text: {
         primary: "#252525",

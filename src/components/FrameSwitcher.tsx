@@ -34,7 +34,7 @@ const FrameSwitcher = <T,>(props: FrameSwitcherProps<T>) => {
         sx={{
           borderRadius: "9999px",
           "&:hover": {
-            backgroundColor: "action.selected",
+            backgroundColor: "action.hover",
           },
           padding: "0.75rem",
           color: "text.primary",

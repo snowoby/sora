@@ -8,6 +8,7 @@ import MarkdownViewer from "@/components/publish/MarkdownViewer";
 import ProfileCard from "@/components/profile";
 import BackTitleBar from "@/components/BackTitleBar";
 import SeriesCard from "@/components/series";
+import { StorageUrl } from "@/api/Storage";
 
 const EpisodePage = () => {
   let { id } = useParams();
@@ -27,9 +28,15 @@ const EpisodePage = () => {
       <Grid container spacing={2}>
         <Grid item xs={8}>
           <BackTitleBar>{episode.title}</BackTitleBar>
-          <Paper sx={{ padding: "0.5rem" }}>
+          {episode.cover && (
+            <img
+              style={{ maxWidth: "100%" }}
+              srcSet={StorageUrl(episode.cover, "compressed")}
+            />
+          )}
+          <Box sx={{ padding: "0.5rem" }}>
             <MarkdownViewer>{episode.content}</MarkdownViewer>
-          </Paper>
+          </Box>
         </Grid>
         <Grid item xs={4}>
           <Box position="sticky" top="0" bottom="0">

@@ -57,8 +57,8 @@ const EpisodeCard = ({ episode }: EpisodeCardProps) => {
           {episode.cover && (
             <CardMedia
               component="img"
-              sx={{ maxHeight: "1000px", mb: "1rem" }}
-              image={StorageUrl(episode.cover, "compressed")}
+              sx={{ mb: "1rem", width: "100%", maxWidth: "100%" }}
+              image={StorageUrl(episode.cover, "thumbnail")}
               alt="green iguana"
             />
           )}

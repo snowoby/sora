@@ -234,14 +234,14 @@ const AccountPage = () => {
                 {
                   padding: "1rem",
                   "&:hover": {
-                    backgroundColor: "#eeeeee",
+                    backgroundColor: "action.hover",
                   },
                   color: "text.primary",
                   textTransform: "none",
                   justifyContent: "flex-start",
                 },
                 selectedProfile?.id === profile.id && {
-                  backgroundColor: "#eeeeee",
+                  backgroundColor: "action.hover",
                 },
               ]}
               fullWidth

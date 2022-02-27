@@ -7,13 +7,20 @@ const BackTitleBar = ({ children }: { children?: React.ReactNode }) => {
   const navigate = useNavigate();
 
   return (
-    <Box position="sticky" top="0" bgcolor="background.paper">
-      <Typography variant="h6">
-        <IconButton onClick={() => navigate(-1)}>
-          <ArrowBack />
-        </IconButton>
-        {children}
-      </Typography>
+    <Box
+      position="sticky"
+      top="0"
+      bgcolor="background.paper"
+      mt={2}
+      display="grid"
+      gridTemplateColumns="auto 1fr"
+      alignItems="center"
+      gap={2}
+    >
+      <IconButton onClick={() => navigate(-1)}>
+        <ArrowBack />
+      </IconButton>
+      <Typography variant="h6">{children}</Typography>
     </Box>
   );
 };
