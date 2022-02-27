@@ -1,4 +1,4 @@
-import { Box, Container, Grid, Paper } from "@mui/material";
+import { Box, Container, Grid, Paper, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { APIGetEpisode } from "@/api/Episode";
@@ -27,7 +27,9 @@ const EpisodePage = () => {
     <Container>
       <Grid container spacing={2}>
         <Grid item xs={8}>
-          <BackTitleBar>{episode.title}</BackTitleBar>
+          <Box position="sticky" top="0">
+            <BackTitleBar>{episode.title}</BackTitleBar>
+          </Box>
           {episode.cover && (
             <img
               style={{ maxWidth: "100%" }}
@@ -39,16 +41,16 @@ const EpisodePage = () => {
           </Box>
         </Grid>
         <Grid item xs={4}>
-          <Box position="sticky" top="0" bottom="0">
-            <h2>Author</h2>
+          <Box position="sticky" top="1rem" bottom="0">
+            <Typography variant="h6">Author</Typography>
             <ProfileCard profile={episode.profile} />
+            {episode.series && (
+              <>
+                <Typography variant="h6">Series</Typography>
+                <SeriesCard series={episode.series} />
+              </>
+            )}
           </Box>
-          {episode.series && (
-            <Box position="sticky" top="0" bottom="0">
-              <h2>Series</h2>
-              <SeriesCard series={episode.series} />
-            </Box>
-          )}
         </Grid>
       </Grid>
     </Container>
