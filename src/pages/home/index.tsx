@@ -22,6 +22,7 @@ import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRen
 import LibraryBooksOutlinedIcon from "@mui/icons-material/LibraryBooksOutlined";
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import UniversalContext from "@/context/UniversalContext";
+import AccountContext from "@/context/AccountContext";
 
 const WrappedButton = (props: ButtonProps) => {
   return (
@@ -45,6 +46,7 @@ const WrappedButton = (props: ButtonProps) => {
 
 const MainPage = () => {
   const [episodes, setEpisodes] = useState<Episode[]>();
+  const { profiles } = useContext(AccountContext);
   useEffect(() => {
     APIGetAllEpisode()
       .then(({ data }) => {
@@ -58,11 +60,17 @@ const MainPage = () => {
   const router = [
     { name: "home", icon: <HomeOutlinedIcon />, link: "/" },
     { name: "account", icon: <AccountCircleOutlinedIcon />, link: "/account" },
-    { name: "series", icon: <LibraryBooksOutlinedIcon />, link: "/series" },
+    {
+      name: "series",
+      icon: <LibraryBooksOutlinedIcon />,
+      link: "/series",
+      disabled: !profiles?.length,
+    },
     {
       name: "publish",
       icon: <DriveFileRenameOutlineOutlinedIcon />,
       link: "/publish",
+      disabled: !profiles?.length,
     },
   ];
 
@@ -100,7 +108,7 @@ const MainPage = () => {
               {siteName}
             </Typography>
             {router.map((route, index) => (
-              <Link to={route.link} key={index}>
+              <Link to={route.link} key={index} hidden={route.disabled}>
                 <WrappedButton>
                   <Box display="flex" gap="0.75rem">
                     {route.icon} {route.name}

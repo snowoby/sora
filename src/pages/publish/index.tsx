@@ -6,17 +6,10 @@ import {
   Container,
   Divider,
   Grid,
-  ImageListItem,
-  ImageListItemBar,
-  List,
-  ListSubheader,
-  MenuItem,
   Stack,
   TextField,
-  Typography,
 } from "@mui/material";
 import AccountContext from "@/context/AccountContext";
-import ProfileSwitcher from "@/components/ProfileSwitcher";
 import { FileInfo, Profile, Series } from "@/types";
 import { APICreateEpisode } from "@/api/Episode";
 import log from "@/log";
@@ -24,13 +17,11 @@ import FileUploader from "@/components/publish/FileUploader";
 import { FilePush } from "@/api/FileUpload";
 import SourceImage from "@/components/Image";
 import { Add } from "@mui/icons-material";
-import MarkdownEditor from "@/components/publish/MarkdownEditor";
-import Image from "@/components/Image";
 import BackTitleBar from "@/components/BackTitleBar";
 import { APIAllMySeries } from "@/api/Series";
-import FrameSwitcher from "@/components/FrameSwitcher";
-import SeriesCard from "@/components/series";
-import ProfileCard from "@/components/profile";
+import FilePutter from "@/components/FilePutter";
+import Content from "@/pages/publish/Content";
+import ProfileSeriesSwitcher from "./ProfileSeriesSwitcher";
 
 const PublishPage = () => {
   const { profiles } = useContext(AccountContext);
@@ -117,81 +108,12 @@ const PublishPage = () => {
                     setFormData({ ...formData, title: e.target.value })
                   }
                 />
-                <MarkdownEditor
-                  multiline
-                  variant="filled"
-                  minRows={5}
-                  fullWidth
-                  label="content"
-                  name="content"
-                  value={formData.content}
-                  onChange={(e) =>
-                    setFormData({ ...formData, content: e.target.value })
-                  }
+                <Content
+                  content={formData.content}
+                  onChange={(content) => setFormData({ ...formData, content })}
                 />
 
-                <Box display="grid" gridTemplateColumns="auto 1fr">
-                  <div
-                    style={{ width: "6rem", height: "6rem", margin: "0.5rem" }}
-                  >
-                    <FileUploader
-                      accept={["image/*"]}
-                      onDrop={async (files) => {
-                        for (let i = 0; i < files.length; i++) {
-                          const { data } = await FilePush("file", files[i]);
-                          setFiles((prevFiles) => [...prevFiles, data]);
-                        }
-                      }}
-                    >
-                      <Button
-                        variant="contained"
-                        sx={{
-                          width: "6rem",
-                          height: "6rem",
-                          textAlign: "left",
-                        }}
-                      >
-                        Upload files here
-                      </Button>
-                    </FileUploader>
-                  </div>
-                  <List
-                    component={Stack}
-                    direction="row"
-                    spacing={2}
-                    sx={{ overflowX: "scroll" }}
-                  >
-                    {files
-                      .filter((file) => file.mime.startsWith("image/"))
-                      .map((file) => (
-                        <ImageListItem key={file.id}>
-                          <Button
-                            onClick={() =>
-                              navigator.clipboard.writeText(
-                                `![${file.filename}](image:${file.path}/${file.id} "${file.filename}")`
-                              )
-                            }
-                          >
-                            <Image
-                              style={{
-                                width: "6rem",
-                                height: "6rem",
-                                objectFit: "cover",
-                              }}
-                              source={`${file.path}/${file.id}`}
-                            />
-                            <ImageListItemBar
-                              subtitle={
-                                <Typography variant="body2">
-                                  {file.filename}
-                                </Typography>
-                              }
-                            />
-                          </Button>
-                        </ImageListItem>
-                      ))}
-                  </List>
-                </Box>
+                <FilePutter files={files} onChange={setFiles} />
               </Stack>
             </form>
           </Card>
@@ -254,103 +176,3 @@ const PublishPage = () => {
 };
 
 export default PublishPage;
-
-type GroupLabel = { valueType: "group"; children: React.ReactNode };
-
-type ProfileSeriesSwitcherProps = {
-  profileOptions: Profile[];
-  seriesOptions: Series[];
-  selected?: Profile | Series;
-  onChange: (selected: Profile | Series) => void;
-  placeholder?: string;
-};
-
-const ProfileSeriesSwitcher = ({
-  profileOptions,
-  seriesOptions,
-  selected,
-  onChange,
-  placeholder,
-}: ProfileSeriesSwitcherProps) => {
-  return (
-    <FrameSwitcher<Series | Profile | GroupLabel>
-      selected={selected}
-      options={[
-        {
-          valueType: "group",
-          children: <Divider />,
-        },
-        ...profileOptions,
-        {
-          valueType: "group",
-          children: <Divider />,
-        },
-        ...seriesOptions,
-      ]}
-      placeholder={placeholder}
-      renderButton={(item) => {
-        return (
-          <>
-            {item.valueType === "profile" ? (
-              <ProfileCard profile={item as Profile} size="normal" />
-            ) : (
-              <SeriesCard
-                series={item as Series}
-                profile={(item as Series).profile}
-              />
-            )}
-          </>
-        );
-      }}
-      renderSelected={(selected) => {
-        switch (selected.valueType) {
-          case "profile":
-            return <ProfileCard profile={selected as Profile} size="normal" />;
-          case "series":
-            return (
-              <SeriesCard
-                series={selected as Series}
-                profile={(selected as Series).profile}
-              />
-            );
-          default:
-            return null;
-        }
-      }}
-      renderUnselectedMenuItem={(unselected, callAfterClick) => {
-        if (unselected.valueType === "group")
-          return (
-            <ListSubheader sx={{ backgroundColor: "text.disabled" }}>
-              {(unselected as GroupLabel).children}
-            </ListSubheader>
-          );
-        let inner;
-        switch (unselected.valueType) {
-          case "profile":
-            inner = <ProfileCard profile={unselected as Profile} size="lite" />;
-            break;
-          case "series":
-            inner = (
-              <SeriesCard
-                series={unselected as Series}
-                profile={(unselected as Series).profile}
-              />
-            );
-            break;
-          default:
-            inner = null;
-        }
-        return (
-          <MenuItem
-            onClick={() => {
-              callAfterClick();
-              onChange(unselected as Profile | Series);
-            }}
-          >
-            {inner}
-          </MenuItem>
-        );
-      }}
-    />
-  );
-};
