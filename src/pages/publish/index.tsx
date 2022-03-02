@@ -1,53 +1,66 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  Card,
-  Container,
-  Divider,
-  Grid,
-  Stack,
-  TextField,
-} from "@mui/material";
+import { Button, Card, Container, Divider, Grid, Stack } from "@mui/material";
 import AccountContext from "@/context/AccountContext";
 import { FileInfo, Profile, Series } from "@/types";
 import { APICreateEpisode } from "@/api/Episode";
 import log from "@/log";
-import FileUploader from "@/components/publish/FileUploader";
-import { FilePush } from "@/api/FileUpload";
-import SourceImage from "@/components/Image";
-import { Add } from "@mui/icons-material";
 import BackTitleBar from "@/components/BackTitleBar";
 import { APIAllMySeries } from "@/api/Series";
-import FilePutter from "@/components/FilePutter";
-import Content from "@/pages/publish/Content";
 import ProfileSeriesSwitcher from "./ProfileSeriesSwitcher";
+import FormalPublishCard from "@/pages/publish/FormalPublishCard";
 
 const PublishPage = () => {
   const { profiles } = useContext(AccountContext);
   const [seriesList, setSeriesList] = useState<Series[]>();
-  const [formData, setFormData] = useState<Record<string, any>>({
-    title: "",
-    content: "",
-    seriesID: null,
-    profileID: "",
-    cover: "",
-  });
-
-  const handleCoverChange = (cover: FileInfo) => {
-    setFormData({
-      ...formData,
-      cover: `${cover.path}/${cover.id}`,
-    });
-    setCover(cover);
-  };
   const [cover, setCover] = useState<FileInfo>();
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
   const [files, setFiles] = useState<FileInfo[]>([]);
+
+  const handleTitleChange = (field: string, value: unknown) => {
+    log.info(value);
+    switch (field) {
+      case "title":
+        setTitle(value as string);
+        break;
+      case "content":
+        setContent(value as string);
+        break;
+      case "cover":
+        setCover(value as FileInfo);
+        break;
+      case "files":
+        setFiles(value as FileInfo[]);
+        break;
+    }
+  };
+
+  const [series, setSeries] = useState<Series | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+
+  const submit = () => {
+    APICreateEpisode({
+      cover: cover?.id,
+      content,
+      title,
+      files: files.map((file) => ({
+        id: file.id,
+        nsfw: false,
+        mime: file.mime,
+      })),
+      seriesId: series?.id,
+      profileId: profile?.id,
+    })
+      .then(({ data }) => {
+        log.info(data);
+      })
+      .catch((e) => log.error(e));
+  };
 
   useEffect(() => {
     APIAllMySeries()
       .then(({ data }) => setSeriesList(data))
-      .catch(log.error);
+      .catch(log.info);
   }, []);
 
   if (!profiles || !seriesList) {
@@ -65,56 +78,13 @@ const PublishPage = () => {
           <BackTitleBar>publish</BackTitleBar>
           <Card sx={{ overflow: "visible" }}>
             <form>
-              <Stack spacing={2}>
-                <FileUploader
-                  multiple={false}
-                  onDrop={(files) => {
-                    FilePush("file", files[0]).then(({ data }) =>
-                      handleCoverChange(data)
-                    );
-                  }}
-                >
-                  <Box
-                    height={cover ? "18rem" : "6rem"}
-                    width="100%"
-                    display="flex"
-                    justifyItems="center"
-                    justifyContent="center"
-                  >
-                    {cover ? (
-                      <SourceImage
-                        style={{
-                          height: "100%",
-                          width: "100%",
-                          objectFit: "cover",
-                          overflow: "hidden",
-                        }}
-                        source={`${cover.path}/${cover.id}`}
-                      />
-                    ) : (
-                      <Button fullWidth>
-                        <Add />
-                      </Button>
-                    )}
-                  </Box>
-                </FileUploader>
-                <TextField
-                  variant="filled"
-                  fullWidth
-                  label="title"
-                  name="title"
-                  value={formData.title}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
-                />
-                <Content
-                  content={formData.content}
-                  onChange={(content) => setFormData({ ...formData, content })}
-                />
-
-                <FilePutter files={files} onChange={setFiles} />
-              </Stack>
+              <FormalPublishCard
+                cover={cover}
+                title={title}
+                content={content}
+                files={files}
+                onChange={handleTitleChange}
+              />
             </form>
           </Card>
         </Grid>
@@ -125,28 +95,20 @@ const PublishPage = () => {
               onChange={(item) => {
                 if (item.valueType === "series") {
                   const series = item as Series;
-                  setFormData({
-                    ...formData,
-                    seriesID: series.id,
-                    profileID: series.profile.id,
-                  });
+                  setSeries(series);
+                  setProfile(series.profile);
                 } else {
                   const profile = item as Profile;
-                  setFormData({
-                    ...formData,
-                    profileID: profile.id,
-                    seriesID: null,
-                  });
+                  setSeries(null);
+                  setProfile(profile);
                 }
               }}
               profileOptions={profiles ?? []}
               seriesOptions={seriesList ?? []}
               selected={
-                formData.seriesID
-                  ? seriesList.find((series) => series.id === formData.seriesID)
-                  : profiles.find(
-                      (profile) => profile.id === formData.profileID
-                    )
+                series
+                  ? seriesList.find((item) => series?.id === item.id)
+                  : profiles.find((item) => profile?.id === item.id)
               }
             />
             <Divider />
@@ -155,13 +117,7 @@ const PublishPage = () => {
               type="button"
               variant="contained"
               size="large"
-              onClick={() =>
-                APICreateEpisode(formData)
-                  .then(({ data }) => {
-                    log.info(data);
-                  })
-                  .catch((e) => log.error(e))
-              }
+              onClick={submit}
             >
               publish
             </Button>
