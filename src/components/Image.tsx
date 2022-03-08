@@ -4,9 +4,9 @@ import log from "@/log";
 import urlcat from "urlcat";
 
 const SourceImage = ({
-                       source,
-                       ...props
-                     }: React.ImgHTMLAttributes<HTMLImageElement> & { source: string }) => {
+  source,
+  ...props
+}: React.ImgHTMLAttributes<HTMLImageElement> & { source: string }) => {
   const errorCount = useRef(0);
   const timeoutID = useRef<any>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -22,7 +22,7 @@ const SourceImage = ({
   return (
     <img
       ref={imgRef}
-      src={StorageUrl(source, "compressed")}
+      src={StorageUrl(source, "file", "compressed")}
       onError={(e) => {
         timeoutID.current = setTimeout(() => {
           if (!imgRef.current) return;

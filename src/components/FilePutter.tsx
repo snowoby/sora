@@ -56,7 +56,7 @@ const FilePutter = (props: Props) => {
               <Button
                 onClick={() =>
                   navigator.clipboard.writeText(
-                    `![${file.filename}](image:${file.path}/${file.id} "${file.filename}")`
+                    `![${file.filename}](image:${file.id} "${file.filename}")`
                   )
                 }
               >
@@ -66,7 +66,7 @@ const FilePutter = (props: Props) => {
                     height: "6rem",
                     objectFit: "cover",
                   }}
-                  source={`${file.path}/${file.id}`}
+                  source={file.id}
                 />
                 <ImageListItemBar
                   subtitle={

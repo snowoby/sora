@@ -15,7 +15,7 @@ import { APIGetAllEpisode } from "@/api/Episode";
 import { Episode } from "@/types";
 import log from "@/log";
 import { Masonry } from "@mui/lab";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
@@ -23,6 +23,8 @@ import LibraryBooksOutlinedIcon from "@mui/icons-material/LibraryBooksOutlined";
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import UniversalContext from "@/context/UniversalContext";
 import AccountContext from "@/context/AccountContext";
+import ShortEpisodeCard from "@/components/ShortEpisodeCard";
+import ShortModal from "@/pages/home/ShortModal";
 
 const WrappedButton = (props: ButtonProps) => {
   return (
@@ -47,6 +49,12 @@ const WrappedButton = (props: ButtonProps) => {
 const MainPage = () => {
   const [episodes, setEpisodes] = useState<Episode[]>();
   const { profiles } = useContext(AccountContext);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const modalClose = () => {
+    navigate(-1);
+  };
+
   useEffect(() => {
     APIGetAllEpisode()
       .then(({ data }) => {
@@ -72,6 +80,12 @@ const MainPage = () => {
       link: "/publish",
       disabled: !profiles?.length,
     },
+    {
+      name: "quick publish",
+      icon: <DriveFileRenameOutlineOutlinedIcon />,
+      link: "/quick",
+      disabled: !profiles?.length,
+    },
   ];
 
   return (
@@ -94,7 +108,7 @@ const MainPage = () => {
               <Stack>
                 {episodes.map((episode) => (
                   <Box key={episode.id}>
-                    <EpisodeCard episode={episode} />
+                    <ShortEpisodeCard episode={episode} />
                     <Divider />
                   </Box>
                 ))}
@@ -119,6 +133,7 @@ const MainPage = () => {
           </Stack>
         </Grid>
       </Grid>
+      <ShortModal open={location.pathname === "/quick"} onClose={modalClose} />
     </Container>
   );
 };

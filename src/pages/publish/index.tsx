@@ -6,8 +6,8 @@ import { APICreateEpisode } from "@/api/Episode";
 import log from "@/log";
 import BackTitleBar from "@/components/BackTitleBar";
 import { APIAllMySeries } from "@/api/Series";
-import ProfileSeriesSwitcher from "./ProfileSeriesSwitcher";
 import FormalPublishCard from "@/pages/publish/FormalPublishCard";
+import DefaultProfileSeriesSwitcher from "@/components/DefaultProfileSeriesSwitcher";
 
 const PublishPage = () => {
   const { profiles } = useContext(AccountContext);
@@ -35,8 +35,7 @@ const PublishPage = () => {
     }
   };
 
-  const [series, setSeries] = useState<Series | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [identity, setIdentity] = useState<Profile | Series>();
 
   const submit = () => {
     APICreateEpisode({
@@ -48,8 +47,11 @@ const PublishPage = () => {
         nsfw: false,
         mime: file.mime,
       })),
-      seriesId: series?.id,
-      profileId: profile?.id,
+      seriesId: identity?.valueType === "series" ? identity.id : undefined,
+      profileId:
+        identity?.valueType === "series"
+          ? (identity as Series).profile.id
+          : identity?.id,
     })
       .then(({ data }) => {
         log.info(data);
@@ -91,25 +93,9 @@ const PublishPage = () => {
         <Grid item xs={4}>
           <Stack spacing={2}>
             <div />
-            <ProfileSeriesSwitcher
-              onChange={(item) => {
-                if (item.valueType === "series") {
-                  const series = item as Series;
-                  setSeries(series);
-                  setProfile(series.profile);
-                } else {
-                  const profile = item as Profile;
-                  setSeries(null);
-                  setProfile(profile);
-                }
-              }}
-              profileOptions={profiles ?? []}
-              seriesOptions={seriesList ?? []}
-              selected={
-                series
-                  ? seriesList.find((item) => series?.id === item.id)
-                  : profiles.find((item) => profile?.id === item.id)
-              }
+            <DefaultProfileSeriesSwitcher
+              onChange={setIdentity}
+              selected={identity}
             />
             <Divider />
             <Button

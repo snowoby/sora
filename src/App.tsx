@@ -5,23 +5,26 @@ import UniversalContext, {
 import AccountContext from "@/context/AccountContext";
 import Guide from "@/route";
 import log from "./log";
-import { AccountInfo, StorageEndpoint } from "./types";
+import { AccountInfo, Series, StorageEndpoint } from "./types";
 import { APISelf } from "./api/ProfileAPI";
 import { APIStorageEndpoint } from "@/api/Site";
 import endpoint from "@/const/endpoint";
 import urlcat from "urlcat";
 import { Box, createTheme, ThemeProvider } from "@mui/material";
+import { APIAllMySeries } from "@/api/Series";
 
 const App = () => {
   const [accountInfo, setAccount] = useState<AccountInfo>();
+  const [seriesInfo, setSeries] = useState<Series[]>();
   const [ep, setEp] = useState<StorageEndpoint>();
 
-  const updateAccount = () =>
-    APISelf()
-      .then((response) => {
-        setAccount(response.data);
-      })
-      .catch((e) => log.error(e));
+  const updateAccount = async () => {
+    const self = APISelf();
+    const series = APIAllMySeries();
+    const results = await Promise.all([self, series]);
+    setAccount(results[0].data);
+    setSeries(results[1].data);
+  };
 
   useEffect(() => {
     updateAccount().then(() => {});
@@ -54,6 +57,7 @@ const App = () => {
               value={{
                 account: accountInfo?.account,
                 profiles: accountInfo?.profiles,
+                series: seriesInfo,
                 updateAccount,
               }}
             >

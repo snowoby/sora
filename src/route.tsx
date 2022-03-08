@@ -25,6 +25,7 @@ const Guide = () => {
           <Route path=":id" element={<EpisodePage />} />
         </Route>
         <Route path="publish" element={<PublishPage />} />
+        <Route path="quick" element={<MainPage />} />
       </Routes>
     </BrowserRouter>
   );

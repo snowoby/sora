@@ -46,6 +46,7 @@ export type SignPageType = "login" | "register";
 export type AccountContextType = {
   account?: Account;
   profiles?: Profiles;
+  series?: Series[];
   updateAccount: () => void;
 };
 
@@ -76,6 +77,8 @@ export type Episode = EpisodeData &
   InfoBasic & {
     profile: Profile;
     series?: Series;
+    cover?: FileInfo;
+    files?: FileInfo[];
   };
 
 export type PublishCardProps = {

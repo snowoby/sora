@@ -89,7 +89,7 @@ const AccountPage = () => {
           .then(({ data }) =>
             setEditProfile({
               ...editProfile,
-              avatar: `${data.path}/${data.id}`,
+              avatar: data.id,
             })
           )
           .catch((e) => log.error(e));

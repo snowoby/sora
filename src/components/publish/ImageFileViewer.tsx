@@ -10,9 +10,9 @@ const ImageFileViewer = ({ file }: { file: FileInfo }) => {
 
   useEffect(() => {
     const id = setInterval(async () => {
-      const ok = await StorageExists(`${file.path}/${file.id}`, "compressed");
+      const ok = await StorageExists(file.id, file.path, "compressed");
       if (ok) {
-        setSrc(StorageUrl(`${file.path}/${file.id}`, "compressed"));
+        setSrc(StorageUrl(file.id, file.path, "compressed"));
         clearInterval(id);
       } else {
         errCount.current += 1;

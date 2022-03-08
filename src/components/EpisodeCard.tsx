@@ -1,19 +1,12 @@
 import React from "react";
-import {
-  Avatar,
-  Box,
-  CardMedia,
-  Paper,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, CardMedia, Paper, Stack, Typography } from "@mui/material";
 import { EpisodeCardProps, Profile, Series } from "@/types";
 import { Link } from "react-router-dom";
 import { StorageUrl } from "@/api/Storage";
 import AvatarWrap from "@/components/AvatarWrap";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import PublisherCard from "@/components/PublisherCard";
 
 dayjs.extend(relativeTime);
 const EpisodeCard = ({ episode }: EpisodeCardProps) => {
@@ -35,11 +28,7 @@ const EpisodeCard = ({ episode }: EpisodeCardProps) => {
             gridTemplateColumns="auto 1fr auto"
             alignItems="center"
           >
-            {episode.series ? (
-              <SeriesCard series={episode.series} />
-            ) : (
-              <ProfileCard profile={episode.profile} />
-            )}
+            <PublisherCard series={episode.series} profile={episode.profile} />
             <div />
 
             <Typography variant="body2" color="text.secondary">
@@ -58,7 +47,7 @@ const EpisodeCard = ({ episode }: EpisodeCardProps) => {
             <CardMedia
               component="img"
               sx={{ mb: "1rem", width: "100%", maxWidth: "100%" }}
-              image={StorageUrl(episode.cover, "thumbnail")}
+              image={StorageUrl(episode.cover, "file", "thumbnail")}
               alt="green iguana"
             />
           )}
@@ -107,35 +96,6 @@ const ProfileCard = ({ profile }: { profile: Profile }) => {
         </Typography>
       </Box>
     </Box>
-  );
-};
-
-type SeriesCardProps = {
-  series: Series;
-};
-
-const SeriesCard = ({ series }: SeriesCardProps) => {
-  const profile = series.profile;
-  return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "auto auto 1fr",
-        gap: "0.5rem",
-        alignItems: "center",
-      }}
-    >
-      <Avatar
-        sx={{ height: "2.5rem", width: "2.5rem" }}
-        src={
-          profile && profile.avatar && StorageUrl(profile.avatar, "compressed")
-        }
-      />
-      <ArrowRightIcon />
-      <Typography variant="subtitle1" height="fit-content">
-        {series.title}
-      </Typography>
-    </div>
   );
 };
 export default EpisodeCard;

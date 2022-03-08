@@ -1,15 +1,15 @@
 import React from "react";
-import { Profile, Series } from "@/types";
-import { Avatar, Box, Typography } from "@mui/material";
+import { Avatar, Typography } from "@mui/material";
 import { StorageUrl } from "@/api/Storage";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+import { Series } from "@/types";
+
 type Props = {
   series: Series;
-  profile?: Profile;
-  size?: "display";
 };
 
-const SeriesCard = ({ series, profile, size }: Props) => {
+const SeriesProfileCard = ({ series }: Props) => {
+  const profile = series.profile;
   return (
     <div
       style={{
@@ -20,15 +20,17 @@ const SeriesCard = ({ series, profile, size }: Props) => {
       }}
     >
       <Avatar
-        sx={[size === "display" && { height: "2rem", width: "2rem" }]}
-        src={profile && StorageUrl(profile.avatar, "avatar", "compressed")}
+        sx={{ height: "2.5rem", width: "2.5rem" }}
+        src={
+          profile &&
+          profile.avatar &&
+          StorageUrl(profile.avatar, "avatar", "compressed")
+        }
       />
       <ArrowRightIcon />
-      <Typography variant="subtitle2" height="fit-content">
+      <Typography variant="subtitle1" height="fit-content">
         {series.title}
       </Typography>
     </div>
   );
 };
-
-export default SeriesCard;
