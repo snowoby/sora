@@ -12,7 +12,7 @@ type ProfileSeriesSwitcherProps = {
   seriesOptions: Series[];
   selected?: Profile | Series;
   onChange: (selected: Profile | Series) => void;
-  placeholder?: string;
+  placeholder?: React.ReactNode;
 };
 
 const ProfileSeriesSwitcher = ({

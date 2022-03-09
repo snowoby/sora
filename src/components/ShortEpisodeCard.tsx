@@ -1,11 +1,13 @@
 import React from "react";
 import { Episode, FileInfo } from "@/types";
 import PublisherCard from "@/components/PublisherCard";
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import MarkdownViewer from "@/components/publish/MarkdownViewer";
 import { StorageUrl } from "@/api/Storage";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import EventNoteOutlinedIcon from "@mui/icons-material/EventNoteOutlined";
 dayjs.extend(relativeTime);
 
 interface Props {
@@ -35,17 +37,34 @@ const ShortEpisodeCard = ({ episode }: Props) => {
         )}
         <MarkdownViewer skipImage={true}>{episode.content}</MarkdownViewer>
       </Box>
+      {!!episode.files?.length && (
+        <Box
+          m={2}
+          overflow="hidden"
+          sx={{
+            borderRadius: "0.5rem",
+            borderColor: "divider",
+            borderWidth: "0.5px",
+            borderStyle: "solid",
+          }}
+        >
+          <ImageTiles files={episode.files} />
+        </Box>
+      )}
       <Box
-        m={2}
-        overflow="hidden"
-        sx={{
-          borderRadius: "0.5rem",
-          borderColor: "palette.divider",
-          borderWidth: "0.5px",
-          borderStyle: "solid",
-        }}
+        display="flex"
+        flexDirection="row"
+        justifyContent="space-around"
+        py="0.5rem"
       >
-        <ImageTiles files={episode.files} />
+        <Button fullWidth>
+          <ChatBubbleOutlineIcon fontSize="small" />
+          reply
+        </Button>
+        <Button fullWidth>
+          <EventNoteOutlinedIcon fontSize="small" />
+          note
+        </Button>
       </Box>
     </>
   );

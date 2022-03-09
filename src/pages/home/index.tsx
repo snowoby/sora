@@ -51,16 +51,21 @@ const MainPage = () => {
   const { profiles } = useContext(AccountContext);
   const location = useLocation();
   const navigate = useNavigate();
-  const modalClose = () => {
-    navigate(-1);
-  };
 
-  useEffect(() => {
+  const fetchEpisodes = () =>
     APIGetAllEpisode()
       .then(({ data }) => {
         setEpisodes(data);
       })
       .catch((e) => log.error(e));
+
+  const modalClose = () => {
+    navigate("/");
+    fetchEpisodes().then();
+  };
+
+  useEffect(() => {
+    fetchEpisodes();
   }, []);
 
   const { siteName } = useContext(UniversalContext);

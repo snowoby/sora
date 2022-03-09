@@ -22,7 +22,7 @@ const ShortModal = (props: Props) => {
     >
       <DialogTitle>Quick</DialogTitle>
       <DialogContent>
-        <ShortPublishCard />
+        <ShortPublishCard onFinish={props.onClose} />
       </DialogContent>
     </Dialog>
   );

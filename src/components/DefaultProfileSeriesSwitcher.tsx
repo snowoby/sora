@@ -6,6 +6,7 @@ import { Profile, Series } from "@/types";
 type Props = {
   selected?: Series | Profile;
   onChange: (item: Series | Profile) => void;
+  placeholder?: React.ReactNode;
 };
 
 const DefaultProfileSeriesSwitcher = (props: Props) => {
@@ -17,6 +18,7 @@ const DefaultProfileSeriesSwitcher = (props: Props) => {
       profileOptions={profiles ?? []}
       seriesOptions={series ?? []}
       onChange={props.onChange}
+      placeholder={props.placeholder}
     />
   );
 };

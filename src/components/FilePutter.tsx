@@ -25,10 +25,12 @@ const FilePutter = (props: Props) => {
         <FileUploader
           accept={["image/*"]}
           onDrop={async (dropFiles) => {
+            const fileList = [...files];
             for (let i = 0; i < dropFiles.length; i++) {
               const { data } = await FilePush("file", dropFiles[i]);
-              onChange([...files, data]);
+              fileList.push(data);
             }
+            onChange(fileList);
           }}
         >
           <Button
