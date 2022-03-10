@@ -19,11 +19,15 @@ const App = () => {
   const [ep, setEp] = useState<StorageEndpoint>();
 
   const updateAccount = async () => {
-    const self = APISelf();
-    const series = APIAllMySeries();
-    const results = await Promise.all([self, series]);
-    setAccount(results[0].data);
-    setSeries(results[1].data);
+    try {
+      const self = APISelf();
+      const series = APIAllMySeries();
+      const results = await Promise.all([self, series]);
+      setAccount(results[0].data);
+      setSeries(results[1].data);
+    } catch (e) {
+      log.error(e);
+    }
   };
 
   useEffect(() => {

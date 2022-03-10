@@ -24,6 +24,8 @@ client.interceptors.request.use((config) => {
   return config;
 });
 
+const sleep = (ms = 500) => new Promise((resolve) => setTimeout(resolve, ms))
+
 client.interceptors.response.use(
   (response) => response,
   (e) => {
@@ -45,5 +47,12 @@ client.interceptors.response.use(
     return Promise.reject(e);
   }
 );
+
+client.interceptors.response.use(async (response)=>{
+  if (process.env.NODE_ENV === 'development') {
+    await sleep();
+  }
+  return response;
+})
 
 export default client;

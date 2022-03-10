@@ -14,7 +14,7 @@ const DefaultProfileSeriesSwitcher = (props: Props) => {
 
   return (
     <ProfileSeriesSwitcher
-      selected={props.selected}
+      selected={props.selected ?? profiles?.[0]}
       profileOptions={profiles ?? []}
       seriesOptions={series ?? []}
       onChange={props.onChange}

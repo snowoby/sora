@@ -70,7 +70,7 @@ const PublishCard = ({ profileID, afterSubmit }: PublishCardProps) => {
                     objectFit: "cover",
                     overflow: "hidden",
                   }}
-                  source={`${cover.path}/${cover.id}`}
+                  source={cover.id}
                 />
               ) : (
                 <IconButton>

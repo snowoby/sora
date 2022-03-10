@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import FilePutter from "@/components/FilePutter";
 import { Episode, FileInfo, Profile, Series } from "@/types";
 import Content from "./Content";
@@ -6,6 +6,8 @@ import DefaultProfileSeriesSwitcher from "@/components/DefaultProfileSeriesSwitc
 import { Box, Button, Stack, Typography } from "@mui/material";
 import { APICreateEpisode } from "@/api/Episode";
 import log from "@/log";
+import { LoadingButton } from "@mui/lab";
+import AccountContext from "@/context/AccountContext";
 
 type Props = {
   onFinish?: (episode: Episode | null) => void;
@@ -14,7 +16,10 @@ type Props = {
 const ShortPublishCard = ({ onFinish }: Props) => {
   const [content, setContent] = React.useState("");
   const [files, setFiles] = React.useState<FileInfo[]>([]);
-  const [identity, setIdentity] = useState<Profile | Series>();
+  const { profiles } = useContext(AccountContext);
+  const [identity, setIdentity] = useState<Profile | Series | undefined>(
+    profiles?.[0]
+  );
   const [submitting, setSubmitting] = useState(false);
   const submit = () => {
     setSubmitting(true);
@@ -50,7 +55,6 @@ const ShortPublishCard = ({ onFinish }: Props) => {
           <DefaultProfileSeriesSwitcher
             onChange={setIdentity}
             selected={identity}
-            placeholder={"You want to publish as..."}
           />
           <Content content={content} onChange={setContent} />
           <Box>
@@ -59,15 +63,15 @@ const ShortPublishCard = ({ onFinish }: Props) => {
               *all image will be published.
             </Typography>
           </Box>
-          <Button
-            disabled={submitting}
+          <LoadingButton
+            loading={submitting}
             type="submit"
             fullWidth
             size="large"
             variant="outlined"
           >
             go
-          </Button>
+          </LoadingButton>
         </Stack>
       </form>
     </>

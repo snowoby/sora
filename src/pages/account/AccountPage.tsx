@@ -11,7 +11,7 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import MainFrame from "@/pages/frame/MainFrame";
 import ProfileCard from "@/components/profile";
 import AvatarWrap from "@/components/AvatarWrap";
@@ -21,6 +21,7 @@ import log from "@/log";
 import ReactCrop, { Crop } from "react-image-crop";
 import PromiseFileReader from "promise-file-reader";
 import "react-image-crop/src/ReactCrop.scss";
+import { Logout } from "@/utils/utils";
 
 const AccountPage = () => {
   const { account, profiles, updateAccount } = useContext(AccountContext);
@@ -37,7 +38,7 @@ const AccountPage = () => {
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const [img, setImg] = useState<HTMLImageElement>();
   const [editProfile, setEditProfile] = useState<ProfileCreate>(emptyForm);
-
+  const navigate = useNavigate();
   const reset = () => {
     setSelectedProfile(undefined);
     setEditProfile({ ...emptyForm });
@@ -280,6 +281,15 @@ const AccountPage = () => {
           height: Math.round(completedCrop?.height ?? 0),
         }}
       />
+      <Button
+        color="error"
+        onClick={() => {
+          Logout();
+          window.location.pathname = "/";
+        }}
+      >
+        logout
+      </Button>
     </MainFrame>
   );
 };

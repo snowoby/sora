@@ -32,7 +32,7 @@ const WideImagePutter = (props: Props) => {
               objectFit: "cover",
               overflow: "hidden",
             }}
-            source={`${props.file.path}/${props.file.id}`}
+            source={props.file.id}
           />
         ) : (
           <Button fullWidth>
