@@ -5,4 +5,4 @@ COPY yarn.lock /app/yarn.lock
 RUN yarn
 COPY . /app
 RUN yarn build
-CMD ["echo", "done!"]
+CMD ["cp", "/app/build/*","/build"]
