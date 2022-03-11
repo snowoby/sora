@@ -3,14 +3,15 @@ import FilePutter from "@/components/FilePutter";
 import { Episode, FileInfo, Profile, Series } from "@/types";
 import Content from "./Content";
 import DefaultProfileSeriesSwitcher from "@/components/DefaultProfileSeriesSwitcher";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { AlertColor, Box, Button, Stack, Typography } from "@mui/material";
 import { APICreateEpisode } from "@/api/Episode";
 import log from "@/log";
 import { LoadingButton } from "@mui/lab";
 import AccountContext from "@/context/AccountContext";
+import Notice from "@/components/Notice";
 
 type Props = {
-  onFinish?: (episode: Episode | null) => void;
+  onFinish?: (episode?: Episode, identity?: Profile | Series) => void;
 };
 
 const ShortPublishCard = ({ onFinish }: Props) => {
@@ -20,6 +21,9 @@ const ShortPublishCard = ({ onFinish }: Props) => {
   const [identity, setIdentity] = useState<Profile | Series | undefined>(
     profiles?.[0]
   );
+  const [noticeOpen, setNoticeOpen] = useState(false);
+  const [noticeMessage, setNoticeMessage] = useState("");
+  const [status, setStatus] = useState<AlertColor>("success");
   const [submitting, setSubmitting] = useState(false);
   const submit = () => {
     setSubmitting(true);
@@ -38,10 +42,20 @@ const ShortPublishCard = ({ onFinish }: Props) => {
     })
       .then(({ data }) => {
         log.info(data);
-        onFinish?.(data);
+        setNoticeOpen(true);
+        setNoticeMessage("published!");
+        setStatus("success");
+        setTimeout(() => {
+          onFinish?.(data, identity);
+        }, 1000);
       })
-      .catch((e) => log.error(e))
-      .finally(() => setSubmitting(false));
+      .catch((e) => {
+        log.error(e);
+        setNoticeOpen(true);
+        setNoticeMessage(e.response?.data?.message ?? e.message);
+        setStatus("error");
+        setSubmitting(false);
+      });
   };
   return (
     <>
@@ -74,6 +88,12 @@ const ShortPublishCard = ({ onFinish }: Props) => {
           </LoadingButton>
         </Stack>
       </form>
+      <Notice
+        open={noticeOpen}
+        message={noticeMessage}
+        type={status}
+        onClose={() => setNoticeOpen(false)}
+      />
     </>
   );
 };

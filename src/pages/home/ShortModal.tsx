@@ -6,17 +6,18 @@ import {
   DialogTitle,
 } from "@mui/material";
 import ShortPublishCard from "@/pages/publish/ShortPublishCard";
+import { Episode, Profile, Series } from "@/types";
 
 type Props = {
   open: boolean;
-  onClose: () => void;
+  onClose: (episode?: Episode, identity?: Series | Profile) => void;
 };
 
 const ShortModal = (props: Props) => {
   return (
     <Dialog
       open={props.open}
-      onClose={props.onClose}
+      onClose={() => props.onClose()}
       fullWidth={true}
       maxWidth="sm"
     >

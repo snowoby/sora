@@ -65,7 +65,7 @@ const App = () => {
                 updateAccount,
               }}
             >
-              <Guide />
+              {ep && <Guide />}
             </AccountContext.Provider>
           </UniversalContext.Provider>
         </ThemeProvider>

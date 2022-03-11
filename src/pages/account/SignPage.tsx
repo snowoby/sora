@@ -7,6 +7,8 @@ import {
   Button,
   Divider,
   Grow,
+  IconButton,
+  InputAdornment,
   Slide,
   Snackbar,
   Stack,
@@ -21,6 +23,9 @@ import registerBackground from "@/assets/register.webp";
 import { APIRegister, LoginStream } from "@/api/SignAPI";
 import AccountContext from "@/context/AccountContext";
 import { LoadingButton } from "@mui/lab";
+import { AxiosError } from "axios";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import Notice from "@/components/Notice";
 
 type SignPageType = "login" | "register";
 
@@ -39,13 +44,14 @@ const SignPage = ({ pageType }: { pageType: SignPageType }) => {
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const { account, updateAccount } = useContext(AccountContext);
-
+  const [showPassword, setShowPassword] = useState(false);
   const another = (value: SignPageType) =>
     value === "login" ? "register" : "login";
 
   const loginAction = async () => {
     const response = await LoginStream(form);
     setNoticeOpen(true);
+    setStatus("success");
     setMessage("login successfully! redirecting...");
     await updateAccount();
     log.info(response.data);
@@ -115,38 +121,61 @@ const SignPage = ({ pageType }: { pageType: SignPageType }) => {
           </Typography>
           <Box>
             <form
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
                 setSubmitting(true);
-                submit[pageType]()
-                  .then(() => {
-                    setStatus("success");
-                  })
-                  .catch((e) => {
-                    setMessage(e.response.data.message);
-                    log.error(e);
-                    setStatus("error");
-                    setSubmitting(false);
-                  })
-                  .finally(() => setNoticeOpen(true));
-
+                try {
+                  await submit[pageType]();
+                  setStatus("success");
+                } catch (e: any) {
+                  setMessage(e.response?.data?.message ?? e.message);
+                  log.error(e);
+                  setStatus("error");
+                  setSubmitting(false);
+                } finally {
+                  setNoticeOpen(true);
+                }
                 return false;
               }}
             >
               <Stack spacing={3}>
-                {["email", "password"].map((fieldName) => (
-                  <TextField
-                    key={fieldName}
-                    className="block"
-                    fullWidth
-                    label={fieldName}
-                    type={fieldName}
-                    name={fieldName}
-                    variant="filled"
-                    required={true}
-                    onChange={inputChange}
-                  />
-                ))}
+                <TextField
+                  key="email"
+                  className="block"
+                  fullWidth
+                  label="email"
+                  type="email"
+                  name="email"
+                  variant="filled"
+                  required={true}
+                  onChange={inputChange}
+                />
+                <TextField
+                  key="password"
+                  className="block"
+                  fullWidth
+                  label="password"
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  variant="filled"
+                  required={true}
+                  onChange={inputChange}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={() => setShowPassword(!showPassword)}
+                          onMouseDown={(e) => e.preventDefault()}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+
                 <LoadingButton
                   className="block"
                   fullWidth
@@ -179,32 +208,3 @@ const SignPage = ({ pageType }: { pageType: SignPageType }) => {
 };
 
 export default SignPage;
-
-type NoticeProps = {
-  open: boolean;
-  message: string;
-  type?: "error" | "success";
-  onClose: () => void;
-};
-const slide = (props: any) => <Slide direction="up" {...props} />;
-
-const Notice = (props: NoticeProps) => {
-  return (
-    <Snackbar
-      TransitionComponent={slide}
-      open={props.open}
-      autoHideDuration={6000}
-      onClose={props.onClose}
-      anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      key={1}
-    >
-      <Alert
-        onClose={props.onClose}
-        severity={props.type}
-        sx={{ width: "100%" }}
-      >
-        {props.message}
-      </Alert>
-    </Snackbar>
-  );
-};
