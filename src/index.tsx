@@ -3,11 +3,14 @@ import ReactDOM from "react-dom";
 import reportWebVitals from "./reportWebVitals";
 import App from "./App";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
+import log from "./log";
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
   },
 });
+log.log("asdasd")
+
 ReactDOM.render(
   <React.StrictMode>
     {/*<ThemeProvider theme={darkTheme}>*/}

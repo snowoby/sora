@@ -6,6 +6,12 @@ module.exports = {
     alias: {
       "@": path.resolve(__dirname, "src/"),
     },
+    configure: {
+      output: {
+        filename: "[name].[contenthash].js",
+        path: path.resolve(__dirname, "build"),
+      },
+    },
   },
   style: {
     css: {
