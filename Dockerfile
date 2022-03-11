@@ -4,4 +4,5 @@ COPY package.json /app/package.json
 COPY yarn.lock /app/yarn.lock
 RUN yarn
 COPY . /app
-CMD ["yarn", "build"]
+RUN yarn build
+CMD ["echo", "done!"]
