@@ -14,7 +14,7 @@ const Notice = (props: NoticeProps) => {
     <Snackbar
       TransitionComponent={slide}
       open={props.open}
-      autoHideDuration={6000}
+      autoHideDuration={3000}
       onClose={props.onClose}
       anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       key={1}

@@ -5,6 +5,10 @@ import {
   ButtonProps,
   CircularProgress,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   Grid,
   LinearProgress,
@@ -13,10 +17,10 @@ import {
 } from "@mui/material";
 import EpisodeCard from "@/components/EpisodeCard";
 import MainFrame from "@/pages/frame/MainFrame";
-import { APIGetAllEpisode } from "@/api/Episode";
+import { APIDeleteEpisode, APIGetAllEpisode } from "@/api/Episode";
 import { Episode, Profile, Series } from "@/types";
 import log from "@/log";
-import { Masonry } from "@mui/lab";
+import { LoadingButton, Masonry } from "@mui/lab";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
@@ -27,6 +31,8 @@ import UniversalContext from "@/context/UniversalContext";
 import AccountContext from "@/context/AccountContext";
 import ShortEpisodeCard from "@/components/ShortEpisodeCard";
 import ShortModal from "@/pages/home/ShortModal";
+import Notice from "@/components/Notice";
+import { AxiosError } from "axios";
 
 const WrappedButton = (props: ButtonProps) => {
   return (
@@ -50,7 +56,14 @@ const WrappedButton = (props: ButtonProps) => {
 
 const MainPage = () => {
   const [episodes, setEpisodes] = useState<Episode[]>();
+  const [showNotice, setShowNotice] = useState<boolean>(false);
+  const [noticeMessage, setNoticeMessage] = useState<string>("");
+  const [noticeType, setNoticeType] = useState<"success" | "error">("success");
   const { loginStatus, account, profiles } = useContext(AccountContext);
+  const [deleteConfirmEpisode, setDeleteConfirmEpisode] =
+    useState<Episode | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -117,12 +130,58 @@ const MainPage = () => {
         <Stack>
           {episodes.map((episode) => (
             <Box key={episode.id}>
-              <ShortEpisodeCard episode={episode} />
+              <ShortEpisodeCard
+                onDelete={(episode) => {
+                  setDeleteConfirmEpisode(episode);
+                  setDeleteConfirmOpen(true);
+                  setDeleting(false);
+                }}
+                episode={episode}
+              />
               <Divider />
             </Box>
           ))}
         </Stack>
       )}
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onClose={() => setDeleteConfirmOpen(false)}
+        loading={deleting}
+        onConfirm={() => {
+          if (!deleteConfirmEpisode) return;
+          setDeleting(true);
+          APIDeleteEpisode(deleteConfirmEpisode.id)
+            .then(() => {
+              setDeleteConfirmEpisode(null);
+              setDeleteConfirmOpen(false);
+              setNoticeMessage("deleted.");
+              setNoticeType("success");
+              setShowNotice(true);
+              setEpisodes((episodes) =>
+                episodes?.filter((e) => e.id !== deleteConfirmEpisode.id)
+              );
+            })
+            .catch((e) => {
+              setNoticeMessage(
+                (e as AxiosError).response?.data?.message ?? e.message
+              );
+              setNoticeType("error");
+              setShowNotice(true);
+              setDeleting(false);
+            });
+        }}
+      >
+        {deleteConfirmEpisode && (
+          <ShortEpisodeCard hideAction={true} episode={deleteConfirmEpisode} />
+        )}
+      </ConfirmDialog>
+      <Notice
+        open={showNotice}
+        message={noticeMessage}
+        onClose={() => setShowNotice(false)}
+        type={noticeType}
+      ></Notice>
     </Stack>
   );
 
@@ -173,3 +232,34 @@ const MainPage = () => {
 };
 
 export default MainPage;
+
+type ConfirmDialogProps = {
+  children?: React.ReactNode;
+  open: boolean;
+  onClose?: () => void;
+  onConfirm?: () => void;
+  loading?: boolean;
+};
+
+const ConfirmDialog = ({
+  open,
+  children,
+  onClose,
+  onConfirm,
+  loading,
+}: ConfirmDialogProps) => {
+  return (
+    <Dialog open={open} fullWidth onClose={onClose}>
+      <DialogTitle>do you really want to delete?</DialogTitle>
+      <DialogContent>{children}</DialogContent>
+      <DialogActions>
+        <LoadingButton loading={loading} onClick={onClose}>
+          Cancel
+        </LoadingButton>
+        <LoadingButton loading={loading} color="error" onClick={onConfirm}>
+          Delete
+        </LoadingButton>
+      </DialogActions>
+    </Dialog>
+  );
+};
