@@ -3,9 +3,11 @@ import {
   Box,
   Button,
   ButtonProps,
+  CircularProgress,
   Container,
   Divider,
   Grid,
+  LinearProgress,
   Stack,
   Typography,
 } from "@mui/material";
@@ -48,7 +50,7 @@ const WrappedButton = (props: ButtonProps) => {
 
 const MainPage = () => {
   const [episodes, setEpisodes] = useState<Episode[]>();
-  const { profiles } = useContext(AccountContext);
+  const { loginStatus, account, profiles } = useContext(AccountContext);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -67,7 +69,18 @@ const MainPage = () => {
 
   const router = [
     { name: "home", icon: <HomeOutlinedIcon />, link: "/" },
-    { name: "account", icon: <AccountCircleOutlinedIcon />, link: "/account" },
+    {
+      name:
+        loginStatus == null ? (
+          <CircularProgress />
+        ) : account?.email ? (
+          account.email
+        ) : (
+          "login / register"
+        ),
+      icon: <AccountCircleOutlinedIcon />,
+      link: "/account",
+    },
     {
       name: "series",
       icon: <LibraryBooksOutlinedIcon />,
@@ -88,33 +101,37 @@ const MainPage = () => {
     },
   ];
 
+  const mainBody = () => (
+    <Stack
+      spacing={2}
+      sx={{
+        borderLeftColor: "divider",
+        borderLeftStyle: "solid",
+        borderLeftWidth: "1px",
+        borderRightColor: "divider",
+        borderRightStyle: "solid",
+        borderRightWidth: "1px",
+      }}
+    >
+      {episodes && (
+        <Stack>
+          {episodes.map((episode) => (
+            <Box key={episode.id}>
+              <ShortEpisodeCard episode={episode} />
+              <Divider />
+            </Box>
+          ))}
+        </Stack>
+      )}
+    </Stack>
+  );
+
   return (
     <Container>
       <Grid container spacing={2}>
         <Grid item xs={4}></Grid>
         <Grid item xs={6}>
-          <Stack
-            spacing={2}
-            sx={{
-              borderLeftColor: "divider",
-              borderLeftStyle: "solid",
-              borderLeftWidth: "1px",
-              borderRightColor: "divider",
-              borderRightStyle: "solid",
-              borderRightWidth: "1px",
-            }}
-          >
-            {episodes && (
-              <Stack>
-                {episodes.map((episode) => (
-                  <Box key={episode.id}>
-                    <ShortEpisodeCard episode={episode} />
-                    <Divider />
-                  </Box>
-                ))}
-              </Stack>
-            )}
-          </Stack>
+          {episodes ? mainBody() : <LinearProgress />}
         </Grid>
         <Grid item xs={2}>
           <Stack className="sticky top-0" spacing={0}>

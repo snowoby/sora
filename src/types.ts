@@ -44,6 +44,7 @@ export type AccountPageProps = {
 export type SignPageType = "login" | "register";
 
 export type AccountContextType = {
+  loginStatus?: boolean;
   account?: Account;
   profiles?: Profiles;
   series?: Series[];

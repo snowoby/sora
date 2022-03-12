@@ -12,20 +12,32 @@ import endpoint from "@/const/endpoint";
 import urlcat from "urlcat";
 import { Box, createTheme, ThemeProvider } from "@mui/material";
 import { APIAllMySeries } from "@/api/Series";
+import { boolean } from "yup";
+import { AxiosError } from "axios";
+import { GetAccessToken, GetRefreshToken } from "./utils/utils";
 
 const App = () => {
   const [accountInfo, setAccount] = useState<AccountInfo>();
+  const [loginStatus, setLoginStatus] = useState<boolean>();
   const [seriesInfo, setSeries] = useState<Series[]>();
   const [ep, setEp] = useState<StorageEndpoint>();
 
   const updateAccount = async () => {
+    if (!GetAccessToken() && !GetRefreshToken()) {
+      setLoginStatus(false);
+      return;
+    }
     try {
       const self = APISelf();
       const series = APIAllMySeries();
       const results = await Promise.all([self, series]);
       setAccount(results[0].data);
       setSeries(results[1].data);
+      setLoginStatus(true);
     } catch (e) {
+      if ((e as AxiosError)?.response?.status === 401) {
+        setLoginStatus(false);
+      }
       log.error(e);
     }
   };
@@ -62,6 +74,7 @@ const App = () => {
                 account: accountInfo?.account,
                 profiles: accountInfo?.profiles,
                 series: seriesInfo,
+                loginStatus,
                 updateAccount,
               }}
             >
