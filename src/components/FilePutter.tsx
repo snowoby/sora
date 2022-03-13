@@ -11,17 +11,25 @@ import {
 import FileUploader from "@/components/publish/FileUploader";
 import { FilePush } from "@/api/FileUpload";
 // import Image from "@/components/Image";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { FileInfo, FileUploadProps } from "@/types";
 import { StorageUrl } from "@/api/Storage";
 import PromiseFileReader from "promise-file-reader";
 
 interface Props {
   files: FileUploadProps[];
-  onChange: (files: FileUploadProps[]) => void;
+  onChange: (f: (old: FileUploadProps[]) => FileUploadProps[]) => void;
 }
 const FilePutter = (props: Props) => {
   const { files, onChange } = props;
+  const mounted = useRef(false);
+
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
   return (
     <Box display="grid" gridTemplateColumns="auto 1fr">
       <div style={{ width: "6rem", height: "6rem", margin: "0.5rem" }}>
@@ -43,10 +51,11 @@ const FilePutter = (props: Props) => {
               file.dataUrl = dataUrl;
             }
 
-            onChange([...files, ...newFiles]);
+            mounted.current && onChange((old) => [...old, ...newFiles]);
             for (const fileUpload of newFiles) {
               if (!fileUpload.localFile) continue;
               try {
+                if (!mounted.current) return;
                 const { data } = await FilePush("file", fileUpload.localFile);
                 fileUpload.fileStatus = "uploaded";
                 fileUpload.fileInfo = data;
@@ -58,7 +67,7 @@ const FilePutter = (props: Props) => {
               } catch (e) {
                 fileUpload.fileStatus = "failed";
               }
-              onChange([...files, ...newFiles]);
+              mounted.current && onChange((old) => [...old]);
             }
           }}
         >
