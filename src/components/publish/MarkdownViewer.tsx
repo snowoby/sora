@@ -32,7 +32,7 @@ const MarkdownViewer = ({
         );
         let newSrc = src;
         if (groups && groups.length > 1)
-          newSrc = StorageUrl(groups[1], "file", "compressed");
+          newSrc = StorageUrl("file", groups[1], "compressed");
         if (skipImage) {
           if (src.startsWith("image:")) {
             return "";

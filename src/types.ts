@@ -114,6 +114,14 @@ export type FileInfo = {
   status: string;
 };
 
+export type FileStatus = "uploading" | "uploaded" | "failed"| "deleted";
+export type FileUploadProps = {
+  fileStatus: FileStatus;
+  dataUrl?: string;
+  fileInfo?: FileInfo;
+  localFile?: File;
+}
+
 export type UniversalContextProps = {
   siteName: string;
   storage?: StorageEndpoint;

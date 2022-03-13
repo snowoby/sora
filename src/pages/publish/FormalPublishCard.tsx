@@ -3,13 +3,13 @@ import { Stack, TextField } from "@mui/material";
 import Content from "@/pages/publish/Content";
 import FilePutter from "@/components/FilePutter";
 import WideImagePutter from "@/pages/publish/WideImagePutter";
-import { FileInfo } from "@/types";
+import { FileInfo, FileUploadProps } from "@/types";
 
 interface Props {
   cover?: FileInfo;
   title: string;
   content: string;
-  files: FileInfo[];
+  files: FileUploadProps[];
   onChange: (key: string, value: unknown) => void;
 }
 const FormalPublishCard = (props: Props) => {

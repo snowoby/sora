@@ -21,7 +21,7 @@ const SeriesCard = ({ series, profile, size }: Props) => {
     >
       <Avatar
         sx={[size === "display" && { height: "2rem", width: "2rem" }]}
-        src={profile && StorageUrl(profile.avatar, "avatar", "compressed")}
+        src={profile && StorageUrl("avatar", profile.avatar, "compressed")}
       />
       <ArrowRightIcon />
       <Typography variant="subtitle2" height="fit-content">

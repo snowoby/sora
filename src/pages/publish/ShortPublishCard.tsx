@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import FilePutter from "@/components/FilePutter";
-import { Episode, FileInfo, Profile, Series } from "@/types";
+import { Episode, FileInfo, FileUploadProps, Profile, Series } from "@/types";
 import Content from "./Content";
 import DefaultProfileSeriesSwitcher from "@/components/DefaultProfileSeriesSwitcher";
 import { AlertColor, Box, Button, Stack, Typography } from "@mui/material";
@@ -16,7 +16,7 @@ type Props = {
 
 const ShortPublishCard = ({ onFinish }: Props) => {
   const [content, setContent] = React.useState("");
-  const [files, setFiles] = React.useState<FileInfo[]>([]);
+  const [files, setFiles] = React.useState<FileUploadProps[]>([]);
   const { profiles } = useContext(AccountContext);
   const [identity, setIdentity] = useState<Profile | Series | undefined>(
     profiles?.[0]
@@ -30,9 +30,9 @@ const ShortPublishCard = ({ onFinish }: Props) => {
     APICreateEpisode({
       content,
       files: files.map((file) => ({
-        id: file.id,
+        id: file.fileInfo?.id,
         nsfw: false,
-        mime: file.mime,
+        mime: file.fileInfo?.mime,
       })),
       seriesId: identity?.valueType === "series" ? identity.id : undefined,
       profileId:

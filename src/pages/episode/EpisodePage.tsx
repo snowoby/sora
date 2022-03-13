@@ -33,7 +33,7 @@ const EpisodePage = () => {
           {episode.cover && (
             <img
               style={{ maxWidth: "100%" }}
-              srcSet={StorageUrl(episode.cover, "file", "compressed")}
+              srcSet={StorageUrl("file", episode.cover, "compressed")}
             />
           )}
           <Box sx={{ padding: "0.5rem" }}>

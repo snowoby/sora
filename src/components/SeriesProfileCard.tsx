@@ -24,7 +24,7 @@ const SeriesProfileCard = ({ series }: Props) => {
         src={
           profile &&
           profile.avatar &&
-          StorageUrl(profile.avatar, "avatar", "compressed")
+          StorageUrl("avatar", profile.avatar, "compressed")
         }
       />
       <ArrowRightIcon />

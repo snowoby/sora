@@ -1,7 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Button, Card, Container, Divider, Grid, Stack } from "@mui/material";
 import AccountContext from "@/context/AccountContext";
-import { FileInfo, Profile, Series } from "@/types";
+import {
+  FileInfo,
+  FileUploadData,
+  FileUploadProps,
+  Profile,
+  Series,
+} from "@/types";
 import { APICreateEpisode } from "@/api/Episode";
 import log from "@/log";
 import BackTitleBar from "@/components/BackTitleBar";
@@ -15,7 +21,7 @@ const PublishPage = () => {
   const [cover, setCover] = useState<FileInfo>();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [files, setFiles] = useState<FileInfo[]>([]);
+  const [files, setFiles] = useState<FileUploadProps[]>([]);
 
   const handleTitleChange = (field: string, value: unknown) => {
     log.info(value);
@@ -30,7 +36,7 @@ const PublishPage = () => {
         setCover(value as FileInfo);
         break;
       case "files":
-        setFiles(value as FileInfo[]);
+        setFiles(value as FileUploadProps[]);
         break;
     }
   };
@@ -42,11 +48,13 @@ const PublishPage = () => {
       cover: cover?.id,
       content,
       title,
-      files: files.map((file) => ({
-        id: file.id,
-        nsfw: false,
-        mime: file.mime,
-      })),
+      files: files
+        .filter((file) => file.fileStatus === "uploaded" && file.fileInfo)
+        .map((file) => ({
+          id: file.fileInfo?.id,
+          nsfw: false,
+          mime: file.fileInfo?.mime,
+        })),
       seriesId: identity?.valueType === "series" ? identity.id : undefined,
       profileId:
         identity?.valueType === "series"

@@ -127,7 +127,7 @@ const ImageTiles = ({ files }: { files?: FileInfo[] }) => {
         {files?.map((file: FileInfo) => (
           <img
             key={file.id}
-            src={StorageUrl(file.id, file.path, "thumbnail")}
+            src={StorageUrl(file.path, file.id, "thumbnail")}
             alt={file.filename}
             style={{
               width: "100%",

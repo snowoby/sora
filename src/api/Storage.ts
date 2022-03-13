@@ -2,7 +2,7 @@ import urlcat from "urlcat";
 import endpoint from "@/const/endpoint";
 import axios from "axios";
 
-export const StorageUrl = (id: string, path: string, identifier: string) =>
+export const StorageUrl = (path: string, id: string, identifier: string) =>
   urlcat(endpoint.url, "/:folder/:id/:identifier", {
     folder: path ?? "file",
     id: id,
@@ -14,6 +14,6 @@ export const StorageExists = (
   path: string,
   identifier: string
 ) => {
-  const url = StorageUrl(source, path, identifier);
+  const url = StorageUrl(path, source, identifier);
   return axios.head(url);
 };

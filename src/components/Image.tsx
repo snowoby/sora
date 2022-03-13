@@ -22,7 +22,7 @@ const SourceImage = ({
   return (
     <img
       ref={imgRef}
-      src={StorageUrl(source, "file", "compressed")}
+      src={StorageUrl("file", source, "compressed")}
       onError={(e) => {
         timeoutID.current = setTimeout(() => {
           if (!imgRef.current) return;
