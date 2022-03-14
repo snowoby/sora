@@ -38,6 +38,7 @@ const FilePutter = (props: Props) => {
           onDrop={async (dropFiles) => {
             const newFiles: FileUploadProps[] = dropFiles.map((file) => {
               const fileUpload: FileUploadProps = {
+                uploadingStatus: "uploading",
                 fileStatus: "uploading",
                 localFile: file,
               };
@@ -56,7 +57,15 @@ const FilePutter = (props: Props) => {
               if (!fileUpload.localFile) continue;
               try {
                 if (!mounted.current) return;
-                const { data } = await FilePush("file", fileUpload.localFile);
+                const { data } = await FilePush(
+                  "file",
+                  fileUpload.localFile,
+                  (status, percentage) => {
+                    fileUpload.uploadingStatus = status;
+                    fileUpload.progress = percentage;
+                    mounted.current && onChange((old) => [...old]);
+                  }
+                );
                 fileUpload.fileStatus = "uploaded";
                 fileUpload.fileInfo = data;
                 fileUpload.dataUrl = StorageUrl(
@@ -112,8 +121,30 @@ const FilePutter = (props: Props) => {
                       zIndex: 10,
                     }}
                   >
-                    {file.fileStatus === "uploading" && <CircularProgress />}
+                    {file.fileStatus === "uploading" && (
+                      <CircularProgress
+                        variant={
+                          file.uploadingStatus === "uploading"
+                            ? "determinate"
+                            : "indeterminate"
+                        }
+                        value={(file.progress ?? 0) * 100}
+                      />
+                    )}
                   </Box>
+                  {file.uploadingStatus === "uploading" && (
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        bottom: "0",
+                        zIndex: 10,
+                        color: "white!important",
+                      }}
+                    >
+                      {Math.floor((file.progress ?? 0) * 100)}%
+                    </Box>
+                  )}
+
                   <img
                     style={{
                       width: "100%",
