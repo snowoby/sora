@@ -34,24 +34,19 @@ import ShortModal from "@/pages/home/ShortModal";
 import Notice from "@/components/Notice";
 import { AxiosError } from "axios";
 
-const WrappedButton = (props: ButtonProps) => {
-  return (
-    <Button
-      fullWidth
-      sx={{
-        borderRadius: "9999px",
-        "&:hover": {
-          backgroundColor: "action.hover",
-        },
-        padding: "0.75rem",
-        color: "text.primary",
-        textTransform: "none",
-        justifyContent: "flex-start",
-      }}
-      size="large"
-      {...props}
-    />
-  );
+const commonButtonProps = {
+  fullWidth: true,
+  sx: {
+    borderRadius: "9999px",
+    "&:hover": {
+      backgroundColor: "action.hover",
+    },
+    padding: "0.75rem",
+    color: "text.primary",
+    textTransform: "none",
+    justifyContent: "flex-start",
+  },
+  size: "large",
 };
 
 const MainPage = () => {
@@ -82,18 +77,6 @@ const MainPage = () => {
 
   const router = [
     { name: "home", icon: <HomeOutlinedIcon />, link: "/" },
-    {
-      name:
-        loginStatus == null ? (
-          <CircularProgress />
-        ) : account?.email ? (
-          account.email
-        ) : (
-          "login / register"
-        ),
-      icon: <AccountCircleOutlinedIcon />,
-      link: "/account",
-    },
     {
       name: "series",
       icon: <LibraryBooksOutlinedIcon />,
@@ -197,15 +180,37 @@ const MainPage = () => {
             <Typography variant="h6" sx={{ m: "0.75rem", userSelect: "none" }}>
               {siteName}
             </Typography>
-            {router.map((route, index) => (
-              <Link to={route.link} key={index} hidden={route.disabled}>
-                <WrappedButton>
+
+            {/* 
+            // @ts-ignore: see https://github.com/mui-org/material-ui/issues/7877 */}
+            <LoadingButton
+              component={Link}
+              to="/account"
+              {...commonButtonProps}
+              loading={loginStatus == null}
+              disabled={loginStatus == null}
+            >
+              <Box display="flex" gap="0.75rem">
+                <AccountCircleOutlinedIcon />{" "}
+                {account?.email ? account.email : "login / register"}
+              </Box>
+            </LoadingButton>
+            {router.map((route, index) => {
+              if (route.disabled) return null;
+              return (
+                // @ts-ignore: see https://github.com/mui-org/material-ui/issues/7877
+                <Button
+                  component={Link}
+                  {...commonButtonProps}
+                  to={route.link}
+                  key={index}
+                >
                   <Box display="flex" gap="0.75rem">
                     {route.icon} {route.name}
                   </Box>
-                </WrappedButton>
-              </Link>
-            ))}
+                </Button>
+              );
+            })}
           </Stack>
         </Grid>
       </Grid>

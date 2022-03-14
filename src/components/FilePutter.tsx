@@ -146,21 +146,25 @@ const FilePutter = (props: Props) => {
               >
                 <Box width="6rem" height="6rem">
                   {file.fileStatus === "uploading" && (
-                    <CircularProgress
+                    <Box
                       sx={{
                         position: "absolute",
                         top: "50%",
                         left: "50%",
                         transform: "translate(-50%, -50%)!important",
                         zIndex: 10,
+                        height: 40, //but why?
                       }}
-                      variant={
-                        file.uploadingStatus === "uploading"
-                          ? "determinate"
-                          : "indeterminate"
-                      }
-                      value={(file.progress ?? 0) * 100}
-                    />
+                    >
+                      <CircularProgress
+                        variant={
+                          file.uploadingStatus === "uploading"
+                            ? "determinate"
+                            : "indeterminate"
+                        }
+                        value={(file.progress ?? 0) * 100}
+                      />
+                    </Box>
                   )}
 
                   {file.uploadingStatus === "uploading" && (
