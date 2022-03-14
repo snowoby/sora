@@ -9,7 +9,6 @@ const darkTheme = createTheme({
     mode: "dark",
   },
 });
-log.log("asdasd")
 
 ReactDOM.render(
   <React.StrictMode>

@@ -26,14 +26,24 @@ const ShortPublishCard = ({ onFinish }: Props) => {
   const [status, setStatus] = useState<AlertColor>("success");
   const [submitting, setSubmitting] = useState(false);
   const submit = () => {
+    if (files.find((file) => file.fileStatus === "uploading")) {
+      setNoticeOpen(true);
+      setNoticeMessage(
+        "Please wait for all files to finish uploading, or cancel them."
+      );
+      setStatus("warning");
+      return;
+    }
     setSubmitting(true);
     APICreateEpisode({
       content,
-      files: files.map((file) => ({
-        id: file.fileInfo?.id,
-        nsfw: false,
-        mime: file.fileInfo?.mime,
-      })),
+      files: files
+        .filter((file) => file.fileStatus === "uploaded")
+        .map((file) => ({
+          id: file.fileInfo?.id,
+          nsfw: false,
+          mime: file.fileInfo?.mime,
+        })),
       seriesId: identity?.valueType === "series" ? identity.id : undefined,
       profileId:
         identity?.valueType === "series"

@@ -115,10 +115,11 @@ export type FileInfo = {
 };
 
 export type FileStatus = "uploading" | "uploaded" | "failed"| "deleted";
-export type FileUploadingStatus = "uploading"|"creating"|"processing"|"failed"|"done"
+export type FileUploadingStatus = "uploading"|"creating"|"processing"|"failed"|"uploaded"
 export type FileUploadProps = {
   fileStatus: FileStatus;
   uploadingStatus: FileUploadingStatus;
+  controller?: AbortController;
   progress?: number;
   dataUrl?: string;
   fileInfo?: FileInfo;
