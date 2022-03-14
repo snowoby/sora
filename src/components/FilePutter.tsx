@@ -221,7 +221,7 @@ const FilePutter = (props: Props) => {
           setDeleteDialogOpen(false);
           setNoticeOpen(true);
           setNoticeType("info");
-          setNoticeMessage("that was close!");
+          setNoticeMessage("that was close.");
         }}
       >
         <Box>
@@ -275,7 +275,7 @@ const DeleteConfirmDialog = (props: DeleteConfirmDialogProps) => {
         <Box>{props.children}</Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={props.onCancel}>Cancel</Button>
+        <Button onClick={props.onCancel}>Close</Button>
         <Button onClick={props.onConfirm} color="error">
           Delete
         </Button>

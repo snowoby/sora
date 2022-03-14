@@ -84,7 +84,7 @@ const ShortPublishCard = ({ onFinish }: Props) => {
           <Box>
             <FilePutter files={files} onChange={setFiles} />
             <Typography variant="body2" color="text.secondary">
-              *all image will be published.
+              *all the images will be published.
             </Typography>
           </Box>
           <LoadingButton
