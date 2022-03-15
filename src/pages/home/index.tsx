@@ -26,7 +26,6 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
 import LibraryBooksOutlinedIcon from "@mui/icons-material/LibraryBooksOutlined";
-import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import UniversalContext from "@/context/UniversalContext";
 import AccountContext from "@/context/AccountContext";
 import ShortEpisodeCard from "@/components/ShortEpisodeCard";

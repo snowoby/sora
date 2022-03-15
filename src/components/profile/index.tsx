@@ -1,7 +1,7 @@
 import React from "react";
 import { ProfileCardProps } from "@/types";
 import { Avatar, Box, Typography } from "@mui/material";
-import AvatarWrap from "@/components/AvatarWrap";
+import { StorageUrl } from "@/api/Storage";
 
 const styleConfig = {
   normal: {
@@ -34,7 +34,10 @@ const ProfileCard = ({ profile, size }: ProfileCardProps) => {
         gap: "0.75rem",
       }}
     >
-      <AvatarWrap sx={config.avatarSize} source={profile.avatar} />
+      <Avatar
+        sx={config.avatarSize}
+        src={StorageUrl("avatar", profile.avatar, "small")}
+      />
       <Box
         sx={{
           width: "100%",

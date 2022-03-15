@@ -2,6 +2,7 @@ import React, { ChangeEvent, useContext, useRef, useState } from "react";
 import AccountContext from "@/context/AccountContext";
 import { Profile, ProfileCreate } from "@/types";
 import {
+  Avatar,
   Button,
   Dialog,
   DialogActions,
@@ -14,7 +15,6 @@ import {
 import { Navigate, useNavigate } from "react-router-dom";
 import MainFrame from "@/pages/frame/MainFrame";
 import ProfileCard from "@/components/profile";
-import AvatarWrap from "@/components/AvatarWrap";
 import { APICreateProfile, APIUpdateProfile } from "@/api/ProfileAPI";
 import { FilePush } from "@/api/FileUpload";
 import log from "@/log";
@@ -22,6 +22,7 @@ import ReactCrop, { Crop } from "react-image-crop";
 import PromiseFileReader from "promise-file-reader";
 import "react-image-crop/src/ReactCrop.scss";
 import { Logout } from "@/utils/utils";
+import { StorageUrl } from "@/api/Storage";
 
 const AccountPage = () => {
   const { account, profiles, updateAccount } = useContext(AccountContext);
@@ -171,9 +172,9 @@ const AccountPage = () => {
           <Stack spacing={3}>
             {selectedProfile && (
               <Grid container justifyContent="center">
-                <AvatarWrap
+                <Avatar
                   sx={{ width: "6rem", height: "6rem", textAlign: "center" }}
-                  source={editProfile.avatar}
+                  src={StorageUrl("avatar", editProfile.avatar, "large")}
                 />
               </Grid>
             )}

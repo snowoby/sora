@@ -13,5 +13,3 @@ const AvatarWrap = ({ source, sx, ...props }: AvatarWrapProps) => {
     </Avatar>
   );
 };
-
-export default AvatarWrap;

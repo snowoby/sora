@@ -1,9 +1,15 @@
 import React from "react";
-import { Box, CardMedia, Paper, Stack, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  CardMedia,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { EpisodeCardProps, Profile, Series } from "@/types";
 import { Link } from "react-router-dom";
 import { StorageUrl } from "@/api/Storage";
-import AvatarWrap from "@/components/AvatarWrap";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import PublisherCard from "@/components/PublisherCard";
@@ -70,10 +76,7 @@ const ProfileCard = ({ profile }: { profile: Profile }) => {
         gap: "0.75rem",
       }}
     >
-      <AvatarWrap
-        sx={{ width: "2.5rem", height: "2.5rem" }}
-        source={profile.avatar}
-      />
+      <Avatar src={StorageUrl("avatar", profile.avatar, "small")} />
       <Box
         sx={{
           width: "100%",

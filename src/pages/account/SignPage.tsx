@@ -6,11 +6,8 @@ import {
   Box,
   Button,
   Divider,
-  Grow,
   IconButton,
   InputAdornment,
-  Slide,
-  Snackbar,
   Stack,
   TextField,
   Typography,
@@ -20,10 +17,10 @@ import log from "@/log";
 import UniversalContext from "@/context/UniversalContext";
 import loginBackground from "@/assets/login.webp";
 import registerBackground from "@/assets/register.webp";
+import loggedBackground from "@/assets/logged.webp";
 import { APIRegister, LoginStream } from "@/api/SignAPI";
 import AccountContext from "@/context/AccountContext";
 import { LoadingButton } from "@mui/lab";
-import { AxiosError } from "axios";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import Notice from "@/components/Notice";
 
@@ -80,6 +77,9 @@ const SignPage = ({ pageType }: { pageType: SignPageType }) => {
       <Helmet>
         <title>{pageType}</title>
       </Helmet>
+      <link rel="prefetch" href={loginBackground} />
+      <link rel="prefetch" href={loggedBackground} />
+      <link rel="prefetch" href={registerBackground} />
       <Box
         sx={{
           backgroundImage: `url(${
