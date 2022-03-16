@@ -123,7 +123,7 @@ export type FileUploadProps = {
   progress?: number;
   dataUrl?: string;
   fileInfo?: FileInfo;
-  localFile?: File;
+  localFile?: File|Blob;
 }
 
 export type UniversalContextProps = {

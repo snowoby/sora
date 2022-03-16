@@ -24,6 +24,8 @@ import PromiseFileReader from "promise-file-reader";
 import CancelIcon from "@mui/icons-material/Cancel";
 import log from "@/log";
 import Notice from "./Notice";
+import UploadImage from "./publish/UploadImage";
+import { CreateFileUploadProfile } from "@/utils/file";
 
 interface Props {
   files: FileUploadProps[];
@@ -52,25 +54,24 @@ const FilePutter = (props: Props) => {
             accept={["image/*"]}
             maxSize={1024 * 1024 * 20}
             onDrop={async (dropFiles) => {
-              const newFiles: FileUploadProps[] = dropFiles.map((file) => {
-                const fileUpload: FileUploadProps = {
-                  uploadingStatus: "uploading",
-                  fileStatus: "uploading",
-                  localFile: file,
-                  controller: new AbortController(),
-                };
-                return fileUpload;
-              });
-              for (const file of newFiles) {
-                if (!file.localFile) continue;
-                const dataUrl = await PromiseFileReader.readAsDataURL(
-                  file.localFile
-                );
-                file.dataUrl = dataUrl;
+              // const newFiles: FileUploadProps[] = dropFiles.map((file) => {
+              //   const fileUpload: FileUploadProps = {
+              //     uploadingStatus: "uploading",
+              //     fileStatus: "uploading",
+              //     localFile: file,
+              //     controller: new AbortController(),
+              //   };
+              //   return fileUpload;
+              // });
+
+              const files: FileUploadProps[] = [];
+              for (const file of dropFiles) {
+                if (!file) continue;
+                files.push(await CreateFileUploadProfile(file));
               }
 
-              mounted.current && onChange((old) => [...old, ...newFiles]);
-              for (const fileUpload of newFiles) {
+              mounted.current && onChange((old) => [...old, ...files]);
+              for (const fileUpload of files) {
                 if (!fileUpload.localFile) continue;
                 try {
                   if (!mounted.current) return;
@@ -144,58 +145,7 @@ const FilePutter = (props: Props) => {
                   );
                 }}
               >
-                <Box width="6rem" height="6rem">
-                  {file.fileStatus === "uploading" && (
-                    <Box
-                      sx={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)!important",
-                        zIndex: 10,
-                        height: 40, //but why?
-                      }}
-                    >
-                      <CircularProgress
-                        variant={
-                          file.uploadingStatus === "uploading"
-                            ? "determinate"
-                            : "indeterminate"
-                        }
-                        value={(file.progress ?? 0) * 100}
-                      />
-                    </Box>
-                  )}
-
-                  {file.uploadingStatus === "uploading" && (
-                    <Box
-                      sx={{
-                        position: "absolute",
-                        bottom: "0",
-                        left: "0.4rem",
-                        zIndex: 10,
-                        color: "white!important",
-                      }}
-                    >
-                      {Math.floor((file.progress ?? 0) * 100)}%
-                    </Box>
-                  )}
-
-                  <img
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      filter:
-                        file.fileStatus === "uploaded"
-                          ? "none"
-                          : "grayscale(80%)",
-                      objectFit: "cover",
-                      transition: "filter 0.5s",
-                    }}
-                    src={file.dataUrl}
-                  />
-                </Box>
-
+                <UploadImage file={file} width="6rem" height="6rem" />
                 {file.fileStatus === "uploaded" && (
                   <ImageListItemBar
                     subtitle={
@@ -229,7 +179,9 @@ const FilePutter = (props: Props) => {
         }}
       >
         <Box>
-          <Typography variant="h5">{toDelete?.localFile?.name}</Typography>
+          <Typography variant="h5">
+            {(toDelete?.localFile as any)?.name ?? "Noname file"}
+          </Typography>
           <Typography variant="subtitle1">
             {toDelete?.localFile?.size
               ? `${(toDelete?.localFile?.size / 1024 / 1024).toFixed(2)} MB`

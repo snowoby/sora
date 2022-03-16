@@ -4,6 +4,7 @@ import { MainFrameProps } from "@/types";
 import ProfileSwitcher from "@/components/ProfileSwitcher";
 import { Link } from "react-router-dom";
 import AccountContext from "@/context/AccountContext";
+import LinkMenu from "@/components/LinkMenu";
 
 const MainFrame = ({ children }: MainFrameProps) => {
   const { account } = useContext(AccountContext);
@@ -22,14 +23,7 @@ const MainFrame = ({ children }: MainFrameProps) => {
     </Link>
   );
 
-  const menu = (
-    <Stack className="sticky top-0" spacing={2}>
-      <Link to="/account">account</Link>
-      <Link to="/">home</Link>
-      <Link to="/publish">publish</Link>
-      <Link to="/series">series</Link>
-    </Stack>
-  );
+  const menu = <LinkMenu />;
 
   return (
     <Container maxWidth="xl">

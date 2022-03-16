@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useContext, useRef, useState } from "react";
 import AccountContext from "@/context/AccountContext";
-import { Profile, ProfileCreate } from "@/types";
+import { FileUploadProps, Profile, ProfileCreate } from "@/types";
 import {
   Avatar,
   Button,
@@ -23,6 +23,10 @@ import PromiseFileReader from "promise-file-reader";
 import "react-image-crop/src/ReactCrop.scss";
 import { Logout } from "@/utils/utils";
 import { StorageUrl } from "@/api/Storage";
+import UploadImage from "@/components/publish/UploadImage";
+import { CreateFileUploadProfile } from "@/utils/file";
+import Notice from "@/components/Notice";
+import { LoadingButton } from "@mui/lab";
 
 const AccountPage = () => {
   const { account, profiles, updateAccount } = useContext(AccountContext);
@@ -34,33 +38,36 @@ const AccountPage = () => {
   };
   const [open, setOpen] = useState(false);
   const [cropOpen, setCropOpen] = useState(false);
-  const [avatar, setAvatar] = useState("");
+  const [avatar, setAvatar] = useState<FileUploadProps | null>(null);
+  const [cropAvatar, setCropAvatar] = useState("");
   const [selectedProfile, setSelectedProfile] = useState<Profile>();
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const [img, setImg] = useState<HTMLImageElement>();
   const [editProfile, setEditProfile] = useState<ProfileCreate>(emptyForm);
   const navigate = useNavigate();
+  const [submitting, setSubmitting] = useState(false);
+  const [noticeOpen, setNoticeOpen] = useState<boolean>(false);
+  const [noticeMessage, setNoticeMessage] = useState<string>("");
+  const [noticeType, setNoticeType] = useState<"success" | "warning">(
+    "success"
+  );
   const reset = () => {
+    setSubmitting(false);
     setSelectedProfile(undefined);
     setEditProfile({ ...emptyForm });
   };
-  const [crop, setCrop] = useState<Crop>({
-    height: 0,
-    x: 0,
-    y: 0,
-    aspect: 1,
-    width: 100,
-    unit: "%",
-  });
 
-  const [completedCrop, setCompletedCrop] = useState<Crop>({
+  const defaultCrop: Crop = {
     height: 0,
     x: 0,
     y: 0,
     aspect: 1,
-    width: 100,
+    width: 0,
     unit: "%",
-  });
+  };
+  const [crop, setCrop] = useState<Crop>(defaultCrop);
+
+  const [completedCrop, setCompletedCrop] = useState<Crop>(defaultCrop);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) =>
     setEditProfile({
@@ -72,28 +79,67 @@ const AccountPage = () => {
 
   const submit = async () => {
     try {
+      if (avatar?.fileStatus === "uploading") {
+        setNoticeOpen(true);
+        setNoticeMessage("please cancel upload before submition");
+        setNoticeType("warning");
+        return;
+      }
+      setSubmitting(true);
       if (selectedProfile)
         await APIUpdateProfile(selectedProfile.id, editProfile);
       else await APICreateProfile(editProfile);
       await updateAccount();
-      setEditProfile(emptyForm);
     } catch (e) {
       log.error(e);
+      setSubmitting(false);
     }
   };
-  const closeEdit = () => setOpen(false);
+  const closeEdit = () => {
+    if (avatar?.fileStatus === "uploading") {
+      setNoticeOpen(true);
+      setNoticeMessage("please cancel upload before closing");
+      setNoticeType("warning");
+      return;
+    }
+    setOpen(false);
+  };
   const closeCrop = () => setCropOpen(false);
   const OKCrop = () => {
     previewCanvasRef.current?.toBlob(
-      (blob) => {
+      async (blob) => {
         if (!blob) return;
-        FilePush("avatar", blob)
-          .then(({ data }) =>
+        const fileUploadObj = await CreateFileUploadProfile(blob);
+        setAvatar(fileUploadObj);
+        FilePush(
+          "avatar",
+          blob,
+          (status, percnet) => {
+            setAvatar((prev) => {
+              if (!prev) return prev;
+              return {
+                ...prev,
+                uploadingStatus: status,
+                progress: percnet,
+              };
+            });
+          },
+          fileUploadObj?.controller
+        )
+          .then(({ data }) => {
             setEditProfile({
               ...editProfile,
               avatar: data.id,
-            })
-          )
+            });
+            setAvatar((prev) => {
+              if (!prev) return prev;
+              return {
+                ...prev,
+                uploadingStatus: "uploaded",
+                fileStatus: "uploaded",
+              };
+            });
+          })
           .catch((e) => log.error(e));
       },
       "image/png",
@@ -114,7 +160,7 @@ const AccountPage = () => {
       <DialogTitle>crop</DialogTitle>
       <DialogContent>
         <ReactCrop
-          src={avatar}
+          src={cropAvatar ?? ""}
           crop={crop}
           onImageLoaded={setImg}
           onComplete={setCompletedCrop}
@@ -166,7 +212,7 @@ const AccountPage = () => {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            submit().then(reset);
+            submit().then();
           }}
         >
           <Stack spacing={3}>
@@ -174,21 +220,51 @@ const AccountPage = () => {
               <Grid container justifyContent="center">
                 <Avatar
                   sx={{ width: "6rem", height: "6rem", textAlign: "center" }}
-                  src={StorageUrl("avatar", editProfile.avatar, "large")}
-                />
+                >
+                  {!!avatar || !!selectedProfile.avatar ? (
+                    <UploadImage
+                      file={
+                        avatar || {
+                          uploadingStatus: "uploaded",
+                          fileStatus: "uploaded",
+                          dataUrl: StorageUrl(
+                            "avatar",
+                            selectedProfile.avatar,
+                            "large"
+                          ),
+                        }
+                      }
+                      percentagePosition="center"
+                    />
+                  ) : null}
+                </Avatar>
               </Grid>
             )}
             {selectedProfile && (
-              <Button variant="contained" component="label">
-                update avatar
+              <Button
+                variant="contained"
+                component="label"
+                color={avatar?.fileStatus === "uploading" ? "error" : "primary"}
+                onClick={(e: any) => {
+                  if (avatar?.fileStatus === "uploading") {
+                    e.preventDefault();
+                    avatar.controller?.abort();
+                    setAvatar(null);
+                  }
+                }}
+              >
+                {avatar?.fileStatus === "uploading"
+                  ? "cancel"
+                  : "update avatar"}
                 <input
                   type="file"
                   hidden
                   onChange={(e) => {
+                    setCrop(defaultCrop);
                     const file = e.target?.files?.[0];
                     if (!file) return;
                     PromiseFileReader.readAsDataURL(file)
-                      .then((data) => setAvatar(data))
+                      .then((data) => setCropAvatar(data))
                       .catch((err) => console.error(err))
                       .then(() => setCropOpen(true));
                   }}
@@ -218,8 +294,16 @@ const AccountPage = () => {
         </form>
       </DialogContent>
       <DialogActions>
-        <Button onClick={closeEdit}>Cancel</Button>
-        <Button onClick={() => submit().then(closeEdit)}>OK</Button>
+        <Button disabled={submitting} onClick={closeEdit}>
+          Cancel
+        </Button>
+        <LoadingButton
+          loading={submitting}
+          disabled={submitting}
+          onClick={() => submit().then(closeEdit)}
+        >
+          OK
+        </LoadingButton>
       </DialogActions>
     </Dialog>
   );
@@ -256,6 +340,7 @@ const AccountPage = () => {
 
       <Button
         onClick={() => {
+          setSubmitting(false);
           selectedProfile && setEditProfile(selectedProfile);
           setOpen(true);
         }}
@@ -291,6 +376,12 @@ const AccountPage = () => {
       >
         logout
       </Button>
+      <Notice
+        open={noticeOpen}
+        message={noticeMessage}
+        onClose={() => setNoticeOpen(false)}
+        type={noticeType}
+      />
     </MainFrame>
   );
 };
