@@ -23,6 +23,7 @@ import ShortModal from "@/pages/home/ShortModal";
 import Notice from "@/components/Notice";
 import { AxiosError } from "axios";
 import LinkMenu from "@/components/LinkMenu";
+import MainFrame from "../frame/MainFrame";
 
 const MainPage = () => {
   const [episodes, setEpisodes] = useState<Episode[]>();
@@ -121,16 +122,8 @@ const MainPage = () => {
   );
 
   return (
-    <Container>
-      <Grid container spacing={2}>
-        <Grid item xs={4}></Grid>
-        <Grid item xs={6}>
-          {episodes ? mainBody() : <LinearProgress />}
-        </Grid>
-        <Grid item xs={2}>
-          <LinkMenu />
-        </Grid>
-      </Grid>
+    <>
+      <MainFrame center={episodes ? mainBody() : <LinearProgress />} />
       <ShortModal
         open={location.pathname === "/quick"}
         onClose={(ep, identity) => {
@@ -149,7 +142,7 @@ const MainPage = () => {
           navigate("/");
         }}
       />
-    </Container>
+    </>
   );
 };
 

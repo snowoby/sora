@@ -6,33 +6,22 @@ import { Link } from "react-router-dom";
 import AccountContext from "@/context/AccountContext";
 import LinkMenu from "@/components/LinkMenu";
 
-const MainFrame = ({ children }: MainFrameProps) => {
+const MainFrame = ({ left, center, right }: MainFrameProps) => {
   const { account } = useContext(AccountContext);
-
-  const loginButton = (
-    <Link to="/account/login">
-      <Button
-        fullWidth
-        color="primary"
-        variant="contained"
-        size="large"
-        sx={{ borderRadius: "9999px", height: "4rem" }}
-      >
-        login
-      </Button>
-    </Link>
-  );
 
   const menu = <LinkMenu />;
 
   return (
-    <Container maxWidth="xl">
+    <Container>
       <Grid container columnSpacing={2}>
-        <Grid item xs={8}>
-          {children}
-        </Grid>
         <Grid item xs={4}>
-          {account ? menu : loginButton}
+          {left}
+        </Grid>
+        <Grid item xs={6}>
+          {center}
+        </Grid>
+        <Grid item xs={2}>
+          {right ?? menu}
         </Grid>
       </Grid>
     </Container>

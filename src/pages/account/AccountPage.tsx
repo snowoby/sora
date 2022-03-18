@@ -27,6 +27,8 @@ import UploadImage from "@/components/publish/UploadImage";
 import { CreateFileUploadProfile } from "@/utils/file";
 import Notice from "@/components/Notice";
 import { LoadingButton } from "@mui/lab";
+import RoundedButton from "@/components/RoundedButton";
+import { Box } from "@mui/system";
 
 const AccountPage = () => {
   const { account, profiles, updateAccount } = useContext(AccountContext);
@@ -36,15 +38,14 @@ const AccountPage = () => {
     category: "",
     avatar: "",
   };
-  const [open, setOpen] = useState(false);
   const [cropOpen, setCropOpen] = useState(false);
   const [avatar, setAvatar] = useState<FileUploadProps | null>(null);
   const [cropAvatar, setCropAvatar] = useState("");
+  const [edited, setEdited] = useState<boolean>(false);
   const [selectedProfile, setSelectedProfile] = useState<Profile>();
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const [img, setImg] = useState<HTMLImageElement>();
   const [editProfile, setEditProfile] = useState<ProfileCreate>(emptyForm);
-  const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [noticeOpen, setNoticeOpen] = useState<boolean>(false);
   const [noticeMessage, setNoticeMessage] = useState<string>("");
@@ -69,11 +70,13 @@ const AccountPage = () => {
 
   const [completedCrop, setCompletedCrop] = useState<Crop>(defaultCrop);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) =>
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEditProfile({
       ...editProfile,
       [e.target.name]: e.target.value,
     });
+    setEdited(true);
+  };
 
   const keys: ("title" | "call" | "category")[] = ["title", "call", "category"];
 
@@ -89,9 +92,12 @@ const AccountPage = () => {
       if (selectedProfile)
         await APIUpdateProfile(selectedProfile.id, editProfile);
       else await APICreateProfile(editProfile);
+      setEdited(false);
       await updateAccount();
     } catch (e) {
       log.error(e);
+      setSubmitting(false);
+    } finally {
       setSubmitting(false);
     }
   };
@@ -102,7 +108,6 @@ const AccountPage = () => {
       setNoticeType("warning");
       return;
     }
-    setOpen(false);
   };
   const closeCrop = () => setCropOpen(false);
   const OKCrop = () => {
@@ -139,6 +144,7 @@ const AccountPage = () => {
                 fileStatus: "uploaded",
               };
             });
+            setEdited(true);
           })
           .catch((e) => log.error(e));
       },
@@ -205,10 +211,10 @@ const AccountPage = () => {
     </Dialog>
   );
 
-  const editDialog = (
-    <Dialog open={open} onClose={closeEdit}>
-      <DialogTitle>{selectedProfile ? "edit" : "create"}</DialogTitle>
-      <DialogContent>
+  const edit = (
+    <Box>
+      {selectedProfile ? "edit" : "create"}
+      <Box>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -292,71 +298,52 @@ const AccountPage = () => {
             readOnly
           />
         </form>
-      </DialogContent>
-      <DialogActions>
-        <Button disabled={submitting} onClick={closeEdit}>
-          Cancel
-        </Button>
+      </Box>
+      <Box>
         <LoadingButton
           loading={submitting}
-          disabled={submitting}
+          disabled={submitting || !edited}
           onClick={() => submit().then(closeEdit)}
+          color="warning"
+          fullWidth
         >
-          OK
+          Save
         </LoadingButton>
-      </DialogActions>
-    </Dialog>
+      </Box>
+    </Box>
   );
 
-  return (
-    <MainFrame>
-      <div>email:{account.email}</div>
-      <Grid container spacing={2}>
-        {profiles.map((profile) => (
-          <Grid key={profile.id} item xs={12} md={6} lg={4}>
-            <Button
-              onClick={() => setSelectedProfile(profile)}
-              sx={[
-                {
-                  padding: "1rem",
-                  "&:hover": {
-                    backgroundColor: "action.hover",
-                  },
-                  color: "text.primary",
-                  textTransform: "none",
-                  justifyContent: "flex-start",
-                },
-                selectedProfile?.id === profile.id && {
-                  backgroundColor: "action.hover",
-                },
-              ]}
-              fullWidth
-            >
-              <ProfileCard profile={profile} />
-            </Button>
-          </Grid>
-        ))}
-      </Grid>
-
-      <Button
-        onClick={() => {
-          setSubmitting(false);
-          selectedProfile && setEditProfile(selectedProfile);
-          setOpen(true);
-        }}
-        disabled={!selectedProfile}
-      >
-        edit
-      </Button>
+  const profileList = () => (
+    <Stack>
+      {profiles.map((profile) => (
+        <Grid key={profile.id} item>
+          <RoundedButton
+            activated={selectedProfile === profile}
+            onClick={() => {
+              setSelectedProfile(profile);
+              setEditProfile(profile);
+              setAvatar(null);
+              setEdited(false);
+            }}
+            fullWidth
+          >
+            <ProfileCard profile={profile} />
+          </RoundedButton>
+        </Grid>
+      ))}
       <Button
         onClick={() => {
           reset();
-          setOpen(true);
         }}
       >
         new profile
       </Button>
-      {editDialog}
+    </Stack>
+  );
+
+  const center = () => (
+    <>
+      {edit}
       {cropDialog}
       <canvas
         hidden={true}
@@ -367,23 +354,34 @@ const AccountPage = () => {
           height: Math.round(completedCrop?.height ?? 0),
         }}
       />
-      <Button
-        color="error"
-        onClick={() => {
-          Logout();
-          window.location.pathname = "/";
-        }}
-      >
-        logout
-      </Button>
+
       <Notice
         open={noticeOpen}
         message={noticeMessage}
         onClose={() => setNoticeOpen(false)}
         type={noticeType}
       />
-    </MainFrame>
+    </>
   );
+
+  const right = () => {
+    return (
+      <div>
+        <div>account/profile</div>
+        <Button
+          color="error"
+          onClick={() => {
+            Logout();
+            window.location.pathname = "/";
+          }}
+        >
+          logout
+        </Button>
+      </div>
+    );
+  };
+
+  return <MainFrame left={profileList()} center={center()} right={right()} />;
 };
 
 export default AccountPage;

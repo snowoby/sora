@@ -65,7 +65,9 @@ export type ProfileCardProps = {
 };
 
 export type MainFrameProps = {
-  children?: ReactNode;
+  left?: ReactNode
+  center?: ReactNode
+  right?: ReactNode
 };
 
 export type EpisodeData = {

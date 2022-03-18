@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box, Button, Menu, MenuItem } from "@mui/material";
+import RoundedButton from "./RoundedButton";
 
 type FrameSwitcherProps<T> = {
   options: T[];
@@ -30,17 +31,7 @@ const FrameSwitcher = <T,>(props: FrameSwitcherProps<T>) => {
   return (
     <div>
       <div ref={anchor} style={{ marginBottom: "0.5rem" }} />
-      <Button
-        sx={{
-          borderRadius: "9999px",
-          "&:hover": {
-            backgroundColor: "action.hover",
-          },
-          padding: "0.75rem",
-          color: "text.primary",
-          textTransform: "none",
-          justifyContent: "flex-start",
-        }}
+      <RoundedButton
         disabled={props.disabled}
         type="button"
         onClick={() => setOpen(true)}
@@ -49,7 +40,8 @@ const FrameSwitcher = <T,>(props: FrameSwitcherProps<T>) => {
         {props.selected
           ? props.renderButton?.(props.selected)
           : props.placeholder}
-      </Button>
+      </RoundedButton>
+
       {anchor.current && (
         <Menu
           open={open}
