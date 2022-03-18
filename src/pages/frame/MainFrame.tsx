@@ -14,13 +14,13 @@ const MainFrame = ({ left, center, right }: MainFrameProps) => {
   return (
     <Container>
       <Grid container columnSpacing={2}>
-        <Grid item xs={4}>
+        <Grid item xs={12} md={4}>
           {left}
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           {center}
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs={12} md={2}>
           {right ?? menu}
         </Grid>
       </Grid>
