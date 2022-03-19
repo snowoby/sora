@@ -10,6 +10,7 @@ import LibraryBooksOutlinedIcon from "@mui/icons-material/LibraryBooksOutlined";
 import UniversalContext from "@/context/UniversalContext";
 import AccountContext from "@/context/AccountContext";
 import { AccountContextType, Profiles, UniversalContextProps } from "@/types";
+import MenuFrame from "@/pages/frame/MenuFrame";
 
 const commonButtonProps = {
   fullWidth: true,
@@ -53,11 +54,7 @@ const LinkMenu = () => {
   const { siteName } = useContext(UniversalContext);
   const router = useMemo(() => routers(profiles), [profiles]);
   return (
-    <Stack className="sticky top-0" spacing={0}>
-      <Typography variant="h6" sx={{ m: "0.75rem", userSelect: "none" }}>
-        {siteName}
-      </Typography>
-
+    <MenuFrame title={siteName} hideBack={true}>
       {/* 
   // @ts-ignore: see https://github.com/mui-org/material-ui/issues/7877 */}
       <LoadingButton
@@ -68,7 +65,7 @@ const LinkMenu = () => {
         disabled={loginStatus == null}
       >
         <Box display="flex" gap="0.75rem">
-          <AccountCircleOutlinedIcon />{" "}
+          <AccountCircleOutlinedIcon />
           {account?.email ? account.email : "login / register"}
         </Box>
       </LoadingButton>
@@ -88,7 +85,7 @@ const LinkMenu = () => {
           </Button>
         );
       })}
-    </Stack>
+    </MenuFrame>
   );
 };
 

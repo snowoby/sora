@@ -7,6 +7,7 @@ import MainPage from "@/pages/home";
 import { Container } from "@mui/material";
 import EpisodePage from "@/pages/episode/EpisodePage";
 import CreateSeriesPage from "./pages/series/Create";
+import QuickPublish from "./pages/publish/QuickPublish";
 
 const Guide = () => {
   return (
@@ -25,7 +26,7 @@ const Guide = () => {
           <Route path=":id" element={<EpisodePage />} />
         </Route>
         <Route path="publish" element={<PublishPage />} />
-        <Route path="quick" element={<MainPage />} />
+        <Route path="quick" element={<QuickPublish />} />
       </Routes>
     </BrowserRouter>
   );

@@ -8,6 +8,7 @@ import {
   DialogTitle,
   Divider,
   Grid,
+  Hidden,
   LinearProgress,
   Stack,
 } from "@mui/material";
@@ -19,11 +20,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import UniversalContext from "@/context/UniversalContext";
 import ShortEpisodeCard from "@/components/ShortEpisodeCard";
-import ShortModal from "@/pages/home/ShortModal";
 import Notice from "@/components/Notice";
 import { AxiosError } from "axios";
-import LinkMenu from "@/components/LinkMenu";
 import MainFrame from "../frame/MainFrame";
+import LinkMenu from "@/components/LinkMenu";
+import MenuFrame from "../frame/MenuFrame";
 
 const MainPage = () => {
   const [episodes, setEpisodes] = useState<Episode[]>();
@@ -34,8 +35,6 @@ const MainPage = () => {
     useState<Episode | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const location = useLocation();
-  const navigate = useNavigate();
 
   const fetchEpisodes = () =>
     APIGetAllEpisode()
@@ -121,29 +120,7 @@ const MainPage = () => {
     </Stack>
   );
 
-  return (
-    <>
-      <MainFrame center={episodes ? mainBody() : <LinearProgress />} />
-      <ShortModal
-        open={location.pathname === "/quick"}
-        onClose={(ep, identity) => {
-          if (ep) {
-            if (identity) {
-              if (identity.valueType === "profile") {
-                ep.profile = identity as Profile;
-              }
-              if (identity.valueType === "series") {
-                ep.series = identity as Series;
-                ep.profile = (identity as Series).profile;
-              }
-            }
-            setEpisodes((episodes) => (episodes ? [ep, ...episodes] : [ep]));
-          }
-          navigate("/");
-        }}
-      />
-    </>
-  );
+  return <MainFrame center={episodes ? mainBody() : <LinearProgress />} />;
 };
 
 export default MainPage;

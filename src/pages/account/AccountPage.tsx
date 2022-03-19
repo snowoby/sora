@@ -11,6 +11,7 @@ import {
   Grid,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
 import { Navigate, useNavigate } from "react-router-dom";
 import MainFrame from "@/pages/frame/MainFrame";
@@ -29,6 +30,7 @@ import Notice from "@/components/Notice";
 import { LoadingButton } from "@mui/lab";
 import RoundedButton from "@/components/RoundedButton";
 import { Box } from "@mui/system";
+import MenuFrame from "../frame/MenuFrame";
 
 const AccountPage = () => {
   const { account, profiles, updateAccount } = useContext(AccountContext);
@@ -366,18 +368,17 @@ const AccountPage = () => {
 
   const right = () => {
     return (
-      <div>
-        <div>account/profile</div>
-        <Button
+      <MenuFrame title="account/profile">
+        <RoundedButton
           color="error"
           onClick={() => {
             Logout();
             window.location.pathname = "/";
           }}
         >
-          logout
-        </Button>
-      </div>
+          <Typography color="error">logout</Typography>
+        </RoundedButton>
+      </MenuFrame>
     );
   };
 
