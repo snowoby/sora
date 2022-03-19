@@ -1,6 +1,6 @@
 import { Box, Container, Grid, Paper, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { APIGetEpisode } from "@/api/Episode";
 import { Episode } from "@/types";
 import log from "@/log";
@@ -9,6 +9,8 @@ import ProfileCard from "@/components/profile";
 import BackTitleBar from "@/components/BackTitleBar";
 import SeriesCard from "@/components/series";
 import { StorageUrl } from "@/api/Storage";
+import ShortEpisodeCard from "@/components/ShortEpisodeCard";
+import RoundedButton from "@/components/RoundedButton";
 
 const EpisodePage = () => {
   let { id } = useParams();
@@ -21,37 +23,21 @@ const EpisodePage = () => {
       .catch((e) => log.error(e));
   }, [id]);
 
+  const location = useLocation();
   if (!episode) return <Container>Loading...</Container>;
 
   return (
     <Container>
-      <Grid container spacing={2}>
-        <Grid item xs={8}>
-          <Box position="sticky" top="0">
+      <Grid container>
+        <Grid item xs={0} md={2} />
+        <Grid item xs={12} md={8}>
+          <Box position="sticky" top="0" zIndex={100}>
             <BackTitleBar>{episode.title}</BackTitleBar>
           </Box>
-          {episode.cover && (
-            <img
-              style={{ maxWidth: "100%" }}
-              srcSet={StorageUrl("file", episode.cover, "compressed")}
-            />
-          )}
-          <Box sx={{ padding: "0.5rem" }}>
-            <MarkdownViewer>{episode.content}</MarkdownViewer>
-          </Box>
+          <ShortEpisodeCard episode={episode} fullImage={true} />
+          {location.hash !== "#comments" ? "" : <>no comments</>}
         </Grid>
-        <Grid item xs={4}>
-          <Box position="sticky" top="1rem" bottom="0">
-            <Typography variant="h6">Author</Typography>
-            <ProfileCard profile={episode.profile} />
-            {episode.series && (
-              <>
-                <Typography variant="h6">Series</Typography>
-                <SeriesCard series={episode.series} />
-              </>
-            )}
-          </Box>
-        </Grid>
+        <Grid item xs={0} md={2} />
       </Grid>
     </Container>
   );

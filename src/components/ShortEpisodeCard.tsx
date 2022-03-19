@@ -20,15 +20,24 @@ import CommentOutlinedIcon from "@mui/icons-material/CommentOutlined";
 import BookmarkAddOutlinedIcon from "@mui/icons-material/BookmarkAddOutlined";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import AccountContext from "@/context/AccountContext";
+import { useLocation, useNavigate } from "react-router-dom";
 dayjs.extend(relativeTime);
 
 interface Props {
   episode: Episode;
   onDelete?: (episode: Episode) => void;
   hideAction?: boolean;
+  fullImage?: boolean;
 }
-const ShortEpisodeCard = ({ episode, hideAction, onDelete }: Props) => {
+const ShortEpisodeCard = ({
+  episode,
+  hideAction,
+  fullImage,
+  onDelete,
+}: Props) => {
   const { profiles, loginStatus } = useContext(AccountContext);
+  const navigate = useNavigate();
+  const location = useLocation();
   const actionArea = () => (
     <Box
       display="flex"
@@ -55,7 +64,15 @@ const ShortEpisodeCard = ({ episode, hideAction, onDelete }: Props) => {
         gap={1}
         justifyContent="flex-end"
       >
-        <IconButton>
+        <IconButton
+          onClick={() => {
+            if (location.pathname === `/episode/${episode.id}`) {
+              navigate(location.hash === "#comments" ? "" : "#comments");
+            } else {
+              navigate(`/episode/${episode.id}#comments`);
+            }
+          }}
+        >
           <CommentOutlinedIcon fontSize="small" />
         </IconButton>
         <IconButton>
@@ -99,7 +116,7 @@ const ShortEpisodeCard = ({ episode, hideAction, onDelete }: Props) => {
             borderStyle: "solid",
           }}
         >
-          <ImageTiles files={episode.files} />
+          <ImageTiles files={episode.files} fullImage={fullImage} />
         </Box>
       )}
       {!hideAction && actionArea()}
@@ -109,7 +126,13 @@ const ShortEpisodeCard = ({ episode, hideAction, onDelete }: Props) => {
 
 export default ShortEpisodeCard;
 
-const ImageTiles = ({ files }: { files?: FileInfo[] }) => {
+const ImageTiles = ({
+  files,
+  fullImage,
+}: {
+  files?: FileInfo[];
+  fullImage?: boolean;
+}) => {
   const count = files?.length || 0;
   if (!count) return null;
   const colSize = Math.ceil(Math.sqrt(count));
@@ -117,12 +140,14 @@ const ImageTiles = ({ files }: { files?: FileInfo[] }) => {
   return (
     <>
       <Box
-        display="grid"
-        sx={{
-          gridTemplateColumns: Array(colSize).fill(`1fr`).join(" "),
-          gridTemplateRows: Array(rowSize).fill(`auto`).join(" "),
-          gap: 0.25,
-        }}
+        sx={[
+          !fullImage && {
+            display: "grid",
+            gridTemplateColumns: Array(colSize).fill(`1fr`).join(" "),
+            gridTemplateRows: Array(rowSize).fill(`auto`).join(" "),
+            gap: 0.25,
+          },
+        ]}
       >
         {files?.map((file: FileInfo) => (
           <img
@@ -131,7 +156,7 @@ const ImageTiles = ({ files }: { files?: FileInfo[] }) => {
             alt={file.filename}
             style={{
               width: "100%",
-              aspectRatio: "1",
+              aspectRatio: !fullImage ? "1" : "auto",
               objectFit: "cover",
               objectPosition: "center",
             }}

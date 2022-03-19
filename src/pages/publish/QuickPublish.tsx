@@ -1,5 +1,5 @@
-import { Episode, Profile, Series } from "@/types";
 import React from "react";
+import { Episode, Profile, Series } from "@/types";
 import { useNavigate } from "react-router-dom";
 import MainFrame from "../frame/MainFrame";
 import MenuFrame from "../frame/MenuFrame";
