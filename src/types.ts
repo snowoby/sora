@@ -68,6 +68,7 @@ export type MainFrameProps = {
   left?: ReactNode
   center?: ReactNode
   right?: ReactNode
+  title?: ReactNode
 };
 
 export type EpisodeData = {

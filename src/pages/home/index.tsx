@@ -25,6 +25,7 @@ import { AxiosError } from "axios";
 import MainFrame from "../frame/MainFrame";
 import LinkMenu from "@/components/LinkMenu";
 import MenuFrame from "../frame/MenuFrame";
+import TitleBar from "@/components/TitleBar";
 
 const MainPage = () => {
   const [episodes, setEpisodes] = useState<Episode[]>();
@@ -120,7 +121,12 @@ const MainPage = () => {
     </Stack>
   );
 
-  return <MainFrame center={episodes ? mainBody() : <LinearProgress />} />;
+  return (
+    <MainFrame
+      center={episodes ? mainBody() : <LinearProgress />}
+      title={<TitleBar button={<></>}>{siteName}</TitleBar>}
+    />
+  );
 };
 
 export default MainPage;
