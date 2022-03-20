@@ -1,4 +1,11 @@
-import { Box, Container, Grid, Paper, Typography } from "@mui/material";
+import {
+  Box,
+  Container,
+  Divider,
+  Grid,
+  Paper,
+  Typography,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { APIGetEpisode } from "@/api/Episode";
@@ -11,6 +18,8 @@ import SeriesCard from "@/components/series";
 import { StorageUrl } from "@/api/Storage";
 import ShortEpisodeCard from "@/components/ShortEpisodeCard";
 import RoundedButton from "@/components/RoundedButton";
+import TitleBarFrame from "../frame/TitleBarFrame";
+import ShortPublishCard from "../publish/ShortPublishCard";
 
 const EpisodePage = () => {
   let { id } = useParams();
@@ -26,20 +35,30 @@ const EpisodePage = () => {
   const location = useLocation();
   if (!episode) return <Container>Loading...</Container>;
 
+  const commentArea = () => {
+    return (
+      <Box>
+        <Divider>
+          <Typography sx={{ color: "divider" }}>comments</Typography>
+        </Divider>
+        <ShortPublishCard />
+      </Box>
+    );
+  };
+
   return (
-    <Container>
+    <TitleBarFrame title={episode.title ?? "details"}>
       <Grid container>
-        <Grid item xs={0} md={2} />
+        <Grid item xs />
         <Grid item xs={12} md={8}>
-          <Box position="sticky" top="0" zIndex={100}>
-            <BackTitleBar>{episode.title}</BackTitleBar>
-          </Box>
           <ShortEpisodeCard episode={episode} fullImage={true} />
-          {location.hash !== "#comments" ? "" : <>no comments</>}
+          <Box mx="1rem">
+            {location.hash !== "#comments" ? "" : commentArea()}
+          </Box>
         </Grid>
-        <Grid item xs={0} md={2} />
+        <Grid item xs />
       </Grid>
-    </Container>
+    </TitleBarFrame>
   );
 };
 
