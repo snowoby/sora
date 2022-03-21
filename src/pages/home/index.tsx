@@ -65,7 +65,16 @@ const MainPage = () => {
       {episodes && (
         <Stack>
           {episodes.map((episode) => (
-            <Box key={episode.id}>
+            <Box
+              key={episode.id}
+              sx={{
+                transition: "all 0.15s ease-in-out",
+                "&:hover": {
+                  boxShadow: (theme) =>
+                    `${theme.palette.primary.main} 0 0 10px -4px`,
+                },
+              }}
+            >
               <ShortEpisodeCard
                 onDelete={(episode) => {
                   setDeleteConfirmEpisode(episode);

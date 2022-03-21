@@ -18,7 +18,7 @@ const BackTitleBar = ({ children }: { children?: React.ReactNode }) => {
       <IconButton onClick={() => navigate(-1)}>
         <ArrowBack />
       </IconButton>
-      <Typography variant="h5">{children}</Typography>
+      <Typography>{children}</Typography>
     </Box>
   );
 };

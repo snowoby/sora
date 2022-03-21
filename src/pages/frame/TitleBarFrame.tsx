@@ -3,9 +3,11 @@ import {
   AppBar,
   Box,
   Container,
+  Drawer,
   Grid,
   IconButton,
   Toolbar,
+  Typography,
 } from "@mui/material";
 
 import AccountContext from "@/context/AccountContext";
@@ -14,14 +16,16 @@ import MenuIcon from "@mui/icons-material/Menu";
 
 const TitleBarFrame = ({
   title,
+  menu,
   children,
 }: {
   title?: React.ReactNode;
+  menu?: React.ReactNode;
   children?: React.ReactNode;
 }) => {
   const { account } = useContext(AccountContext);
-
-  const menu = <LinkMenu />;
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  menu = menu ?? <LinkMenu />;
 
   return (
     <Container disableGutters>
@@ -36,6 +40,23 @@ const TitleBarFrame = ({
             zIndex: 100,
           }}
         >
+          <Drawer
+            anchor="left"
+            open={drawerOpen}
+            onClose={() => setDrawerOpen(false)}
+          >
+            <Box
+              sx={{
+                width: "16rem",
+                height: "100vh",
+              }}
+              display="grid"
+              gridTemplateRows="1fr auto"
+            >
+              <Box />
+              <Box>{menu}</Box>
+            </Box>
+          </Drawer>
           <AppBar
             position="fixed"
             sx={{
@@ -46,16 +67,19 @@ const TitleBarFrame = ({
             }}
           >
             <Toolbar>
+              <Typography sx={{ flexGrow: 1 }}>
+                {!!title && <Box>{title}</Box>}
+              </Typography>
               <IconButton
                 size="large"
                 edge="start"
                 color="inherit"
                 aria-label="menu"
-                sx={{ mr: 2 }}
+                sx={{ ml: 2 }}
+                onClick={() => setDrawerOpen(true)}
               >
                 <MenuIcon />
               </IconButton>
-              {!!title && <Box>{title}</Box>}
             </Toolbar>
           </AppBar>
         </Grid>

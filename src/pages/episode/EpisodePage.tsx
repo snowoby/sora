@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Container,
   Divider,
   Grid,
@@ -9,7 +10,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { APIGetEpisode } from "@/api/Episode";
-import { Episode } from "@/types";
+import { Episode, Profile, Series } from "@/types";
 import log from "@/log";
 import MarkdownViewer from "@/components/publish/MarkdownViewer";
 import ProfileCard from "@/components/profile";
@@ -20,6 +21,9 @@ import ShortEpisodeCard from "@/components/ShortEpisodeCard";
 import RoundedButton from "@/components/RoundedButton";
 import TitleBarFrame from "../frame/TitleBarFrame";
 import ShortPublishCard from "../publish/ShortPublishCard";
+import MarkdownEditor from "@/components/publish/MarkdownEditor";
+import ProfileSeriesSwitcher from "@/components/ProfileSeriesSwitcher";
+import DefaultProfileSeriesSwitcher from "@/components/DefaultProfileSeriesSwitcher";
 
 const EpisodePage = () => {
   let { id } = useParams();
@@ -41,13 +45,25 @@ const EpisodePage = () => {
         <Divider>
           <Typography sx={{ color: "divider" }}>comments</Typography>
         </Divider>
-        <ShortPublishCard />
+        <Box>
+          <MarkdownEditor>asdasd</MarkdownEditor>
+          <Box display="grid" gridTemplateColumns="1fr auto">
+            <DefaultProfileSeriesSwitcher
+              onChange={function (item: Series | Profile): void {
+                //TODO
+              }}
+            />
+            <Button>Publish</Button>
+          </Box>
+        </Box>
       </Box>
     );
   };
 
   return (
-    <TitleBarFrame title={episode.title ?? "details"}>
+    <TitleBarFrame
+      title={<BackTitleBar>{episode.title ?? "details"}</BackTitleBar>}
+    >
       <Grid container>
         <Grid item xs />
         <Grid item xs={12} md={8}>

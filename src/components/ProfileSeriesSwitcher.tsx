@@ -1,13 +1,15 @@
 import React from "react";
 import { Profile, Series } from "@/types";
-import FrameSwitcher from "@/components/FrameSwitcher";
+import FrameSwitcher, { FrameSwitcherProps } from "@/components/FrameSwitcher";
 import { Divider, ListSubheader, MenuItem } from "@mui/material";
 import ProfileCard from "@/components/profile";
 import SeriesCard from "@/components/series";
 
-type GroupLabel = { valueType: "group"; children: React.ReactNode };
+export type GroupLabel = { valueType: "group"; children: React.ReactNode };
 
-type ProfileSeriesSwitcherProps = {
+type ProfileSeriesSwitcherProps = Partial<
+  Omit<FrameSwitcherProps<Series | Profile | GroupLabel>, "onChange">
+> & {
   profileOptions: Profile[];
   seriesOptions: Series[];
   selected?: Profile | Series;

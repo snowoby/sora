@@ -28,8 +28,8 @@ const MarkdownEditor = (props: TextFieldProps) => {
           <Tab label="preview" value="preview" />
         </Tabs>
       </Box>
-      <Box hidden={tabIndex != "edit"} minHeight="10rem">
-        <TextField {...props} />
+      <Box hidden={tabIndex != "edit"}>
+        <TextField fullWidth multiline variant="filled" {...props} />
       </Box>
       <Box
         hidden={tabIndex != "preview"}

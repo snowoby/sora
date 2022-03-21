@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Box, Button, Menu, MenuItem } from "@mui/material";
 import RoundedButton from "./RoundedButton";
 
-type FrameSwitcherProps<T> = {
+export type FrameSwitcherProps<T> = {
   options: T[];
   selected?: T;
   onChange?: (option: T) => void;
