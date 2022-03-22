@@ -137,6 +137,41 @@ const ImageTiles = ({
   if (!count) return null;
   const colSize = Math.ceil(Math.sqrt(count));
   const rowSize = Math.ceil(count / colSize);
+
+  const multipleImage = () => {
+    return files?.map((file: FileInfo) => (
+          <img
+            key={file.id}
+            src={StorageUrl(file.path, file.id, "thumbnail")}
+            alt={file.filename}
+            style={{
+              width: "100%",
+              aspectRatio: !fullImage ? "1" : "auto",
+              objectFit: "cover",
+              objectPosition: "center",
+            }}
+          />
+        ))
+  }
+
+  const singleImage = () => {
+    const file = files?.[0];
+    if(!file) return null;
+    return <img
+            key={file.id}
+            src={StorageUrl(file.path, file.id, "thumbnail")}
+            alt={file.filename}
+            style={{
+              maxWidth: "100%",
+              maxHeight:"1024px",
+              objectFit: "cover",
+              objectPosition: "center",
+            }}
+          />
+  }
+
+  
+
   return (
     <>
       <Box
@@ -149,19 +184,8 @@ const ImageTiles = ({
           },
         ]}
       >
-        {files?.map((file: FileInfo) => (
-          <img
-            key={file.id}
-            src={StorageUrl(file.path, file.id, "thumbnail")}
-            alt={file.filename}
-            style={{
-              width: "100%",
-              aspectRatio: !fullImage ? "1" : "auto",
-              objectFit: "cover",
-              objectPosition: "center",
-            }}
-          />
-        ))}
+        {files?.length===1?singleImage():multipleImage()}
+        {}
       </Box>
     </>
   );

@@ -2,11 +2,19 @@ import React from "react";
 import ReactDOM from "react-dom";
 import reportWebVitals from "./reportWebVitals";
 import App from "./App";
-import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
-import log from "./log";
+import { createTheme, CssBaseline, PaletteMode, ThemeProvider } from "@mui/material";
+import dotenv from "dotenv";
+
+dotenv.config();
+let mode:PaletteMode="light";
+if (process.env.NODE_ENV === "production") {
+  mode=window.matchMedia('(prefers-color-scheme: dark)').matches?"dark":"light"
+}
+
+
 const darkTheme = createTheme({
   palette: {
-    mode: "dark",
+    mode: mode,
   },
 });
 
