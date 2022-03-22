@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { Episode, FileInfo } from "@/types";
 import PublisherCard from "@/components/PublisherCard";
 import {
+  Backdrop,
   Box,
   Button,
   Dialog,
@@ -38,6 +39,8 @@ const ShortEpisodeCard = ({
   const { profiles, loginStatus } = useContext(AccountContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const [largeImageOpen, setLargeImageOpen] = useState(false);
+  const [largeImageFile, setLargeImageFile] = useState<FileInfo | null>(null);
   const actionArea = () => (
     <Box
       display="flex"
@@ -49,8 +52,11 @@ const ShortEpisodeCard = ({
         {loginStatus &&
           profiles?.find((profile) => profile.id === episode.profile.id) && (
             <IconButton
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 onDelete?.(episode);
+                return false;
               }}
             >
               <DeleteForeverOutlinedIcon color="error" fontSize="small" />
@@ -65,10 +71,12 @@ const ShortEpisodeCard = ({
         justifyContent="flex-end"
       >
         <IconButton
-          onClick={() => {
-            if (location.pathname === `/episode/${episode.id}`) {
-              navigate(location.hash === "#comments" ? "" : "#comments");
-            } else {
+          onClick={(e) => {
+            e.stopPropagation();
+            if (
+              location.pathname !== `/episode/${episode.id}` ||
+              location.hash !== "#comments"
+            ) {
               navigate(`/episode/${episode.id}#comments`);
             }
           }}
@@ -116,7 +124,16 @@ const ShortEpisodeCard = ({
             borderStyle: "solid",
           }}
         >
-          <ImageTiles files={episode.files} fullImage={fullImage} />
+          <ImageTiles
+            files={episode.files}
+            fullImage={fullImage}
+            onClick={(e, file) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setLargeImageOpen(true);
+              setLargeImageFile(file);
+            }}
+          />
         </Box>
       )}
       {!hideAction && actionArea()}
@@ -129,9 +146,11 @@ export default ShortEpisodeCard;
 const ImageTiles = ({
   files,
   fullImage,
+  onClick,
 }: {
   files?: FileInfo[];
   fullImage?: boolean;
+  onClick?: (e: any, file: FileInfo) => void;
 }) => {
   const count = files?.length || 0;
   if (!count) return null;
@@ -140,37 +159,39 @@ const ImageTiles = ({
 
   const multipleImage = () => {
     return files?.map((file: FileInfo) => (
-          <img
-            key={file.id}
-            src={StorageUrl(file.path, file.id, "thumbnail")}
-            alt={file.filename}
-            style={{
-              width: "100%",
-              aspectRatio: !fullImage ? "1" : "auto",
-              objectFit: "cover",
-              objectPosition: "center",
-            }}
-          />
-        ))
-  }
+      <img
+        key={file.id}
+        src={StorageUrl(file.path, file.id, "thumbnail")}
+        alt={file.filename}
+        style={{
+          display: "block",
+          width: "100%",
+          aspectRatio: !fullImage ? "1" : "auto",
+          objectFit: "cover",
+          objectPosition: "center",
+        }}
+      />
+    ));
+  };
 
   const singleImage = () => {
     const file = files?.[0];
-    if(!file) return null;
-    return <img
-            key={file.id}
-            src={StorageUrl(file.path, file.id, "thumbnail")}
-            alt={file.filename}
-            style={{
-              maxWidth: "100%",
-              maxHeight:"1024px",
-              objectFit: "cover",
-              objectPosition: "center",
-            }}
-          />
-  }
-
-  
+    if (!file) return null;
+    return [
+      <img
+        key={file.id}
+        src={StorageUrl(file.path, file.id, "thumbnail")}
+        alt={file.filename}
+        style={{
+          display: "block",
+          maxWidth: "100%",
+          maxHeight: "1024px",
+          objectFit: "cover",
+          objectPosition: "center",
+        }}
+      />,
+    ];
+  };
 
   return (
     <>
@@ -184,8 +205,18 @@ const ImageTiles = ({
           },
         ]}
       >
-        {files?.length===1?singleImage():multipleImage()}
-        {}
+        {(files?.length === 1 ? singleImage() : multipleImage())?.map(
+          (img, index) => (
+            <Box
+              key={index}
+              onClick={(e) => {
+                onClick?.(e, files?.[index] as FileInfo);
+              }}
+            >
+              {img}
+            </Box>
+          )
+        )}
       </Box>
     </>
   );

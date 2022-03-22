@@ -36,6 +36,7 @@ const MainPage = () => {
     useState<Episode | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const navigate = useNavigate();
 
   const fetchEpisodes = () =>
     APIGetAllEpisode()
@@ -72,7 +73,11 @@ const MainPage = () => {
                 "&:hover": {
                   boxShadow: (theme) =>
                     `${theme.palette.primary.main} 0 0 10px -4px`,
+                  cursor: "pointer",
                 },
+              }}
+              onClick={() => {
+                navigate(`/episode/${episode.id}`);
               }}
             >
               <ShortEpisodeCard
