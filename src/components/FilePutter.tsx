@@ -179,7 +179,7 @@ const FilePutter = (props: Props) => {
         }}
       >
         <Box>
-          <Typography variant="h5">
+          <Typography variant="h5" sx={{wordBreak:"break-all"}}>
             {(toDelete?.localFile as any)?.name ?? "Noname file"}
           </Typography>
           <Typography variant="subtitle1">
