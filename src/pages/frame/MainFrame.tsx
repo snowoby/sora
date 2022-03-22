@@ -27,7 +27,7 @@ const MainFrame = ({ left, center, right, title }: MainFrameProps) => {
       <Grid item xs={12} md={6}>
         {center}
       </Grid>
-      <Grid item display={{ xs: "none" }} xs={12} md={2}>
+      <Grid item display={{ xs: "none", md:"block" }} xs={12} md={2}>
         {!!title && <Box>{title}</Box>}
         {right ?? menu}
       </Grid>
