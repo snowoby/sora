@@ -27,6 +27,7 @@ dayjs.extend(relativeTime);
 interface Props {
   episode: Episode;
   onDelete?: (episode: Episode) => void;
+  onMediaClick?: (e: any, file: FileInfo) => void;
   hideAction?: boolean;
   fullImage?: boolean;
 }
@@ -35,12 +36,11 @@ const ShortEpisodeCard = ({
   hideAction,
   fullImage,
   onDelete,
+  onMediaClick,
 }: Props) => {
   const { profiles, loginStatus } = useContext(AccountContext);
   const navigate = useNavigate();
   const location = useLocation();
-  const [largeImageOpen, setLargeImageOpen] = useState(false);
-  const [largeImageFile, setLargeImageFile] = useState<FileInfo | null>(null);
   const actionArea = () => (
     <Box
       display="flex"
@@ -127,12 +127,7 @@ const ShortEpisodeCard = ({
           <ImageTiles
             files={episode.files}
             fullImage={fullImage}
-            onClick={(e, file) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setLargeImageOpen(true);
-              setLargeImageFile(file);
-            }}
+            onClick={onMediaClick}
           />
         </Box>
       )}
