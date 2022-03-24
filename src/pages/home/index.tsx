@@ -120,7 +120,7 @@ const MainPage = () => {
         >
           {largeImageFile && (
             <img
-              src={StorageUrl("file", largeImageFile.id, "original")}
+              src={StorageUrl("file", largeImageFile.id, "compress")}
               style={{ maxWidth: "100%", maxHeight: "100%" }}
             />
           )}
