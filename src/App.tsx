@@ -5,7 +5,7 @@ import UniversalContext, {
 import AccountContext from "@/context/AccountContext";
 import Guide from "@/route";
 import log from "./log";
-import { AccountInfo, Series, StorageEndpoint } from "./types";
+import { AccountInfo, Episode, Series, StorageEndpoint } from "./types";
 import { APISelf } from "./api/ProfileAPI";
 import { APIStorageEndpoint } from "@/api/Site";
 import endpoint from "@/const/endpoint";
@@ -15,11 +15,13 @@ import { APIAllMySeries } from "@/api/Series";
 import { boolean } from "yup";
 import { AxiosError } from "axios";
 import { GetAccessToken, GetRefreshToken } from "./utils/utils";
+import HomeTimelineContext from "./context/HomeTimelineContext";
 
 const App = () => {
   const [accountInfo, setAccount] = useState<AccountInfo>();
   const [loginStatus, setLoginStatus] = useState<boolean>();
   const [seriesInfo, setSeries] = useState<Series[]>();
+  const [homeTimeline, setHomeTimeline] = useState<Episode[]>();
   const [ep, setEp] = useState<StorageEndpoint>();
 
   const updateAccount = async () => {
@@ -78,7 +80,11 @@ const App = () => {
                 updateAccount,
               }}
             >
-              {ep && <Guide />}
+              <HomeTimelineContext.Provider
+                value={{ timeline: homeTimeline, setTimeline: setHomeTimeline }}
+              >
+                {ep && <Guide />}
+              </HomeTimelineContext.Provider>
             </AccountContext.Provider>
           </UniversalContext.Provider>
         </ThemeProvider>

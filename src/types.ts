@@ -155,3 +155,8 @@ export type SeriesData = {
 };
 
 export type Series = InfoBasic & SeriesData & { profile: Profile };
+
+export type HomeTimelineContextType = {
+  timeline?: Episode[]
+  setTimeline: React.Dispatch<React.SetStateAction<Episode[] | undefined>>
+}

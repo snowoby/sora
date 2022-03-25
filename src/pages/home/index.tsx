@@ -23,9 +23,10 @@ import { AxiosError } from "axios";
 import MainFrame from "../frame/MainFrame";
 import TitleBar from "@/components/TitleBar";
 import { StorageUrl } from "@/api/Storage";
+import HomeTimelineContext from "@/context/HomeTimelineContext";
 
 const MainPage = () => {
-  const [episodes, setEpisodes] = useState<Episode[]>();
+  // const [episodes, setEpisodes] = useState<Episode[]>();
   const [showNotice, setShowNotice] = useState<boolean>(false);
   const [noticeMessage, setNoticeMessage] = useState<string>("");
   const [noticeType, setNoticeType] = useState<"success" | "error">("success");
@@ -36,19 +37,19 @@ const MainPage = () => {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const navigate = useNavigate();
+  const { siteName } = useContext(UniversalContext);
+  const { timeline, setTimeline } = useContext(HomeTimelineContext);
 
   const fetchEpisodes = () =>
     APIGetAllEpisode()
       .then(({ data }) => {
-        setEpisodes(data);
+        setTimeline(data);
       })
       .catch((e) => log.error(e));
 
   useEffect(() => {
     fetchEpisodes();
   }, []);
-
-  const { siteName } = useContext(UniversalContext);
 
   const mainBody = () => (
     <>
@@ -63,9 +64,9 @@ const MainPage = () => {
           borderRightWidth: "1px",
         }}
       >
-        {episodes && (
+        {timeline && (
           <Stack>
-            {episodes.map((episode) => (
+            {timeline.map((episode) => (
               <Box
                 key={episode.id}
                 sx={{
@@ -73,11 +74,7 @@ const MainPage = () => {
                   "&:hover": {
                     boxShadow: (theme) =>
                       `${theme.palette.primary.main} 0 0 10px -4px`,
-                    cursor: "pointer",
                   },
-                }}
-                onClick={() => {
-                  navigate(`/episode/${episode.id}`);
                 }}
               >
                 <ShortEpisodeCard
@@ -140,10 +137,11 @@ const MainPage = () => {
               setNoticeMessage("deleted.");
               setNoticeType("success");
               setShowNotice(true);
-              setEpisodes((episodes) =>
+              setTimeline((episodes?: Episode[]) =>
                 episodes?.filter((e) => e.id !== deleteConfirmEpisode.id)
               );
             })
+
             .catch((e) => {
               setNoticeMessage(
                 (e as AxiosError).response?.data?.message ?? e.message
@@ -169,7 +167,7 @@ const MainPage = () => {
 
   return (
     <MainFrame
-      center={episodes ? mainBody() : <LinearProgress />}
+      center={timeline ? mainBody() : <LinearProgress />}
       title={<TitleBar button={<></>}>{siteName}</TitleBar>}
     />
   );
