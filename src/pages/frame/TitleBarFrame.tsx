@@ -67,9 +67,7 @@ const TitleBarFrame = ({
             }}
           >
             <Toolbar>
-              <Typography sx={{ flexGrow: 1 }}>
-                {!!title && <Box>{title}</Box>}
-              </Typography>
+              <Box sx={{ flexGrow: 1 }}>{!!title && title}</Box>
               <IconButton
                 size="large"
                 edge="start"

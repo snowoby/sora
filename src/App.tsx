@@ -12,7 +12,6 @@ import endpoint from "@/const/endpoint";
 import urlcat from "urlcat";
 import { Box, createTheme, ThemeProvider } from "@mui/material";
 import { APIAllMySeries } from "@/api/Series";
-import { boolean } from "yup";
 import { AxiosError } from "axios";
 import { GetAccessToken, GetRefreshToken } from "./utils/utils";
 import HomeTimelineContext from "./context/HomeTimelineContext";

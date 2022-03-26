@@ -4,30 +4,48 @@ import {
   Container,
   Divider,
   Grid,
-  Paper,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useLocation, useParams } from "react-router-dom";
-import { APIGetEpisode } from "@/api/Episode";
-import { Episode, Profile, Series } from "@/types";
+import { APICreateEpisode, APIGetEpisode } from "@/api/Episode";
+import { Episode, Profile, Series, Comment } from "@/types";
 import log from "@/log";
-import MarkdownViewer from "@/components/publish/MarkdownViewer";
-import ProfileCard from "@/components/profile";
 import BackTitleBar from "@/components/BackTitleBar";
-import SeriesCard from "@/components/series";
-import { StorageUrl } from "@/api/Storage";
 import ShortEpisodeCard from "@/components/ShortEpisodeCard";
-import RoundedButton from "@/components/RoundedButton";
 import TitleBarFrame from "../frame/TitleBarFrame";
-import ShortPublishCard from "../publish/ShortPublishCard";
 import MarkdownEditor from "@/components/publish/MarkdownEditor";
-import ProfileSeriesSwitcher from "@/components/ProfileSeriesSwitcher";
 import DefaultProfileSeriesSwitcher from "@/components/DefaultProfileSeriesSwitcher";
+import ProfileSeriesSwitcher from "@/components/ProfileSeriesSwitcher";
+import series from "@/components/series";
+import AccountContext from "@/context/AccountContext";
+import ProfileCard from "@/components/profile";
+import { APICreateComment, APIGetAllCommentOfOneEpisode } from "@/api/Comment";
+import CommentCard from "@/components/CommentCard";
 
 const EpisodePage = () => {
   let { id } = useParams();
   const [episode, setEpisode] = useState<Episode>();
+  const location = useLocation();
+  const [commentOpen, setCommentOpen] = useState(location.hash === "#comments");
+  const [comment, setComment] = useState("");
+  const { profiles } = useContext(AccountContext);
+  const [commentAuthor, setCommentAuthor] = useState<Profile | undefined>(
+    profiles?.[0]
+  );
+  const [commentList, setCommentList] = useState<Comment[]>();
+
+  useEffect(() => {
+    if (!commentAuthor) setCommentAuthor(profiles?.[0]);
+  }, [profiles]);
+
+  useEffect(() => {
+    if (!id) return;
+    if (commentList) return;
+    APIGetAllCommentOfOneEpisode(id).then(({ data }) => {
+      setCommentList(data);
+    });
+  }, [commentOpen]);
 
   useEffect(() => {
     if (!id) return;
@@ -36,7 +54,6 @@ const EpisodePage = () => {
       .catch((e) => log.error(e));
   }, [id]);
 
-  const location = useLocation();
   if (!episode) return <Container>Loading...</Container>;
 
   const commentArea = () => {
@@ -46,16 +63,73 @@ const EpisodePage = () => {
           <Typography sx={{ color: "divider" }}>comments</Typography>
         </Divider>
         <Box>
-          <MarkdownEditor>asdasd</MarkdownEditor>
-          <Box display="grid" gridTemplateColumns="1fr auto">
-            <DefaultProfileSeriesSwitcher
-              onChange={function (item: Series | Profile): void {
-                //TODO
-              }}
-            />
-            <Button>Publish</Button>
+          <form
+            onSubmit={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              if (!commentAuthor) return;
+              APICreateComment(episode.id, {
+                from: commentAuthor.id,
+                content: comment,
+              })
+                .then(() => {
+                  setComment("");
+                })
+                .catch((e) => log.error(e));
+            }}
+          >
+            <Box
+              display={{ xs: "block", md: "grid" }}
+              gridTemplateColumns="auto 1fr auto"
+              gap={1}
+            >
+              <ProfileSeriesSwitcher
+                selected={commentAuthor}
+                profileOptions={profiles ?? []}
+                seriesOptions={[]}
+                onChange={(selected) => setCommentAuthor(selected as Profile)}
+                renderButton={(selected) => (
+                  <>
+                    <Box
+                      height="3rem"
+                      width="3rem"
+                      display={{ xs: "none", md: "block" }}
+                    >
+                      <ProfileCard
+                        profile={selected as Profile}
+                        size="avatar"
+                      />
+                    </Box>
+                    <Box display={{ xs: "block", md: "none" }}>
+                      <ProfileCard profile={selected as Profile} size="lite" />
+                    </Box>
+                  </>
+                )}
+              />
+
+              <MarkdownEditor
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+              />
+              <Box alignSelf="end" mt="1rem" textAlign="end">
+                <Button type="submit">Publish</Button>
+              </Box>
+            </Box>
+          </form>
+          <Box mt="1rem">
+            <Divider />
           </Box>
         </Box>
+      </Box>
+    );
+  };
+
+  const comments = () => {
+    return (
+      <Box>
+        {commentList?.map((comment) => (
+          <CommentCard key={comment.id} comment={comment} marginBottom={2} />
+        ))}
       </Box>
     );
   };
@@ -68,9 +142,10 @@ const EpisodePage = () => {
         <Grid item xs />
         <Grid item xs={12} md={8}>
           <ShortEpisodeCard episode={episode} fullImage={true} />
-          <Box mx="1rem">
-            {location.hash !== "#comments" ? "" : commentArea()}
+          <Box mx="1rem" mb="1rem">
+            {profiles?.length && commentArea()}
           </Box>
+          <Box mx="1rem">{comments()}</Box>
         </Grid>
         <Grid item xs />
       </Grid>

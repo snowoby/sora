@@ -61,7 +61,7 @@ export type ProfileSwitcherProps = {
 
 export type ProfileCardProps = {
   profile: Profile;
-  size?: "normal" | "lite" | "display";
+  size?: "normal" | "lite" | "display" | "avatar";
 };
 
 export type MainFrameProps = {
@@ -159,4 +159,10 @@ export type Series = InfoBasic & SeriesData & { profile: Profile };
 export type HomeTimelineContextType = {
   timeline?: Episode[]
   setTimeline: React.Dispatch<React.SetStateAction<Episode[] | undefined>>
+}
+
+export type Comment = {
+  id: string;
+  content: string;
+  author:Profile;
 }

@@ -19,11 +19,24 @@ const styleConfig = {
     titleSize: "subtitle2",
     call: false,
   },
+  avatar: {
+    avatarSize: { height: "2rem", width: "2rem" },
+    titleSize: "subtitle2",
+    call: false,
+  },
 };
 
 const ProfileCard = ({ profile, size }: ProfileCardProps) => {
   if (!size) size = "normal";
   const config = styleConfig[size];
+
+  if (size === "avatar")
+    return (
+      <Avatar
+        sx={{ width: "100%", height: "100%" }}
+        src={StorageUrl("avatar", profile.avatar, "small")}
+      />
+    );
 
   return (
     <Box

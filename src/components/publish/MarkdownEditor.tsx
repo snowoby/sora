@@ -43,7 +43,6 @@ const MarkdownEditor = (props: TextFieldProps) => {
             },
           },
         ]}
-        minHeight="10rem"
       >
         <MarkdownViewer>{props.value as string}</MarkdownViewer>
       </Box>

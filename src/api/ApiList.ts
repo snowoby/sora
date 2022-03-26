@@ -3,6 +3,7 @@ const root = "/";
 const account = `${root}account/`;
 const profile = `${root}profile/`;
 const episode = `${root}episode/`;
+const comment = `${root}comment/`;
 const series = `${root}series/`;
 const file = `${root}file/`;
 const site = `${root}site/`;
@@ -21,4 +22,5 @@ export default {
   file,
   singleFile,
   series,
+  comment
 };

@@ -23,6 +23,7 @@ const ProfileSeriesSwitcher = ({
   selected,
   onChange,
   placeholder,
+  ...otherProps
 }: ProfileSeriesSwitcherProps) => {
   return (
     <FrameSwitcher<Series | Profile | GroupLabel>
@@ -103,6 +104,7 @@ const ProfileSeriesSwitcher = ({
           </MenuItem>
         );
       }}
+      {...otherProps}
     />
   );
 };
