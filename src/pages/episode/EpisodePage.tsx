@@ -72,8 +72,12 @@ const EpisodePage = () => {
                 from: commentAuthor.id,
                 content: comment,
               })
-                .then(() => {
+                .then(({ data }) => {
                   setComment("");
+                  setCommentList((prev) => {
+                    if (!prev) return [data];
+                    return [data, ...prev];
+                  });
                 })
                 .catch((e) => log.error(e));
             }}
@@ -88,6 +92,7 @@ const EpisodePage = () => {
                 profileOptions={profiles ?? []}
                 seriesOptions={[]}
                 onChange={(selected) => setCommentAuthor(selected as Profile)}
+                freeWidth={true}
                 renderButton={(selected) => (
                   <>
                     <Box

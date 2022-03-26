@@ -84,6 +84,7 @@ export type Episode = EpisodeData &
     series?: Series;
     cover?: FileInfo;
     files?: FileInfo[];
+    commentCount?:number;
   };
 
 export type PublishCardProps = {

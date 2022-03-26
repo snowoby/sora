@@ -70,19 +70,26 @@ const ShortEpisodeCard = ({
         gap={1}
         justifyContent="flex-end"
       >
-        <IconButton
-          onClick={(e) => {
-            e.stopPropagation();
-            if (
-              location.pathname !== `/episode/${episode.id}` ||
-              location.hash !== "#comments"
-            ) {
-              navigate(`/episode/${episode.id}#comments`);
-            }
-          }}
-        >
-          <CommentOutlinedIcon fontSize="small" />
-        </IconButton>
+        <Box>
+          <Typography variant="body2" color="text.secondary">
+            <span style={{ marginRight: "0.25rem" }}>
+              {!!episode.commentCount && episode.commentCount}
+            </span>
+            <IconButton
+              onClick={(e) => {
+                e.stopPropagation();
+                if (
+                  location.pathname !== `/episode/${episode.id}` ||
+                  location.hash !== "#comments"
+                ) {
+                  navigate(`/episode/${episode.id}#comments`);
+                }
+              }}
+            >
+              <CommentOutlinedIcon fontSize="small" />
+            </IconButton>
+          </Typography>
+        </Box>
         <IconButton>
           <BookmarkAddOutlinedIcon fontSize="small" />
         </IconButton>

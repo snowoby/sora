@@ -17,6 +17,7 @@ export type FrameSwitcherProps<T> = {
     option: T,
     callAfterClick: () => void
   ) => React.ReactNode;
+  freeWidth?: boolean;
 };
 
 const FrameSwitcher = <T,>(props: FrameSwitcherProps<T>) => {
@@ -47,7 +48,9 @@ const FrameSwitcher = <T,>(props: FrameSwitcherProps<T>) => {
           open={open}
           onClose={() => setOpen(false)}
           anchorEl={anchor.current}
-          PaperProps={{ style: { width: menuWidth } }}
+          PaperProps={{
+            style: { width: props.freeWidth ? "auto" : menuWidth },
+          }}
         >
           {props.selected && (
             <MenuItem
