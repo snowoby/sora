@@ -1,5 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, Card, Container, Divider, Grid, Stack } from "@mui/material";
+import {
+  Button,
+  Card,
+  Container,
+  Divider,
+  Grid,
+  LinearProgress,
+  Stack,
+} from "@mui/material";
 import AccountContext from "@/context/AccountContext";
 import {
   FileInfo,
@@ -74,7 +82,11 @@ const PublishPage = () => {
   }, []);
 
   if (!profiles || !seriesList) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <LinearProgress />
+      </div>
+    );
   }
 
   if (!profiles.length) {

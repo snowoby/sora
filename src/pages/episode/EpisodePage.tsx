@@ -4,24 +4,24 @@ import {
   Container,
   Divider,
   Grid,
+  LinearProgress,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState, useContext } from "react";
 import { useLocation, useParams } from "react-router-dom";
-import { APICreateEpisode, APIGetEpisode } from "@/api/Episode";
-import { Episode, Profile, Series, Comment } from "@/types";
+import { APIGetEpisode } from "@/api/Episode";
+import { Episode, Profile, Comment } from "@/types";
 import log from "@/log";
 import BackTitleBar from "@/components/BackTitleBar";
 import ShortEpisodeCard from "@/components/ShortEpisodeCard";
 import TitleBarFrame from "../frame/TitleBarFrame";
 import MarkdownEditor from "@/components/publish/MarkdownEditor";
-import DefaultProfileSeriesSwitcher from "@/components/DefaultProfileSeriesSwitcher";
 import ProfileSeriesSwitcher from "@/components/ProfileSeriesSwitcher";
-import series from "@/components/series";
 import AccountContext from "@/context/AccountContext";
 import ProfileCard from "@/components/profile";
 import { APICreateComment, APIGetAllCommentOfOneEpisode } from "@/api/Comment";
 import CommentCard from "@/components/CommentCard";
+import MiddleFrame from "../frame/MiddleFrame";
 
 const EpisodePage = () => {
   let { id } = useParams();
@@ -54,7 +54,12 @@ const EpisodePage = () => {
       .catch((e) => log.error(e));
   }, [id]);
 
-  if (!episode) return <Container>Loading...</Container>;
+  if (!episode)
+    return (
+      <Container>
+        <LinearProgress />
+      </Container>
+    );
 
   const commentArea = () => {
     return (
@@ -138,23 +143,22 @@ const EpisodePage = () => {
       </Box>
     );
   };
-
+  const titleBar = () => (
+    <BackTitleBar>{episode.title ?? "details"}</BackTitleBar>
+  );
   return (
-    <TitleBarFrame
-      title={<BackTitleBar>{episode.title ?? "details"}</BackTitleBar>}
-    >
-      <Grid container>
-        <Grid item xs />
-        <Grid item xs={12} md={8}>
+    <MiddleFrame
+      title={titleBar()}
+      center={
+        <>
           <ShortEpisodeCard episode={episode} fullImage={true} />
           <Box mx="1rem" mb="1rem">
             {profiles?.length && commentArea()}
           </Box>
           <Box mx="1rem">{comments()}</Box>
-        </Grid>
-        <Grid item xs />
-      </Grid>
-    </TitleBarFrame>
+        </>
+      }
+    />
   );
 };
 

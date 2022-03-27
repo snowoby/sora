@@ -31,6 +31,7 @@ import { LoadingButton } from "@mui/lab";
 import RoundedButton from "@/components/RoundedButton";
 import { Box } from "@mui/system";
 import MenuFrame from "../frame/MenuFrame";
+import BackTitleBar from "@/components/BackTitleBar";
 
 const AccountPage = () => {
   const { account, profiles, updateAccount } = useContext(AccountContext);
@@ -316,35 +317,37 @@ const AccountPage = () => {
   );
 
   const profileList = () => (
-    <Stack>
-      {profiles.map((profile) => (
-        <Grid key={profile.id} item>
-          <RoundedButton
-            activated={selectedProfile === profile}
-            onClick={() => {
-              setSelectedProfile(profile);
-              setEditProfile(profile);
-              setAvatar(null);
-              setEdited(false);
-            }}
-            fullWidth
-          >
-            <ProfileCard profile={profile} />
-          </RoundedButton>
-        </Grid>
-      ))}
-      <Button
-        onClick={() => {
-          reset();
-        }}
-      >
-        new profile
-      </Button>
-    </Stack>
+    <Box mx={2}>
+      <Stack>
+        {profiles.map((profile) => (
+          <Grid key={profile.id} item>
+            <RoundedButton
+              activated={selectedProfile === profile}
+              onClick={() => {
+                setSelectedProfile(profile);
+                setEditProfile(profile);
+                setAvatar(null);
+                setEdited(false);
+              }}
+              fullWidth
+            >
+              <ProfileCard profile={profile} />
+            </RoundedButton>
+          </Grid>
+        ))}
+        <Button
+          onClick={() => {
+            reset();
+          }}
+        >
+          new profile
+        </Button>
+      </Stack>
+    </Box>
   );
 
   const center = () => (
-    <>
+    <Box mx={2}>
       {edit}
       {cropDialog}
       <canvas
@@ -363,26 +366,31 @@ const AccountPage = () => {
         onClose={() => setNoticeOpen(false)}
         type={noticeType}
       />
-    </>
+    </Box>
   );
 
   const right = () => {
     return (
-      <MenuFrame title="account/profile">
-        <RoundedButton
-          color="error"
-          onClick={() => {
-            Logout();
-            window.location.pathname = "/";
-          }}
-        >
-          <Typography color="error">logout</Typography>
-        </RoundedButton>
-      </MenuFrame>
+      <RoundedButton
+        color="error"
+        onClick={() => {
+          Logout();
+          window.location.pathname = "/";
+        }}
+      >
+        <Typography color="error">logout</Typography>
+      </RoundedButton>
     );
   };
 
-  return <MainFrame left={profileList()} center={center()} right={right()} />;
+  return (
+    <MainFrame
+      left={profileList()}
+      center={center()}
+      right={right()}
+      title={<BackTitleBar>account/profile</BackTitleBar>}
+    />
+  );
 };
 
 export default AccountPage;

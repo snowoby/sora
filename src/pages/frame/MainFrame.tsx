@@ -1,37 +1,30 @@
 import React, { useContext } from "react";
-import {
-  AppBar,
-  Box,
-  Container,
-  Grid,
-  IconButton,
-  Toolbar,
-} from "@mui/material";
-import { MainFrameProps } from "@/types";
-
+import { Box } from "@mui/material";
 import AccountContext from "@/context/AccountContext";
 import LinkMenu from "@/components/LinkMenu";
-import MenuIcon from "@mui/icons-material/Menu";
-import TitleBarFrame from "./TitleBarFrame";
+import PageFrame from "./PageFrame";
+import { FrameProps } from "@/types";
 
-const MainFrame = ({ left, center, right, title }: MainFrameProps) => {
+const MainFrame = ({ left, center, right, title }: FrameProps) => {
   const { account } = useContext(AccountContext);
 
   const menu = <LinkMenu />;
 
   return (
-    <TitleBarFrame title={title}>
-      <Grid item xs={12} md={4}>
-        {left}
-      </Grid>
-      <Grid item xs={12} md={6}>
-        {center}
-      </Grid>
-      <Grid item display={{ xs: "none", md:"block" }} xs={12} md={2}>
-        {!!title && <Box>{title}</Box>}
-        {right ?? menu}
-      </Grid>
-    </TitleBarFrame>
+    <PageFrame
+      title={title}
+      left={left}
+      leftGridProps={{ md: 4 }}
+      center={center}
+      centerGridProps={{ md: 6 }}
+      right={
+        <>
+          {!!title && <Box>{title}</Box>}
+          {right ?? menu}
+        </>
+      }
+      rightGridProps={{ display: { xs: "none", md: "block" }, md: 2 }}
+    />
   );
 };
 

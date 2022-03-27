@@ -1,6 +1,6 @@
 import React from "react";
-import { Profile, Series, Comment } from "@/types";
-import { Box, BoxProps, Typography } from "@mui/material";
+import { Comment } from "@/types";
+import { Box, BoxProps, Chip, Typography } from "@mui/material";
 import ProfileCard from "./profile";
 
 type Props = {
@@ -14,7 +14,14 @@ const CommentCard = ({ comment, ...props }: Props) => {
         <Box width="2rem" height="2rem">
           <ProfileCard profile={comment.author} size="avatar" />
         </Box>
-        <Typography mt="0.25rem">{comment.content}</Typography>
+        <Typography>
+          <Chip
+            label={comment.author.title}
+            sx={{ mr: "0.25rem", height: "1.5rem" }}
+            component="span"
+          />
+          {comment.content}
+        </Typography>
       </Box>
     </Box>
   );

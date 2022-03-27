@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import internal from "stream";
-import { AvatarProps } from "@mui/material";
+import { AvatarProps, GridProps } from "@mui/material";
 
 type InfoBasic = {
   id: string;
@@ -64,13 +64,17 @@ export type ProfileCardProps = {
   size?: "normal" | "lite" | "display" | "avatar";
 };
 
-export type MainFrameProps = {
+export type FrameProps = {
   left?: ReactNode
   center?: ReactNode
   right?: ReactNode
   title?: ReactNode
-  
+  leftGridProps?:GridProps
+  centerGridProps?:GridProps
+  rightGridProps?:GridProps
 };
+
+export type MiddleFrameProps = {hideMdTitle?:boolean} & FrameProps
 
 export type EpisodeData = {
   title: string;

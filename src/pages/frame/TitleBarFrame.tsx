@@ -26,7 +26,31 @@ const TitleBarFrame = ({
   const { account } = useContext(AccountContext);
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   menu = menu ?? <LinkMenu />;
-
+  const appBar = () => (
+    <AppBar
+      position="fixed"
+      sx={{
+        top: "auto",
+        bottom: 0,
+        bgcolor: "background.paper",
+        color: "text.primary",
+      }}
+    >
+      <Toolbar>
+        <Box sx={{ flexGrow: 1 }}>{!!title && title}</Box>
+        <IconButton
+          size="large"
+          edge="start"
+          color="inherit"
+          aria-label="menu"
+          sx={{ ml: 2 }}
+          onClick={() => setDrawerOpen(true)}
+        >
+          <MenuIcon />
+        </IconButton>
+      </Toolbar>
+    </AppBar>
+  );
   return (
     <Container disableGutters>
       <Grid container columnSpacing={{ sx: 0, md: 2 }}>
@@ -37,7 +61,7 @@ const TitleBarFrame = ({
             display: { md: "none" },
             top: 0,
             position: "sticky",
-            zIndex: 100,
+            zIndex: (theme) => theme.zIndex.appBar,
           }}
         >
           <Drawer
@@ -57,32 +81,16 @@ const TitleBarFrame = ({
               <Box>{menu}</Box>
             </Box>
           </Drawer>
-          <AppBar
-            position="fixed"
-            sx={{
-              top: "auto",
-              bottom: 0,
-              bgcolor: "background.paper",
-              color: "text.primary",
-            }}
-          >
-            <Toolbar>
-              <Box sx={{ flexGrow: 1 }}>{!!title && title}</Box>
-              <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                aria-label="menu"
-                sx={{ ml: 2 }}
-                onClick={() => setDrawerOpen(true)}
-              >
-                <MenuIcon />
-              </IconButton>
-            </Toolbar>
-          </AppBar>
+          {appBar()}
         </Grid>
         {children}
       </Grid>
+      <Box
+        visibility="hidden"
+        display={{ xs: "block", md: "none" }}
+        position="relative"
+        height={(theme) => theme.mixins.toolbar.minHeight}
+      />
     </Container>
   );
 };

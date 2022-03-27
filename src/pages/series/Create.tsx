@@ -1,5 +1,12 @@
 import React, { useContext, useEffect } from "react";
-import { Button, Container, Grid, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  Container,
+  Grid,
+  LinearProgress,
+  TextField,
+  Typography,
+} from "@mui/material";
 import ProfileSwitcher from "@/components/ProfileSwitcher";
 import AccountContext from "@/context/AccountContext";
 import { APIAllMySeries, APICreateSeries, APIUpdateSeries } from "@/api/Series";
@@ -70,7 +77,11 @@ const CreateSeriesPage = () => {
   };
 
   if (!profiles) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <LinearProgress />
+      </div>
+    );
   }
 
   return (

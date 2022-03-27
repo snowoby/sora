@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 import MainFrame from "../frame/MainFrame";
 import MenuFrame from "../frame/MenuFrame";
 import ShortPublishCard from "./ShortPublishCard";
+import MiddleFrame from "../frame/MiddleFrame";
+import BackTitleBar from "@/components/BackTitleBar";
+import { Box } from "@mui/material";
 
 const QuickPublish = () => {
   const navigate = useNavigate();
@@ -25,9 +28,13 @@ const QuickPublish = () => {
   };
 
   return (
-    <MainFrame
-      center={<ShortPublishCard onFinish={handleDialogClose} />}
-      right={<MenuFrame title="publish" />}
+    <MiddleFrame
+      center={
+        <Box mx={2}>
+          <ShortPublishCard onFinish={handleDialogClose} />
+        </Box>
+      }
+      title={<BackTitleBar>publish</BackTitleBar>}
     />
   );
 };
