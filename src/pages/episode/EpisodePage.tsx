@@ -48,7 +48,7 @@ const EpisodePage = () => {
     });
   }, [commentOpen]);
   const largeThanSm = useMediaQuery((theme:any) => theme.breakpoints.up('sm'));
-
+  log.info(largeThanSm)
   useEffect(() => {
     if (!id) return;
     APIGetEpisode(id)
