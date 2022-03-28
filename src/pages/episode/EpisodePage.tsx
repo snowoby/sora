@@ -22,6 +22,7 @@ import ProfileCard from "@/components/profile";
 import { APICreateComment, APIGetAllCommentOfOneEpisode } from "@/api/Comment";
 import CommentCard from "@/components/CommentCard";
 import MiddleFrame from "../frame/MiddleFrame";
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const EpisodePage = () => {
   let { id } = useParams();
@@ -46,6 +47,7 @@ const EpisodePage = () => {
       setCommentList(data);
     });
   }, [commentOpen]);
+  const largeThanSm = useMediaQuery((theme:any) => theme.breakpoints.up('sm'));
 
   useEffect(() => {
     if (!id) return;
@@ -97,7 +99,7 @@ const EpisodePage = () => {
                 profileOptions={profiles ?? []}
                 seriesOptions={[]}
                 onChange={(selected) => setCommentAuthor(selected as Profile)}
-                freeWidth={true}
+                freeWidth={largeThanSm}
                 renderButton={(selected) => (
                   <>
                     <Box
