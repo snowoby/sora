@@ -45,7 +45,7 @@ const ProfileSeriesSwitcher = ({
         return (
           <>
             {item.valueType === "profile" ? (
-              <ProfileCard profile={item as Profile} size="normal" />
+              <ProfileCard profile={item as Profile} size="lite" />
             ) : (
               <SeriesCard
                 series={item as Series}
@@ -58,7 +58,7 @@ const ProfileSeriesSwitcher = ({
       renderSelected={(selected) => {
         switch (selected.valueType) {
           case "profile":
-            return <ProfileCard profile={selected as Profile} size="normal" />;
+            return <ProfileCard profile={selected as Profile} size="lite" />;
           case "series":
             return (
               <SeriesCard

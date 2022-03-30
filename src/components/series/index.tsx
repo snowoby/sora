@@ -3,6 +3,7 @@ import { Profile, Series } from "@/types";
 import { Avatar, Box, Typography } from "@mui/material";
 import { StorageUrl } from "@/api/Storage";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+import log from "@/log";
 type Props = {
   series: Series;
   profile?: Profile;
@@ -21,7 +22,7 @@ const SeriesCard = ({ series, profile, size }: Props) => {
     >
       <Avatar
         sx={[size === "display" && { height: "2rem", width: "2rem" }]}
-        src={profile && StorageUrl("avatar", profile.avatar, "compressed")}
+        src={profile && StorageUrl("avatar", profile.avatar, "small")}
       />
       <ArrowRightIcon />
       <Typography variant="subtitle2" height="fit-content">

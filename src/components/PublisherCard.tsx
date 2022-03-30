@@ -12,7 +12,7 @@ const PublisherCard = ({ series, profile }: Props) => {
   return (
     <>
       {series ? (
-        <SeriesCard series={series} />
+        <SeriesCard series={series} profile={profile} />
       ) : (
         <ProfileCard profile={profile} size="lite" />
       )}
