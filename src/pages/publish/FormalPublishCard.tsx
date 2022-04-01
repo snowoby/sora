@@ -35,7 +35,7 @@ const FormalPublishCard = (props: Props) => {
         <FilePutter
           files={files}
           onChange={(f) => {
-            handleChange("files")(f(files));
+            // handleChange("files")(f(files));
           }}
         />
       </Stack>

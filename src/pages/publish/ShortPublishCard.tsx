@@ -1,5 +1,5 @@
-import React, { useContext, useState } from "react";
-import FilePutter from "@/components/FilePutter";
+import React, { useContext, useEffect, useState } from "react";
+import FilePutter, { useFilePutter } from "@/components/FilePutter";
 import { Episode, FileInfo, FileUploadProps, Profile, Series } from "@/types";
 import Content from "./Content";
 import DefaultProfileSeriesSwitcher from "@/components/DefaultProfileSeriesSwitcher";
@@ -16,7 +16,8 @@ type Props = {
 
 const ShortPublishCard = ({ onFinish }: Props) => {
   const [content, setContent] = React.useState("");
-  const [files, setFiles] = React.useState<FileUploadProps[]>([]);
+  const [files, setFiles] = useFilePutter();
+
   const { profiles } = useContext(AccountContext);
   const [identity, setIdentity] = useState<Profile | Series | undefined>(
     profiles?.[0]
@@ -25,6 +26,10 @@ const ShortPublishCard = ({ onFinish }: Props) => {
   const [noticeMessage, setNoticeMessage] = useState("");
   const [status, setStatus] = useState<AlertColor>("success");
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    !identity && setIdentity(profiles?.[0]);
+  }, [profiles]);
   const submit = () => {
     if (files.find((file) => file.fileStatus === "uploading")) {
       setNoticeOpen(true);

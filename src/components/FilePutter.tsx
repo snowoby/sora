@@ -17,7 +17,13 @@ import {
 import FileUploader from "@/components/publish/FileUploader";
 import { FilePush } from "@/api/FileUpload";
 // import Image from "@/components/Image";
-import React, { ReactNode, useEffect, useRef, useState } from "react";
+import React, {
+  ReactNode,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
 import { FileInfo, FileUploadProps } from "@/types";
 import { StorageUrl } from "@/api/Storage";
 import PromiseFileReader from "promise-file-reader";
@@ -26,10 +32,11 @@ import log from "@/log";
 import Notice from "./Notice";
 import UploadImage from "./publish/UploadImage";
 import { CreateFileUploadProfile } from "@/utils/file";
+type UpdateFunc = (actionType?: Actions, file?: FileUploadProps) => void;
 
 interface Props {
   files: FileUploadProps[];
-  onChange: (f: (old: FileUploadProps[]) => FileUploadProps[]) => void;
+  onChange: UpdateFunc;
 }
 const FilePutter = (props: Props) => {
   const { files, onChange } = props;
@@ -67,10 +74,11 @@ const FilePutter = (props: Props) => {
               const files: FileUploadProps[] = [];
               for (const file of dropFiles) {
                 if (!file) continue;
-                files.push(await CreateFileUploadProfile(file));
+                const toUpload = await CreateFileUploadProfile(file);
+                files.push(toUpload);
+                mounted.current && onChange("add", toUpload);
               }
 
-              mounted.current && onChange((old) => [...old, ...files]);
               for (const fileUpload of files) {
                 if (!fileUpload.localFile) continue;
                 try {
@@ -81,7 +89,7 @@ const FilePutter = (props: Props) => {
                     (status, percentage) => {
                       fileUpload.uploadingStatus = status;
                       fileUpload.progress = percentage;
-                      mounted.current && onChange((old) => [...old]);
+                      mounted.current && onChange();
                     },
                     fileUpload.controller
                   );
@@ -97,7 +105,7 @@ const FilePutter = (props: Props) => {
                     fileUpload.fileStatus = "deleted";
                   else fileUpload.fileStatus = "failed";
                 }
-                mounted.current && onChange((old) => [...old]);
+                mounted.current && onChange();
               }
             }}
           >
@@ -165,7 +173,7 @@ const FilePutter = (props: Props) => {
           if (!toDelete) return;
           toDelete.controller?.abort();
           toDelete.fileStatus = "deleted";
-          onChange((old) => [...old]);
+          onChange();
           setDeleteDialogOpen(false);
           setNoticeOpen(true);
           setNoticeType("success");
@@ -179,7 +187,7 @@ const FilePutter = (props: Props) => {
         }}
       >
         <Box>
-          <Typography variant="h5" sx={{wordBreak:"break-all"}}>
+          <Typography variant="h5" sx={{ wordBreak: "break-all" }}>
             {(toDelete?.localFile as any)?.name ?? "Noname file"}
           </Typography>
           <Typography variant="subtitle1">
@@ -238,4 +246,38 @@ const DeleteConfirmDialog = (props: DeleteConfirmDialogProps) => {
       </DialogActions>
     </Dialog>
   );
+};
+
+type Actions = "add" | "remove" | "reset";
+type ActionProps = {
+  type?: Actions;
+  file?: FileUploadProps;
+};
+
+const fileReducer = (
+  state: FileUploadProps[],
+  action: ActionProps
+): FileUploadProps[] => {
+  switch (action.type) {
+    case "add":
+      if (action.file) return [...state, action.file];
+      return state;
+    case "remove":
+      return state.filter((file) => file !== action.file);
+    case "reset":
+      return [];
+    default:
+      return [...state];
+  }
+};
+export const useFilePutter = (
+  initFiles?: FileUploadProps[]
+): [FileUploadProps[], UpdateFunc] => {
+  initFiles = initFiles ?? ([] as FileUploadProps[]);
+  const [state, dispatch] = useReducer(fileReducer, initFiles);
+  return [
+    state,
+    (actionType?: Actions, file?: FileUploadProps) =>
+      dispatch({ type: actionType, file }),
+  ];
 };

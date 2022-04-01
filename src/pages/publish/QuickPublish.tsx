@@ -1,8 +1,6 @@
 import React from "react";
 import { Episode, Profile, Series } from "@/types";
 import { useNavigate } from "react-router-dom";
-import MainFrame from "../frame/MainFrame";
-import MenuFrame from "../frame/MenuFrame";
 import ShortPublishCard from "./ShortPublishCard";
 import MiddleFrame from "../frame/MiddleFrame";
 import BackTitleBar from "@/components/BackTitleBar";
