@@ -6,9 +6,11 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
+  IconButton,
   LinearProgress,
   Modal,
   Stack,
+  Typography,
 } from "@mui/material";
 import { APIDeleteEpisode, APIGetAllEpisode } from "@/api/Episode";
 import { Episode, FileInfo, Profile, Series } from "@/types";
@@ -24,6 +26,10 @@ import MainFrame from "../frame/MainFrame";
 import TitleBar from "@/components/TitleBar";
 import { StorageUrl } from "@/api/Storage";
 import HomeTimelineContext from "@/context/HomeTimelineContext";
+import AccountContext from "@/context/AccountContext";
+import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
+import CommentOutlinedIcon from "@mui/icons-material/CommentOutlined";
+import BookmarkAddOutlinedIcon from "@mui/icons-material/BookmarkAddOutlined";
 
 const MainPage = () => {
   // const [episodes, setEpisodes] = useState<Episode[]>();
@@ -36,10 +42,10 @@ const MainPage = () => {
   const [largeImageFile, setLargeImageFile] = useState<FileInfo | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const navigate = useNavigate();
   const { siteName } = useContext(UniversalContext);
+  const { loginStatus, profiles } = useContext(AccountContext);
   const { timeline, setTimeline } = useContext(HomeTimelineContext);
-
+  const navigate = useNavigate();
   const fetchEpisodes = () =>
     APIGetAllEpisode()
       .then(({ data }) => {
@@ -78,11 +84,50 @@ const MainPage = () => {
                 }}
               >
                 <ShortEpisodeCard
-                  onDelete={(episode) => {
-                    setDeleteConfirmEpisode(episode);
-                    setDeleteConfirmOpen(true);
-                    setDeleting(false);
-                  }}
+                  leftAction={
+                    loginStatus &&
+                    profiles?.find(
+                      (profile) => profile.id === episode.profile.id
+                    ) && (
+                      <IconButton
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setDeleteConfirmEpisode(episode);
+                          setDeleteConfirmOpen(true);
+                          setDeleting(false);
+                          return false;
+                        }}
+                      >
+                        <DeleteForeverOutlinedIcon
+                          color="error"
+                          fontSize="small"
+                        />
+                      </IconButton>
+                    )
+                  }
+                  rightAction={
+                    <>
+                      <Box>
+                        <Typography variant="body2" color="text.secondary">
+                          <span style={{ marginRight: "0.25rem" }}>
+                            {!!episode.commentCount && episode.commentCount}
+                          </span>
+                          <IconButton
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/episode/${episode.id}#comments`);
+                            }}
+                          >
+                            <CommentOutlinedIcon fontSize="small" />
+                          </IconButton>
+                        </Typography>
+                      </Box>
+                      <IconButton>
+                        <BookmarkAddOutlinedIcon fontSize="small" />
+                      </IconButton>
+                    </>
+                  }
                   episode={episode}
                   onMediaClick={(e, file) => {
                     e.stopPropagation();

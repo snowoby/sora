@@ -22,7 +22,7 @@ import ProfileCard from "@/components/profile";
 import { APICreateComment, APIGetAllCommentOfOneEpisode } from "@/api/Comment";
 import CommentCard from "@/components/CommentCard";
 import MiddleFrame from "../frame/MiddleFrame";
-import useMediaQuery from '@mui/material/useMediaQuery';
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const EpisodePage = () => {
   let { id } = useParams();
@@ -30,10 +30,12 @@ const EpisodePage = () => {
   const location = useLocation();
   const [commentOpen, setCommentOpen] = useState(location.hash === "#comments");
   const [comment, setComment] = useState("");
+  const [replyTo, setReplyTo] = useState<string>();
   const { profiles } = useContext(AccountContext);
   const [commentAuthor, setCommentAuthor] = useState<Profile | undefined>(
     profiles?.[0]
   );
+
   const [commentList, setCommentList] = useState<Comment[]>();
 
   useEffect(() => {
@@ -47,8 +49,8 @@ const EpisodePage = () => {
       setCommentList(data);
     });
   }, [commentOpen]);
-  const largeThanSm = useMediaQuery((theme:any) => theme.breakpoints.up('sm'));
-  log.info(largeThanSm)
+  const largeThanSm = useMediaQuery((theme: any) => theme.breakpoints.up("sm"));
+  log.info(largeThanSm);
   useEffect(() => {
     if (!id) return;
     APIGetEpisode(id)
@@ -78,6 +80,7 @@ const EpisodePage = () => {
               APICreateComment(episode.id, {
                 from: commentAuthor.id,
                 content: comment,
+                replyTo: replyTo,
               })
                 .then(({ data }) => {
                   setComment("");
@@ -140,7 +143,12 @@ const EpisodePage = () => {
     return (
       <Box>
         {commentList?.map((comment) => (
-          <CommentCard key={comment.id} comment={comment} marginBottom={2} />
+          <CommentCard
+            key={comment.id}
+            comment={comment}
+            marginBottom={2}
+            onClick={() => setReplyTo(comment.id)}
+          />
         ))}
       </Box>
     );
@@ -148,6 +156,7 @@ const EpisodePage = () => {
   const titleBar = () => (
     <BackTitleBar>{episode.title ?? "details"}</BackTitleBar>
   );
+
   return (
     <MiddleFrame
       title={titleBar()}

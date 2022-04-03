@@ -1,27 +1,12 @@
-import React, { useContext, useState } from "react";
+import React from "react";
 import { Episode, FileInfo } from "@/types";
 import PublisherCard from "@/components/PublisherCard";
-import {
-  Backdrop,
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import MarkdownViewer from "@/components/publish/MarkdownViewer";
 import { StorageUrl } from "@/api/Storage";
-import CommentOutlinedIcon from "@mui/icons-material/CommentOutlined";
-import BookmarkAddOutlinedIcon from "@mui/icons-material/BookmarkAddOutlined";
-import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
-import AccountContext from "@/context/AccountContext";
-import { useLocation, useNavigate } from "react-router-dom";
+
 dayjs.extend(relativeTime);
 
 interface Props {
@@ -30,6 +15,8 @@ interface Props {
   onMediaClick?: (e: any, file: FileInfo) => void;
   hideAction?: boolean;
   fullImage?: boolean;
+  leftAction?: React.ReactNode | React.ReactNode[];
+  rightAction?: React.ReactNode | React.ReactNode[];
 }
 const ShortEpisodeCard = ({
   episode,
@@ -37,10 +24,9 @@ const ShortEpisodeCard = ({
   fullImage,
   onDelete,
   onMediaClick,
+  leftAction,
+  rightAction,
 }: Props) => {
-  const { profiles, loginStatus } = useContext(AccountContext);
-  const navigate = useNavigate();
-  const location = useLocation();
   const actionArea = () => (
     <Box
       display="flex"
@@ -48,20 +34,14 @@ const ShortEpisodeCard = ({
       justifyContent="space-between"
       px={2}
     >
-      <Box>
-        {loginStatus &&
-          profiles?.find((profile) => profile.id === episode.profile.id) && (
-            <IconButton
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                onDelete?.(episode);
-                return false;
-              }}
-            >
-              <DeleteForeverOutlinedIcon color="error" fontSize="small" />
-            </IconButton>
-          )}
+      <Box
+        display="flex"
+        flexDirection="row"
+        mb={1}
+        gap={1}
+        justifyContent="flex-start"
+      >
+        {leftAction}
       </Box>
       <Box
         display="flex"
@@ -70,29 +50,7 @@ const ShortEpisodeCard = ({
         gap={1}
         justifyContent="flex-end"
       >
-        <Box>
-          <Typography variant="body2" color="text.secondary">
-            <span style={{ marginRight: "0.25rem" }}>
-              {!!episode.commentCount && episode.commentCount}
-            </span>
-            <IconButton
-              onClick={(e) => {
-                e.stopPropagation();
-                if (
-                  location.pathname !== `/episode/${episode.id}` ||
-                  location.hash !== "#comments"
-                ) {
-                  navigate(`/episode/${episode.id}#comments`);
-                }
-              }}
-            >
-              <CommentOutlinedIcon fontSize="small" />
-            </IconButton>
-          </Typography>
-        </Box>
-        <IconButton>
-          <BookmarkAddOutlinedIcon fontSize="small" />
-        </IconButton>
+        {rightAction}
       </Box>
     </Box>
   );
@@ -138,7 +96,7 @@ const ShortEpisodeCard = ({
           />
         </Box>
       )}
-      {!hideAction && actionArea()}
+      {actionArea()}
     </>
   );
 };
